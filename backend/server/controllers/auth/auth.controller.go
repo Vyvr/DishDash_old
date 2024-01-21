@@ -9,6 +9,7 @@ import (
 	"errors"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -33,11 +34,18 @@ func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.
         return nil, status.Error(codes.Internal, "internal server error")
     }
 
+	    // Hash the password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Printf("Error hashing password: %s", err)
+			return nil, status.Error(codes.Internal, "failed to hash password")
+		}
+
     newUser := &entities.UserEntity{
 		Email:    in.Email,
         Name:     in.Name,
 		Surname:  in.Surname,
-        Password: in.Password,
+        Password: string(hashedPassword),
     }
 
     result := db.Create(newUser)
