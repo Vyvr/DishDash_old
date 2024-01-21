@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "./pb/auth";
+
+service Auth {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+}
+
+message RegisterRequest {
+  string email = 1;
+  string name = 2;
+  string surname = 3;
+  string password = 4;
+}
+
+message RegisterResponse {
+  string message = 1;
+}

@@ -1,0 +1,22 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "protoc --proto_path=proto proto/*.proto --go_out=. --go-grpc_out=. && go build -o ./build/main.exe ./server"
+  bin = "./build/main.exe"
+  include_ext = ["go", "mod", "sum", "proto"]
+  exclude_dir = ["build", "tmp", "pb"]
+  delay = 1000 # Milliseconds
+
+[log]
+  time = true
+
+[screen]
+  clear_on_rebuild = true
+
+[extra_files]
+  follow_symlinks = false
+
+[[watch.exec]]
+  command = "protoc --proto_path=proto proto/*.proto --go_out=. --go-grpc_out=."
+  extensions = ["proto"]
