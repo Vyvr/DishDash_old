@@ -7,4 +7,5 @@ type UserEntity struct {
 	Name     string `gorm:"not null"`
 	Surname  string `gorm:"not null"`
 	Password string `gorm:"not null"`
+	Token    string
 }

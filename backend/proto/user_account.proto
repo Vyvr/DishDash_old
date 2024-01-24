@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package user_account;
+
+option go_package = "./pb/user_account";
+
+service UserAccount {
+    rpc Edit(EditRequest) returns (EditResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
+
+message EditRequest {
+
+}
+
+message EditResponse {
+
+}
+
+message DeleteRequest {
+
+}
+
+message DeleteResponse {
+
+}

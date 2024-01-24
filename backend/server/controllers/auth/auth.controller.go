@@ -4,6 +4,7 @@ import (
 	"context"
 	"dish-dash/pb/auth"
 	"dish-dash/server/entities"
+	"dish-dash/server/services/auth_service"
 	"dish-dash/server/services/database_service"
 	"dish-dash/server/services/registrar_service"
 	"errors"
@@ -56,6 +57,33 @@ func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.
 	}
 
 	return &auth.RegisterResponse{Message: "Successfully registered user."}, nil
+}
+
+func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginResponse, error) {
+    db := database_service.GetDBInstance()
+
+    // Find user by email
+    var user entities.UserEntity
+    if err := db.Where("email = ?", in.Email).First(&user).Error; err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, status.Error(codes.NotFound, "user not found")
+        }
+        return nil, status.Error(codes.Internal, "internal server error")
+    }
+
+    // Compare the provided password with the hashed password
+    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)); err != nil {
+        // Password does not match
+        return nil, status.Error(codes.Unauthenticated, "invalid credentials")
+    }
+
+    // Generate a token (implementation depends on your token generation logic)
+    token, err := auth_service.GenerateJWTToken(user)
+    if err != nil {
+        return nil, status.Error(codes.Internal, "failed to generate token")
+    }
+
+    return &auth.LoginResponse{Token: token}, nil
 }
 
 func Register() {
