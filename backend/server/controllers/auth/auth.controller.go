@@ -9,6 +9,7 @@ import (
 	"dish-dash/server/services/registrar_service"
 	"errors"
 	"log"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -22,6 +23,8 @@ type server struct {
 
 func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.RegisterResponse, error) {
 	db := database_service.GetDBInstance()
+
+    in.Email = strings.ToLower(in.Email)
 
     // Check if the email already exists
     var existingUser entities.UserEntity
@@ -61,6 +64,8 @@ func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.
 
 func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginResponse, error) {
     db := database_service.GetDBInstance()
+
+    in.Email = strings.ToLower(in.Email)
 
     // Find user by email
     var user entities.UserEntity
