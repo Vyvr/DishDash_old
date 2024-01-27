@@ -24,73 +24,78 @@ type server struct {
 func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.RegisterResponse, error) {
 	db := database_service.GetDBInstance()
 
-    in.Email = strings.ToLower(in.Email)
+	in.Email = strings.ToLower(in.Email)
 
-    // Check if the email already exists
-    var existingUser entities.UserEntity
-    if err := db.Where("email = ?", in.Email).First(&existingUser).Error; err == nil {
-        // User with the email already exists
-        log.Printf("Email already in use: %s", in.Email)
-        return nil, status.Error(codes.AlreadyExists, "email already in use")
-    } else if !errors.Is(err, gorm.ErrRecordNotFound) {
-        // An unexpected error occurred
-        log.Printf("Error checking existing user: %s", err)
-        return nil, status.Error(codes.Internal, "internal server error")
-    }
+	// Check if the email already exists
+	var existingUser entities.UserEntity
+	err := db.Where("email = ?", in.Email).First(&existingUser).Error
+	if err == nil {
+		// User with the email already exists
+		log.Printf("Email already in use: %s", in.Email)
+		return nil, status.Error(codes.AlreadyExists, "email already in use")
+	}
 
-	    // Hash the password
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
-		if err != nil {
-			log.Printf("Error hashing password: %s", err)
-			return nil, status.Error(codes.Internal, "failed to hash password")
-		}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		// An unexpected error occurred
+		log.Printf("Error checking existing user: %s", err)
+		return nil, status.Error(codes.Internal, "internal server error")
+	}
 
-    newUser := &entities.UserEntity{
+	// @TODO: validate user password (create some sort of regex validation func)
+
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("Error hashing password: %s", err)
+		return nil, status.Error(codes.Internal, "failed to hash password")
+	}
+
+	newUser := &entities.UserEntity{
 		Email:    in.Email,
-        Name:     in.Name,
+		Name:     in.Name,
 		Surname:  in.Surname,
-        Password: string(hashedPassword),
-    }
+		Password: string(hashedPassword),
+	}
 
-    result := db.Create(newUser)
-	if result.Error != nil {
-		log.Printf("Error registering user: %s", result.Error)
+	result := db.Create(newUser)
+	if err := result.Error; err != nil {
+		log.Printf("Error registering user: %s", err)
 		// Convert the error to a gRPC status error
-		return nil, status.Error(codes.Internal, result.Error.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &auth.RegisterResponse{Message: "Successfully registered user."}, nil
 }
 
 func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginResponse, error) {
-    db := database_service.GetDBInstance()
+	db := database_service.GetDBInstance()
 
-    in.Email = strings.ToLower(in.Email)
+	in.Email = strings.ToLower(in.Email)
 
-    // Find user by email
-    var user entities.UserEntity
-    if err := db.Where("email = ?", in.Email).First(&user).Error; err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, status.Error(codes.NotFound, "user not found")
-        }
-        return nil, status.Error(codes.Internal, "internal server error")
-    }
+	// Find user by email
+	var user entities.UserEntity
+	if err := db.Where("email = ?", in.Email).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, status.Error(codes.NotFound, "user not found")
+		}
+		return nil, status.Error(codes.Internal, "internal server error")
+	}
 
-    // Compare the provided password with the hashed password
-    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)); err != nil {
-        // Password does not match
-        return nil, status.Error(codes.Unauthenticated, "invalid credentials")
-    }
+	// Compare the provided password with the hashed password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)); err != nil {
+		// Password does not match
+		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
+	}
 
-    // Generate a token (implementation depends on your token generation logic)
-    token, err := auth_service.GenerateJWTToken(user)
-    if err != nil {
-        return nil, status.Error(codes.Internal, "failed to generate token")
-    }
+	// Generate a token (implementation depends on your token generation logic)
+	token, err := auth_service.GenerateJWTToken(user)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to generate token")
+	}
 
-    return &auth.LoginResponse{Token: token}, nil
+	return &auth.LoginResponse{Token: token}, nil
 }
 
-func Register() {
+func RegisterServer() {
 	auth.RegisterAuthServer(registrar_service.GetServerInstance(), &server{})
 }

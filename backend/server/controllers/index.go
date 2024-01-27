@@ -7,6 +7,6 @@ import (
 
 func Register() {
 	// @TODO: register server controllers here
-	auth.Register()
-	user.Register()
+	auth.RegisterServer()
+	user.RegisterServer()
 }

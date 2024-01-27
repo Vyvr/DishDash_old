@@ -163,6 +163,6 @@ func (s *server) Delete(ctx context.Context, in *user.DeleteRequest) (*user.Dele
 
 
 // RegisterUserService registers the user service to a gRPC server.
-func Register() {
+func RegisterServer() {
     user.RegisterUserServer(registrar_service.GetServerInstance(), &server{})
 }
