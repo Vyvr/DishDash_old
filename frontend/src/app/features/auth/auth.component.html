@@ -1,2 +1,22 @@
-<div>auth component</div>
-<a href="/dashboard">aaa</a>
+<div class="auth-container">
+    <form *ngIf="showRegister" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <input type="text" formControlName="name" placeholder="Name">
+      <input type="text" formControlName="surname" placeholder="Surname">
+      <input type="email" formControlName="email" placeholder="Email">
+      <input type="password" formControlName="password" placeholder="Password">
+      <input type="password" formControlName="confirmPassword" placeholder="Confirm Password">
+      <button type="submit">Submit</button>
+      <button type="button" (click)="toggleForm()">Login</button>
+    </form>
+  
+    <form *ngIf="!showRegister" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <input type="email" formControlName="email" placeholder="Email">
+      <input type="password" formControlName="password" placeholder="Password">
+      <button type="submit">Submit</button>
+      <button type="button" (click)="toggleForm()">Register</button>
+    </form>
+  </div>
+  
+
+
+<!-- <a href="/dashboard">aaa</a> -->
