@@ -9,6 +9,7 @@ import (
 	"dish-dash/server/services/registrar_service"
 	"errors"
 	"log"
+	"regexp"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -26,6 +27,18 @@ func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.
 
 	in.Email = strings.ToLower(in.Email)
 
+	if !isValidEmail(in.Email) {
+		return nil, status.Error(codes.InvalidArgument, "invalid email format")
+	}
+
+	if !isValidPassword(in.Password) {
+		return nil, status.Error(codes.InvalidArgument, "invalid password format")
+	}
+
+	if len(in.Name) < 1 || len(in.Surname) < 1 {
+		return nil, status.Error(codes.InvalidArgument, "invalid name or surname format")
+	}
+
 	// Check if the email already exists
 	var existingUser entities.UserEntity
 	err := db.Where("email = ?", in.Email).First(&existingUser).Error
@@ -40,8 +53,6 @@ func (s *server) Register(ctx context.Context, in *auth.RegisterRequest) (*auth.
 		log.Printf("Error checking existing user: %s", err)
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
-
-	// @TODO: validate user password (create some sort of regex validation func)
 
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
@@ -94,6 +105,15 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 	}
 
 	return &auth.LoginResponse{Token: token}, nil
+}
+
+func isValidEmail(email string) bool {
+	regex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	return regex.MatchString(email)
+}
+
+func isValidPassword(password string) bool {
+    return len(password) >= 7
 }
 
 func RegisterServer() {

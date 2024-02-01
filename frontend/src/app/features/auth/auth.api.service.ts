@@ -16,14 +16,12 @@ export class ApiService {
   }
 
   register(name: string, surname: string, email: string, password: string): Observable<RegisterResponse> {
-    // Create a new RegisterRequest object
     const request = new RegisterRequest();
     request.setName(name);
     request.setSurname(surname);
     request.setEmail(email);
     request.setPassword(password);
 
-    // Use Observable to wrap the gRPC-Web client call
     return new Observable<RegisterResponse>((observer) => {
       this.authServiceClient.register(request, {}, (err, response) => {
         if (err) {
