@@ -104,6 +104,8 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
+	log.Printf(token)
+
 	return &auth.LoginResponse{Token: token}, nil
 }
 

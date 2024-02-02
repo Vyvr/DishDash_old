@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthClient } from '../../proto/AuthServiceClientPb';
-import { RegisterRequest, RegisterResponse } from '../../proto/auth_pb';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '../../proto/auth_pb';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -25,12 +25,29 @@ export class ApiService {
     return new Observable<RegisterResponse>((observer) => {
       this.authServiceClient.register(request, {}, (err, response) => {
         if (err) {
-          observer.error(err);
+          observer.error(err.message);
           return;
         }
         observer.next(response);
         observer.complete();
       });
     });
+  }
+
+  login(email: string, password: string) {
+    const request = new LoginRequest();
+    request.setEmail(email);
+    request.setPassword(password);
+
+    return new Observable<LoginResponse>((observer) => {
+      this.authServiceClient.login(request, {}, (err, response) => {
+        if(err) {
+          observer.error(err.message);
+          return;
+        }
+        observer.next(response);
+        observer.complete();
+      })
+    })
   }
 }
