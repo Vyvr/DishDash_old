@@ -14,7 +14,7 @@ import { AuthFacade } from 'src/app/store/auth';
   styleUrls: ['./auth.component.scss'],
 })
 export class AuthComponent {
-  authState$ = this.authFacade.authState$;
+  // authState$ = this.authFacade.authState$;
 
   registerForm: FormGroup;
   loginForm: FormGroup;
