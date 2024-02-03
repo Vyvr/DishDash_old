@@ -4,8 +4,8 @@ import { AppState } from '..';
 import { Injectable } from '@angular/core';
 
 import * as actions from './auth.actions';
-import { catchError, map, switchMap } from 'rxjs';
-import { AuthApiService } from 'src/app/features/auth/auth-api.service';
+import { catchError, map, of, switchMap } from 'rxjs';
+import { AuthApiService } from 'src/app/core/api/auth-api.service';
 
 @Injectable()
 export class AuthEffects {
@@ -21,7 +21,7 @@ export class AuthEffects {
       switchMap(({ email, password }) =>
         this.authApiService.login(email, password).pipe(
           map((response) => actions.loginSuccess(response)),
-          catchError((error) => actions.loginFailure(error))
+          catchError((error) => of(actions.loginFailure(error)))
         )
       )
     )

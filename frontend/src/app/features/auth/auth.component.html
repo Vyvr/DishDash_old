@@ -1,32 +1,61 @@
-<div class="auth-content">
+<ng-container *ngIf="{ authState: authState$ | async } as viewData">
+  {{ viewData?.authState?.data?.token }}
+
+  <div class="auth-content">
     <div class="auth-container">
-        <form *ngIf="showRegister" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <h1>Register</h1>
-            <input type="text" formControlName="name" placeholder="Name">
-            <input type="text" formControlName="surname" placeholder="Surname">
-            <input type="email" formControlName="email" placeholder="Email">
-            <input type="password" formControlName="password" placeholder="Password">
-            <input type="password" formControlName="confirmPassword" placeholder="Confirm Password">
-            <ul class="auth-errors" >
-                <li class="auth-error" *ngFor="let error of registrationErrors">{{error}}</li>
-            </ul>
-            <button type="submit">Submit</button>
-            <button type="button" (click)="toggleForm()">Login</button>
-        </form>
+      <form
+        *ngIf="showRegister"
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <h1>Register</h1>
+        <input type="text" formControlName="name" placeholder="Name" />
+        <input type="text" formControlName="surname" placeholder="Surname" />
+        <input type="email" formControlName="email" placeholder="Email" />
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirm Password"
+        />
+        <ul class="auth-errors">
+          <li class="auth-error" *ngFor="let error of registrationErrors">
+            {{ error }}
+          </li>
+        </ul>
+        <button type="submit">Submit</button>
+        <button type="button" (click)="toggleForm()">Login</button>
+      </form>
 
-        <form *ngIf="!showRegister" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <h1>Login</h1>
-            <input type="email" formControlName="email" placeholder="Email">
-            <input type="password" formControlName="password" placeholder="Password">
-            <ul class="auth-errors" >
-                <li class="auth-error" *ngFor="let error of loginErrors">{{error}}</li>
-            </ul>
-            <label *ngIf="registrationSuccessful" class="auth-register-success">Successfully registered</label>
-            <button type="submit">Submit</button>
-            <button type="button" (click)="toggleForm()">Register</button>
-        </form>
+      <form
+        *ngIf="!showRegister"
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <h1>Login</h1>
+        <input type="email" formControlName="email" placeholder="Email" />
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <ul class="auth-errors">
+          <li class="auth-error" *ngFor="let error of loginErrors">
+            {{ error }}
+          </li>
+        </ul>
+        <label *ngIf="registrationSuccessful" class="auth-register-success"
+          >Successfully registered</label
+        >
+        <button type="submit">Submit</button>
+        <button type="button" (click)="toggleForm()">Register</button>
+      </form>
     </div>
-</div>
+  </div>
 
-
-<!-- <a href="/dashboard">aaa</a> -->
+  <!-- <a href="/dashboard">aaa</a> -->
+</ng-container>

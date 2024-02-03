@@ -29,30 +29,33 @@ export class AuthApiService {
     surname: string,
     email: string,
     password: string
-  ): Observable<RegisterResponse> {
+  ): Observable<RegisterResponse.AsObject> {
     const request = new RegisterRequest();
     request.setName(name);
     request.setSurname(surname);
     request.setEmail(email);
     request.setPassword(password);
 
-    return handleRequest<RegisterRequest, RegisterResponse>(
-      request,
-      this.authServiceClient.register
-    );
+    return handleRequest<
+      RegisterRequest,
+      RegisterResponse,
+      RegisterResponse.AsObject
+    >(request, this.authServiceClient.register);
   }
 
-  login(email: string, password: string): Observable<LoginResponse> {
+  login(email: string, password: string): Observable<LoginResponse.AsObject> {
     const request = new LoginRequest();
     request.setEmail(email);
     request.setPassword(password);
 
-    return handleRequest<LoginRequest, LoginResponse>(
+    return handleRequest<LoginRequest, LoginResponse, LoginResponse.AsObject>(
       request,
       this.authServiceClient.login
     );
   }
 }
+
+type ToObject = { toObject: () => any };
 
 type HandleRequestFunc<Request, Response> = (
   request: Request,
@@ -60,17 +63,17 @@ type HandleRequestFunc<Request, Response> = (
   callback: (err: RpcError, response: Response) => void
 ) => ClientReadableStream<Response>;
 
-function handleRequest<Request, Response>(
+function handleRequest<Request, Response extends ToObject, ResponseObject>(
   request: Request,
   func: HandleRequestFunc<Request, Response>,
   metadata: Metadata | null = null
-): Observable<Response> {
-  return new Observable<Response>((observer) => {
+): Observable<ResponseObject> {
+  return new Observable<ResponseObject>((observer) => {
     func(request, metadata, (err, response) => {
       if (err) {
         observer.error(err.message);
       } else {
-        observer.next(response);
+        observer.next(response.toObject());
       }
       observer.complete();
     });

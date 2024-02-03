@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './features/auth/auth.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AuthApiService } from './features/auth/auth-api.service';
+import { AuthApiService } from './core/api/auth-api.service';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { effects, reducers } from './store';

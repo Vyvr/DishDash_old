@@ -1,11 +1,11 @@
 import { loadedState } from '../utils';
 
-export interface UserData {
+export interface AuthData {
   token: string;
 }
 
 export interface AuthState {
-  data: UserData | null;
+  data: AuthData | null;
   error: string | null;
   loading: boolean;
 }
