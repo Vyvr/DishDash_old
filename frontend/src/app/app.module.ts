@@ -7,21 +7,36 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './features/auth/auth.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ApiService } from './features/auth/auth.api.service';
+import { AuthApiService } from './features/auth/auth-api.service';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { effects, reducers } from './store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+
+const devImports = [
+  StoreDevtoolsModule.instrument({
+    maxAge: 50,
+  }),
+];
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AuthComponent,
-    DashboardComponent,
-  ],
+  declarations: [AppComponent, AuthComponent, DashboardComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    EffectsModule.forRoot(effects),
+    StoreModule.forRoot(reducers, {
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+      },
+    }),
+    StoreRouterConnectingModule.forRoot(),
   ],
-  providers: [ApiService],
-  bootstrap: [AppComponent]
+  providers: [AuthApiService],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

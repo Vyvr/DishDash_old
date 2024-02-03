@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ApiService } from 'src/app/features/auth/auth.api.service';
+import { AuthApiService } from 'src/app/features/auth/auth-api.service';
 import { UserData } from 'src/app/store/auth/auth.model';
 import { LoginData, RegisterData } from './models/auth.model';
 
@@ -18,7 +18,7 @@ export class AuthComponent {
   loginErrors: Array<string> = [];
   registrationErrors: Array<string> = [];
 
-  constructor(private fb: FormBuilder, private apiService: ApiService) {
+  constructor(private fb: FormBuilder, private apiService: AuthApiService) {
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
       surname: ['', Validators.required],
