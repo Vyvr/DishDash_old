@@ -1,0 +1,79 @@
+.header-wrapper {
+  display: flex;
+  align-items: center; /* Aligns items vertically in the center */
+  justify-content: space-between; /* Distributes space between items */
+
+  background-color: rgb(41, 150, 94);
+  width: 100%;
+  height: 50px;
+}
+
+.logo-wrapper {
+  background-color: blue;
+  min-width: 300px;
+  height: 100%;
+
+  .logo {
+    background-color: blue;
+    width: 100px;
+    height: 100%;
+  }
+}
+
+.search-bar-wrapper {
+  height: 100%;
+  background-color: red;
+  .search-bar {
+    height: 30px;
+  }
+}
+
+.header-menu-wrapper {
+  .logout-button {
+    background-color: rgb(41, 150, 94);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.3s ease;
+  }
+
+  .logout-button svg-icon {
+    width: 24px;
+    height: 24px;
+    fill: #ffff;
+    transition: filter 0.3s ease-in-out;
+    transition: fill 0.3s ease-in-out;
+  }
+
+  .logout-button:hover svg-icon {
+    fill: red;
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .icon-button {
+    background-color: rgb(41, 150, 94);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.3s ease;
+  }
+
+  .icon-button svg-icon {
+    width: 24px;
+    height: 24px;
+    fill: #ffff;
+    transition: filter 0.3s ease-in-out;
+  }
+
+  .icon-button:hover svg-icon {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+  }
+}

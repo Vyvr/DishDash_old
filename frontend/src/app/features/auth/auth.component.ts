@@ -7,14 +7,15 @@ import {
 } from '@angular/forms';
 import { LoginRequest, RegisterRequest } from 'src/app/proto/auth_pb';
 import { AuthFacade } from 'src/app/store/auth';
+import { OnDestroyMixin, untilComponentDestroyed } from '@w11k/ngx-componentdestroyed';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
 })
-export class AuthComponent {
-  // authState$ = this.authFacade.authState$;
+export class AuthComponent extends OnDestroyMixin {
+  authState$ = this.authFacade.authState$;
 
   registerForm: FormGroup;
   loginForm: FormGroup;
@@ -23,8 +24,11 @@ export class AuthComponent {
 
   loginErrors: Array<string> = [];
   registrationErrors: Array<string> = [];
+  isAuthenticated: boolean = false;
 
   constructor(private fb: FormBuilder, private authFacade: AuthFacade) {
+    super();
+
     this.registerForm = this.fb.group(
       {
         name: ['', Validators.required],
@@ -41,6 +45,28 @@ export class AuthComponent {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(7)]],
+    });
+  }
+
+  ngOnInit() {
+    this.loginErrors = [];
+    this.registrationErrors = [];
+    this.registrationSuccessful = false;
+
+    this.authState$.pipe(untilComponentDestroyed(this)).subscribe(({data, error, loading}) => {
+      if(this.showRegister) {
+        if(error) {
+          this.registrationErrors.push(error);
+        } else {
+          this.registrationSuccessful = true;
+          this.toggleForm();
+        }
+      }
+
+      if(!this.showRegister && error) {
+        this.loginErrors.push(error);
+        return;
+      }
     });
   }
 
@@ -67,6 +93,7 @@ export class AuthComponent {
 
     const payload: LoginRequest.AsObject = this.loginForm.value;
     this.authFacade.login(payload);
+
   }
 
   private _submitRegister() {
@@ -77,7 +104,7 @@ export class AuthComponent {
     }
 
     const payload: RegisterRequest.AsObject = this.registerForm.value;
-    // this.authFacade.register(payload);
+    this.authFacade.register(payload);
   }
 
   private _mustMatch(

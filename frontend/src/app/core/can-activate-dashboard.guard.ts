@@ -2,19 +2,31 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
+  Router,
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { Observable, interval, map } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { AuthFacade } from '../store/auth';
+import { isNil } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanActivateDashboard implements CanActivate {
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
-    return interval(2500).pipe(map(() => true));
+  authState$ = this.authFacade.authState$;
+
+  constructor(private authFacade: AuthFacade, private router: Router) {}
+
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.authState$.pipe(
+      map(({ data }) => {
+        if (isNil(data?.token)) {
+          return this.router.createUrlTree(['/', 'auth']);
+        }
+
+        return true;
+      })
+    );
   }
 }

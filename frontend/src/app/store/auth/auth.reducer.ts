@@ -6,6 +6,7 @@ import { errorState, loadedState, loadingState } from '../utils';
 
 export const authReducer = createReducer(
   initialState,
+  //---------------LOGIN---------------------
   on(actions.login, (state) => ({ ...state, ...loadingState })),
   on(actions.loginSuccess, (state, { token }) => ({
     ...state,
@@ -16,6 +17,14 @@ export const authReducer = createReducer(
     },
   })),
   on(actions.loginFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+
+  //---------------REGISTER---------------------
+  on(actions.register, (state) => ({ ...state, ...loadingState })),
+  on(actions.registerSuccess, (state) => ({ ...state, ...loadedState })),
+  on(actions.registerFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   }))

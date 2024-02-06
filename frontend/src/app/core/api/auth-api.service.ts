@@ -7,7 +7,7 @@ import {
   RegisterResponse,
 } from '../../proto/auth_pb';
 import { Observable } from 'rxjs';
-import { ClientReadableStream, Metadata, RpcError } from 'grpc-web';
+import { handleRequest } from './utils';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +40,7 @@ export class AuthApiService {
       RegisterRequest,
       RegisterResponse,
       RegisterResponse.AsObject
-    >(request, this.authServiceClient.register);
+    >(request, this.authServiceClient.register.bind(this.authServiceClient));
   }
 
   login(email: string, password: string): Observable<LoginResponse.AsObject> {
@@ -50,32 +50,7 @@ export class AuthApiService {
 
     return handleRequest<LoginRequest, LoginResponse, LoginResponse.AsObject>(
       request,
-      this.authServiceClient.login
+      this.authServiceClient.login.bind(this.authServiceClient)
     );
   }
-}
-
-type ToObject = { toObject: () => any };
-
-type HandleRequestFunc<Request, Response> = (
-  request: Request,
-  metadata: Metadata | null,
-  callback: (err: RpcError, response: Response) => void
-) => ClientReadableStream<Response>;
-
-function handleRequest<Request, Response extends ToObject, ResponseObject>(
-  request: Request,
-  func: HandleRequestFunc<Request, Response>,
-  metadata: Metadata | null = null
-): Observable<ResponseObject> {
-  return new Observable<ResponseObject>((observer) => {
-    func(request, metadata, (err, response) => {
-      if (err) {
-        observer.error(err.message);
-      } else {
-        observer.next(response.toObject());
-      }
-      observer.complete();
-    });
-  });
 }
