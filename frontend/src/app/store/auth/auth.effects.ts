@@ -25,7 +25,7 @@ export class AuthEffects {
           map((response) => {
             return actions.loginSuccess(response);
           }),
-          tap(() => this.router.navigate(['/dashboard'])),
+          tap(() => this.router.navigate(['/dashboard/posts'])),
           catchError((error) => of(actions.loginFailure(error)))
         )
       )
