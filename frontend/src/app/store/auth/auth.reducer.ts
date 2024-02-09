@@ -21,6 +21,21 @@ export const authReducer = createReducer(
     ...errorState(message),
   })),
 
+  //---------------LOGOUT---------------------
+  on(actions.logout, (state) => ({ ...state, ...loadingState })),
+  on(actions.logoutSuccess, (state) => ({
+    ...state,
+    ...loadedState,
+    data: {
+      ...state.data,
+      token: null,
+    },
+  })),
+  on(actions.logoutFailure, (state, { error }) => ({
+    ...state,
+    ...errorState(error),
+  })),
+
   //---------------REGISTER---------------------
   on(actions.register, (state) => ({ ...state, ...loadingState })),
   on(actions.registerSuccess, (state) => ({ ...state, ...loadedState })),

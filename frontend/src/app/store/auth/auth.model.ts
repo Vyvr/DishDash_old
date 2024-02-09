@@ -1,7 +1,7 @@
 import { loadedState } from '../utils';
 
 export interface AuthData {
-  token: string;
+  token: string | null;
 }
 
 export interface AuthState {

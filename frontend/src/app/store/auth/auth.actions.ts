@@ -25,6 +25,14 @@ export const loginFailure = createAction(
   props<{ message: string }>()
 );
 
+//---------------LOGOUT---------------------
+
+export const logout = createAction(`[${moduleName}] Logout`);
+
+export const logoutSuccess = createAction(`[${moduleName}] Logout success`);
+
+export const logoutFailure = createAction(`[${moduleName}] Logout failure`, props<{ error: string }>());
+
 //---------------REGISTER---------------------
 
 export const register = createAction(

@@ -32,6 +32,19 @@ export class AuthFacade {
     this.store.dispatch(actions.loginFailure(payload));
   }
 
+  //---------------LOGOUT---------------------
+  logout(): void {
+    this.store.dispatch(actions.logout());
+  }
+
+  logoutSuccess(): void {
+    this.store.dispatch(actions.logoutSuccess());
+  }
+
+  logoutFailure(payload: { error: string }): void {
+    this.store.dispatch(actions.logoutFailure(payload));
+  }
+
   //---------------REGISTER---------------------
 
   register(payload: RegisterRequest.AsObject): void {
