@@ -1,4 +1,8 @@
 <!-- <div>Dashboard component</div>
 <button (click)="onGoToAuth()">clickMe</button> -->
-<dashboard-header />
-<router-outlet></router-outlet>
+<div class="dashboard-wrapper">
+  <dashboard-header />
+  <div class="dashboard-left-panel"></div>
+  <router-outlet></router-outlet>
+  <div class="dashboard-right-panel"></div>
+</div>
