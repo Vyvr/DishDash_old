@@ -1,0 +1,25 @@
+:host {  // Ensures that the component itself fills the available space
+    display: block;
+    height: 100%;
+  }
+
+.dashboard-content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-rows: 1fr;
+  grid-column-gap: 5px;
+  grid-row-gap: 0px;
+  height: calc(100% - 50px);
+}
+
+.dashboard-left-panel {
+  background-color: red;
+}
+
+.dashboard-right-panel {
+  background-color: magenta;
+}
+
+.dashboard-router {
+  display: none;
+}
