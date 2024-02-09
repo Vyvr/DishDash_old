@@ -15,7 +15,12 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { HeaderComponent } from './features/dashboard/header/header/header.component';
+import { HeaderComponent } from './features/dashboard/header/header.component';
+import { PostsComponent } from './features/dashboard/posts/posts.component';
+import { MenuBookComponent } from './features/dashboard/menu-book/menu-book.component';
+import { MarketComponent } from './features/dashboard/market/market.component';
+import { FarmersComponent } from './features/dashboard/farmers/farmers.component';
+import { SettingsComponent } from './features/dashboard/settings/settings.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -24,7 +29,7 @@ const devImports = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, DashboardComponent, HeaderComponent],
+  declarations: [AppComponent, AuthComponent, DashboardComponent, HeaderComponent, PostsComponent, MenuBookComponent, MarketComponent, FarmersComponent, SettingsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
