@@ -109,13 +109,23 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 	return &auth.LoginResponse{Token: token}, nil
 }
 
+func (s *server) ValidateToken(ctx context.Context, in *auth.ValidateTokenRequest) (*auth.ValidateTokenResponse, error) {
+	_, err := auth_service.ValidateToken(in.Token, in.UserId)
+
+	if err != nil {
+		return &auth.ValidateTokenResponse{IsValid: false}, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	return &auth.ValidateTokenResponse{IsValid: true}, nil
+}
+
 func isValidEmail(email string) bool {
 	regex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	return regex.MatchString(email)
 }
 
 func isValidPassword(password string) bool {
-    return len(password) >= 7
+	return len(password) >= 7
 }
 
 func RegisterServer() {
