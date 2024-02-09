@@ -8,27 +8,27 @@
   </div>
 
   <div class="header-menu-wrapper">
-    <button class="icon-button">
+    <button class="icon-button" (click)="navigateToPosts()">
       <svg-icon src="assets/posts-icon.svg" alt="Posts"></svg-icon>
     </button>
 
-    <button class="icon-button">
+    <button class="icon-button" (click)="navigateToMenuBook()">
       <svg-icon src="assets/menu-book-icon.svg" alt="Menu book"></svg-icon>
     </button>
 
-    <button class="icon-button">
+    <button class="icon-button" (click)="navigateToMarket()">
       <svg-icon src="assets/shop-icon.svg" alt="Market"></svg-icon>
     </button>
 
-    <button class="icon-button">
+    <button class="icon-button" (click)="navigateToFarmers()">
       <svg-icon src="assets/farm-tractor-icon.svg" alt="Farmers" />
     </button>
 
-    <button class="icon-button">
+    <button class="icon-button" (click)="navigateToSettings()">
       <svg-icon src="assets/user-settings-icon.svg" alt="Settings" />
     </button>
 
-    <button class="logout-button">
+    <button class="logout-button" (click)="logout()">
       <svg-icon class="logout-icon" src="assets/logout-icon.svg" alt="Logout" />
     </button>
   </div>
