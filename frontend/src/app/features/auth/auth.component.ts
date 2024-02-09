@@ -5,9 +5,12 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { LoginRequest, RegisterRequest } from 'src/app/proto/auth_pb';
+import { LoginRequest, RegisterRequest } from 'src/app/pb/auth_pb';
 import { AuthFacade } from 'src/app/store/auth';
-import { OnDestroyMixin, untilComponentDestroyed } from '@w11k/ngx-componentdestroyed';
+import {
+  OnDestroyMixin,
+  untilComponentDestroyed,
+} from '@w11k/ngx-componentdestroyed';
 
 @Component({
   selector: 'app-auth',
@@ -53,21 +56,23 @@ export class AuthComponent extends OnDestroyMixin {
     this.registrationErrors = [];
     this.registrationSuccessful = false;
 
-    this.authState$.pipe(untilComponentDestroyed(this)).subscribe(({data, error, loading}) => {
-      if(this.showRegister) {
-        if(error) {
-          this.registrationErrors.push(error);
-        } else {
-          this.registrationSuccessful = true;
-          this.toggleForm();
+    this.authState$
+      .pipe(untilComponentDestroyed(this))
+      .subscribe(({ data, error, loading }) => {
+        if (this.showRegister) {
+          if (error) {
+            this.registrationErrors.push(error);
+          } else {
+            this.registrationSuccessful = true;
+            this.toggleForm();
+          }
         }
-      }
 
-      if(!this.showRegister && error) {
-        this.loginErrors.push(error);
-        return;
-      }
-    });
+        if (!this.showRegister && error) {
+          this.loginErrors.push(error);
+          return;
+        }
+      });
   }
 
   toggleForm() {
@@ -93,7 +98,6 @@ export class AuthComponent extends OnDestroyMixin {
 
     const payload: LoginRequest.AsObject = this.loginForm.value;
     this.authFacade.login(payload);
-
   }
 
   private _submitRegister() {

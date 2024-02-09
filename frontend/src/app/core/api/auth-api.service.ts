@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AuthClient } from '../../proto/AuthServiceClientPb';
+import { AuthClient } from '../../pb/AuthServiceClientPb';
 import {
   LoginRequest,
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
-} from '../../proto/auth_pb';
+} from '../../pb/auth_pb';
 import { Observable } from 'rxjs';
 import { handleRequest } from './utils';
 

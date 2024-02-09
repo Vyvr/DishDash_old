@@ -1,5 +1,10 @@
 import { createAction, props } from '@ngrx/store';
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from 'src/app/proto/auth_pb';
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from 'src/app/pb/auth_pb';
 
 const moduleName = 'Auth';
 

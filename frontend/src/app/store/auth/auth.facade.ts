@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { AppState } from '..';
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from 'src/app/proto/auth_pb';
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from 'src/app/pb/auth_pb';
 
 import * as actions from './auth.actions';
 import * as selectors from './auth.selectors';
@@ -13,8 +18,7 @@ export class AuthFacade {
 
   constructor(private store: Store<AppState>) {}
 
-//---------------LOGIN---------------------
-
+  //---------------LOGIN---------------------
 
   login(payload: LoginRequest.AsObject): void {
     this.store.dispatch(actions.login(payload));
