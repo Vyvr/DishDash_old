@@ -1,6 +1,54 @@
-.posts-wrapper {
-    display: block;
-    background-color: yellow;
-    height: 100%;
-    padding: 0px;
+.posts-outside-wrapper {
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 10px 0px;
+}
+
+.posts-inside-wrapper {
+  height: 100%;
+  border-left: solid 1px #ccc;
+  border-right: solid 1px #ccc;
+}
+
+.create-post-wrapper {
+  display: block;
+  box-sizing: border-box;
+  height: 100px;
+  padding: 0px 10px;
+}
+
+.create-post-content-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  border-bottom: solid 1px #ccc;
+}
+
+.user-picture-wrapper {
+  width: 80px;
+  height: 80px;
+  margin-right: 10px;
+  background-color: magenta;
+}
+
+.inputs-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.create-title-input {
+  width: 400px;
+  height: 20px;
+  margin-bottom: 5px;
+  background: url(../../../../assets/add-post-icon.svg) no-repeat scroll 7px 0px;
+  background-color: #fff;
+  padding-left: 40px;
+}
+
+.create-button {
 }

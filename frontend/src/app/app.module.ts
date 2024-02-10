@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './features/auth/auth.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AuthApiService } from './core/api/auth-api.service';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -21,6 +22,9 @@ import { MenuBookComponent } from './features/dashboard/menu-book/menu-book.comp
 import { MarketComponent } from './features/dashboard/market/market.component';
 import { FarmersComponent } from './features/dashboard/farmers/farmers.component';
 import { SettingsComponent } from './features/dashboard/settings/settings.component';
+import { CreatePostModalComponent } from './features/dashboard/create-post-modal/create-post-modal.component';
+import { DdInputComponent } from './shared-components/dd-input/dd-input.component';
+import { DdPicturesInputComponent } from './shared-components/dd-pictures-input/dd-pictures-input.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -29,11 +33,25 @@ const devImports = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, DashboardComponent, HeaderComponent, PostsComponent, MenuBookComponent, MarketComponent, FarmersComponent, SettingsComponent],
+  declarations: [
+    AppComponent,
+    AuthComponent,
+    DashboardComponent,
+    HeaderComponent,
+    PostsComponent,
+    MenuBookComponent,
+    MarketComponent,
+    FarmersComponent,
+    SettingsComponent,
+    CreatePostModalComponent,
+    DdInputComponent,
+    DdPicturesInputComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
     HttpClientModule,
     AngularSvgIconModule.forRoot(),
     EffectsModule.forRoot(effects),

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { CreatePostModalComponent } from '../create-post-modal/create-post-modal.component';
 
 @Component({
   selector: 'app-posts',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./posts.component.scss']
 })
 export class PostsComponent {
+  @ViewChild(CreatePostModalComponent) modal!: CreatePostModalComponent;
+  postTitle: string = '';
 
+  openCreatePostModal() {
+    this.modal.openModal(this.postTitle);
+  }
 }

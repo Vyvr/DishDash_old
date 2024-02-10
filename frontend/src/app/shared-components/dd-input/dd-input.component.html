@@ -1,0 +1,17 @@
+<div class="dd-input-wrapper">
+  <label>{{ title }}</label>
+  <input
+    *ngIf="type === 'input'"
+    class="dd-custom-input"
+    [(ngModel)]="valueFromInput"
+    (ngModelChange)="onInputChange()"
+    placeholder="{{ title }}"
+  />
+  <textarea
+    *ngIf="type === 'textarea'"
+    class="dd-custom-textarea"
+    [(ngModel)]="valueFromInput"
+    (ngModelChange)="onInputChange()"
+    placeholder="{{ title }}"
+  ></textarea>
+</div>

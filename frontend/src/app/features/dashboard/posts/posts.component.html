@@ -1,2 +1,16 @@
-<div class="posts-wrapper">
+<div class="posts-outside-wrapper">
+  <div class="posts-inside-wrapper">
+    <div class="create-post-wrapper">
+      <div class="create-post-content-wrapper">
+        <div class="user-picture-wrapper"></div>
+        <div class="inputs-wrapper">
+          <input class="create-title-input" [(ngModel)]="postTitle" />
+          <button class="create-button" (click)="openCreatePostModal()">Create post</button>
+        </div>
+      </div>
+    </div>
+    <div class="posts-list-wrapper"></div>
+  </div>
 </div>
+
+<create-post-modal></create-post-modal>

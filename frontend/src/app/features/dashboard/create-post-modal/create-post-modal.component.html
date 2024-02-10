@@ -1,0 +1,28 @@
+<div class="modal-overlay" *ngIf="isVisible">
+  <div class="modal">
+    <button class="close-button" (click)="closeModal()">×</button>
+    <div class="modal-header">
+      <h2>{{ "Post your recipe!" }}</h2>
+    </div>
+    <div class="modal-body">
+      <dd-input [title]="'Title'" [(inputValue)]="postTitle" />
+      <dd-input
+        [title]="'Ingredients'"
+        [type]="'textarea'"
+        [(inputValue)]="postIngredients"
+      />
+      <div class="portion-quantity-wrapper">
+        Portion for
+        <input class="portion-input" [(ngModel)]="portionQuantity" type="number" min="1" max="100" /> people
+      </div>
+      <dd-input
+        [title]="'Preparation'"
+        [type]="'textarea'"
+        [(inputValue)]="postPreparation"
+      />
+    </div>
+    <div class="modal-footer">
+      <button class="submit-modal-button" (click)="submitPost()">Sumbit</button>
+    </div>
+  </div>
+</div>
