@@ -1,9 +1,9 @@
 # Cheatsheet
 ## proto to frontend:
-protoc --proto_path=proto proto/*.proto --grpc-web_out=import_style=typescript,mode=grpcwebtext:../frontend/src/app/proto
+protoc --proto_path=proto proto/*.proto --grpc-web_out=import_style=typescript,mode=grpcwebtext:../frontend/src/app/pb
 
 protoc --proto_path=proto proto/*.proto \
-    --js_out=import_style=commonjs:../frontend/src/app/proto
+    --js_out=import_style=commonjs:../frontend/src/app/pb
 
 ## run backend:
 air -c .air.gnu.toml
