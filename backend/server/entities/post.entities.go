@@ -7,7 +7,7 @@ import (
 // @TODO: finnish this crap
 type PostEntity struct {
 	BaseEntity
-	OwnerId         string    `gorm:"type:uuid"`
+	OwnerId         string    `gorm:"type:text"`
 	OwnerName		string    `gorm:"type:text"`
 	OwnerSurname	string    `gorm:"type:text"`
 	Title           string    `gorm:"type:text"`

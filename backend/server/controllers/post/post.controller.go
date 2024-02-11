@@ -27,7 +27,7 @@ func (s*server) Create(ctx context.Context, in *post.CreatePostRequest) (*post.C
 		return &post.CreatePostResponse{Message: "Invalid token"}, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
-	newPost := entities.PostEntity{
+	newPost := &entities.PostEntity{
 		OwnerId:         string(in.OwnerId),
 		OwnerName:       in.OwnerName,
 		OwnerSurname:    in.OwnerSurname,
@@ -43,7 +43,6 @@ func (s*server) Create(ctx context.Context, in *post.CreatePostRequest) (*post.C
 		log.Printf("Error creating post: %s", err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-
 	return &post.CreatePostResponse{Message: "Successfully created post"}, nil
 }
 
