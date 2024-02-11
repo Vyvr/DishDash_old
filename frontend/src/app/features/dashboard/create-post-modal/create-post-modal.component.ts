@@ -6,12 +6,13 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./create-post-modal.component.scss'],
 })
 export class CreatePostModalComponent {
-  isVisible: boolean = false;
+  isVisible: boolean = true;
 
   postTitle: string = '';
   postIngredients: string = '';
   portionQuantity: number = 1;
   postPreparation: string = '';
+  postImages: string[] = [];
 
   openModal(title: string) {
     this.postTitle = title;
@@ -33,5 +34,7 @@ export class CreatePostModalComponent {
         'preparation' +
         this.postPreparation
     );
+
+    console.log(this.postImages)
   }
 }

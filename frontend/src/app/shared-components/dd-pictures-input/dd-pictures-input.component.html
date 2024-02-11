@@ -1,1 +1,9 @@
-<p>dd-pictures-input works!</p>
+<div class="pictures-input-container">
+    <input type="file" (change)="onFileSelected($event)" multiple accept="image/*">
+    <div class="pictures-grid">
+      <div *ngFor="let image of foodImages; let i = index" class="picture">
+        <button class="delete-picture-button" (click)="deleteImage(i)">×</button>
+        <img [src]="image" alt="Uploaded Picture">
+      </div>
+    </div>
+  </div>
