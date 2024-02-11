@@ -38,6 +38,11 @@ func (s*server) Create(ctx context.Context, in *post.CreatePostRequest) (*post.C
 		Pictures:        in.Pictures,
 	}
 
+	// @TODO ogarnac zdjecia
+	for _, picture := range in.Pictures {
+		log.Printf(picture)
+	}
+
 	result := db.Create(newPost)
 	if err := result.Error; err != nil {
 		log.Printf("Error creating post: %s", err)

@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { ModalData } from './create-post-modal.model';
+import { CreatePostRequest } from 'src/app/pb/post_pb';
+import { PostFacade } from 'src/app/store/post/post.facade';
 
 @Component({
   selector: 'create-post-modal',
@@ -6,6 +9,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./create-post-modal.component.scss'],
 })
 export class CreatePostModalComponent {
+  private data: ModalData | null = null;
+
   isVisible: boolean = true;
 
   postTitle: string = '';
@@ -14,8 +19,11 @@ export class CreatePostModalComponent {
   postPreparation: string = '';
   postImages: string[] = [];
 
-  openModal(title: string) {
-    this.postTitle = title;
+  constructor(private postFacade: PostFacade) {}
+
+  openModal(data: ModalData) {
+    this.data = data;
+    this.postTitle = data.title;
     this.isVisible = true;
   }
 
@@ -23,18 +31,26 @@ export class CreatePostModalComponent {
     this.isVisible = false;
   }
 
-  submitPost() {
-    console.log(
-      'title' +
-        this.postTitle +
-        'ingredients' +
-        this.postIngredients +
-        'quantity' +
-        this.portionQuantity +
-        'preparation' +
-        this.postPreparation
-    );
+  onImagesChange(images: string[]) {
+    this.postImages = images;
+  }
 
-    console.log(this.postImages)
+  submitPost() {
+    if (!this.data) {
+      return;
+    }
+    const payload: CreatePostRequest.AsObject = {
+      token: this.data.token,
+      ownerId: this.data.ownerId,
+      ownerName: this.data.ownerName,
+      ownerSurname: this.data.ownerSurname,
+      title: this.postTitle,
+      ingredients: this.postIngredients,
+      portionQuantity: this.portionQuantity,
+      preparation: this.postPreparation,
+      picturesList: this.postImages,
+    };
+
+    this.postFacade.createPost(payload);
   }
 }

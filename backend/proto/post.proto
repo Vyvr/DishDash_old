@@ -31,9 +31,9 @@ message GetAllResponse {
 
 message CreatePostRequest {
     string token = 1;
-    string ownerId = 2;
-    string ownerName = 3;
-    string ownerSurname = 4;
+    string owner_id = 2;
+    string owner_name = 3;
+    string owner_surname = 4;
     string title = 5;
     string ingredients = 6;
     int32 portion_quantity = 7;

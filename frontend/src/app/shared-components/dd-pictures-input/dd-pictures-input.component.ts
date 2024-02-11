@@ -6,26 +6,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./dd-pictures-input.component.scss'],
 })
 export class DdPicturesInputComponent {
-  foodImages: string[] = [];
+  images: string[] = [];
 
-  @Input()
-  get inputImages(): string[] {
-    return this.foodImages;
-  }
-
-  set inputImages(value: string[]) {
-    this.foodImages = value;
-  }
-
-  @Output() inputImagesChange: EventEmitter<string[]> = new EventEmitter();
-
-  ngOnInit() {
-    this.foodImages = this.inputImages;
-  }
-
-  onInputChange(): void {
-    this.inputImagesChange.emit(this.foodImages);
-  }
+  @Output() imagesChange: EventEmitter<string[]> = new EventEmitter();
 
   onFileSelected(event: any): void {
     const files: FileList = event.target.files;
@@ -35,13 +18,21 @@ export class DdPicturesInputComponent {
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.foodImages.push(e.target.result);
+        this.images.push(e.target.result);
       };
       reader.readAsDataURL(file);
     });
+
+    this.imagesChange.emit(this.images);
   }
 
-  deleteImage(index: number): void {
-    this.foodImages.splice(index, 1);
+  onDeleteImage(index: number): void {
+    this.images.splice(index, 1);
+
+    this.images.map(() => {
+      
+    })
+
+    this.imagesChange.emit(this.images);
   }
 }

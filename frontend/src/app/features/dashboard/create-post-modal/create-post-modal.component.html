@@ -21,7 +21,7 @@
         [(inputValue)]="postPreparation"
       />
       <dd-pictures-input 
-      [(inputImages)]="postImages" />
+      (imagesChange)="onImagesChange($event)" />
     </div>
     <div class="modal-footer">
       <button class="submit-modal-button" (click)="submitPost()">Sumbit</button>
