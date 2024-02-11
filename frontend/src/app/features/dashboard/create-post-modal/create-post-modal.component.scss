@@ -17,6 +17,8 @@
   border-radius: 5px;
   width: 500px;
   z-index: 1000;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .close-button {
@@ -34,7 +36,7 @@
 }
 
 .modal-body {
-  /* Your modal-body styles */
+
 }
 
 .modal-footer {
