@@ -29,6 +29,9 @@ message LoginRequest {
 
 message LoginResponse {
   string token = 1;
+  string id = 2;
+  string name = 3;
+  string surname = 4;
 }
 
 message RefreshTokenRequest {

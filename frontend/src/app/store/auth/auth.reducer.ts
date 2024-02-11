@@ -8,12 +8,15 @@ export const authReducer = createReducer(
   initialState,
   //---------------LOGIN---------------------
   on(actions.login, (state) => ({ ...state, ...loadingState })),
-  on(actions.loginSuccess, (state, { token }) => ({
+  on(actions.loginSuccess, (state, { token, id, name, surname }) => ({
     ...state,
     ...loadedState,
     data: {
       ...state.data,
       token,
+      id,
+      name,
+      surname,
     },
   })),
   on(actions.loginFailure, (state, { message }) => ({
@@ -26,10 +29,7 @@ export const authReducer = createReducer(
   on(actions.logoutSuccess, (state) => ({
     ...state,
     ...loadedState,
-    data: {
-      ...state.data,
-      token: null,
-    },
+    data: null,
   })),
   on(actions.logoutFailure, (state, { error }) => ({
     ...state,

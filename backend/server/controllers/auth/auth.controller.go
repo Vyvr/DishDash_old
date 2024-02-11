@@ -106,7 +106,7 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 
 	log.Printf(token)
 
-	return &auth.LoginResponse{Token: token}, nil
+	return &auth.LoginResponse{Token: token, Id: user.Id.String(), Name: user.Name, Surname: user.Surname}, nil
 }
 
 func (s *server) ValidateToken(ctx context.Context, in *auth.ValidateTokenRequest) (*auth.ValidateTokenResponse, error) {
