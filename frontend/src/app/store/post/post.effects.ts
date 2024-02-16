@@ -10,13 +10,8 @@ import {
   concatMap,
   exhaustMap,
   map,
-  mergeMap,
   of,
-  switchMap,
-  tap,
 } from 'rxjs';
-import { AuthApiService } from 'src/app/core/api/auth-api.service';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import { PostApiService } from 'src/app/core/api/post-api.service';
 
 @Injectable()

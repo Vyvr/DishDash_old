@@ -1,4 +1,4 @@
-import { loadedState } from '../utils';
+import { LoadableState, loadedState } from '../utils';
 
 export interface AuthData {
   token: string;
@@ -7,11 +7,7 @@ export interface AuthData {
   surname: string;
 }
 
-export interface AuthState {
-  data: AuthData | null;
-  error: string | null;
-  loading: boolean;
-}
+export interface AuthState  extends LoadableState<AuthData> {}
 
 export const initialState: AuthState = {
   data: null,

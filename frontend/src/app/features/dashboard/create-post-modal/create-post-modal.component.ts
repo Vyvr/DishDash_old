@@ -11,7 +11,7 @@ import { PostFacade } from 'src/app/store/post/post.facade';
 export class CreatePostModalComponent {
   private data: ModalData | null = null;
 
-  isVisible: boolean = true;
+  isVisible: boolean = false;
 
   postTitle: string = '';
   postIngredients: string = '';
