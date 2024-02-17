@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { CreatePostModalComponent } from '../create-post-modal/create-post-modal.component';
-import { AuthFacade, AuthState } from 'src/app/store/auth';
+import { AuthFacade } from 'src/app/store/auth';
 import {
   OnDestroyMixin,
   untilComponentDestroyed,
@@ -25,7 +25,7 @@ export class PostsComponent extends OnDestroyMixin {
     super();
   }
 
-  openCreatePostModal() {
+  openCreatePostModal(): void {
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((authState) => {

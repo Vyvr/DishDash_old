@@ -4,9 +4,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '..';
 import {
   LoginRequest,
-  LoginResponse,
   RegisterRequest,
-  RegisterResponse,
 } from 'src/app/pb/auth_pb';
 
 import * as actions from './auth.actions';
@@ -22,14 +20,6 @@ export class AuthFacade {
 
   login(payload: LoginRequest.AsObject): void {
     this.store.dispatch(actions.login(payload));
-  }
-
-  loginSuccess(payload: LoginResponse.AsObject): void {
-    this.store.dispatch(actions.loginSuccess(payload));
-  }
-
-  loginFailure(payload: { message: string }): void {
-    this.store.dispatch(actions.loginFailure(payload));
   }
 
   //---------------LOGOUT---------------------
@@ -49,13 +39,5 @@ export class AuthFacade {
 
   register(payload: RegisterRequest.AsObject): void {
     this.store.dispatch(actions.register(payload));
-  }
-
-  registerSuccess(payload: RegisterResponse.AsObject): void {
-    this.store.dispatch(actions.registerSuccess(payload));
-  }
-
-  registerFailure(payload: { message: string }): void {
-    this.store.dispatch(actions.registerFailure(payload));
   }
 }

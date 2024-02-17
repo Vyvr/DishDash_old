@@ -24,7 +24,7 @@ export class DdInputComponent {
   @Output() inputValueChange: EventEmitter<string> = new EventEmitter();
 
   
-  ngOnInit() {
+  ngOnInit(): void {
     this.valueFromInput = this.inputValue;
   }
 

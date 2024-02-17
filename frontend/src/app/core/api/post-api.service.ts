@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PostServiceClient } from 'src/app/pb/PostServiceClientPb';
-import { CreatePostRequest, CreatePostResponse } from 'src/app/pb/post_pb';
+import {
+  AddPostImagesRequest,
+  AddPostImagesResponse,
+  CreatePostRequest,
+  CreatePostResponse,
+} from 'src/app/pb/post_pb';
 import { handleRequest } from './utils';
 
 @Injectable({
@@ -47,4 +52,27 @@ export class PostApiService {
       CreatePostResponse.AsObject
     >(request, this.postServiceClient.create.bind(this.postServiceClient));
   }
+
+  addImages(
+    payload: AddPostImagesRequest.AsObject
+  ): Observable<AddPostImagesResponse.AsObject> {
+    const request = new AddPostImagesRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      AddPostImagesRequest,
+      AddPostImagesResponse,
+      AddPostImagesResponse.AsObject
+    >(request, this.postServiceClient.addImages.bind(this.postServiceClient));
+  }
+}
+
+// @TODO: to future Maciej - fuck you :)
+function bindPayloadToRequest(request: any, payload: any): void {
+  Object.keys(payload).forEach((prop) => {
+    const propName = [prop.charAt(0).toUpperCase(), ...prop.slice(1)].join('');
+
+    request[`set${propName}`](payload[prop]);
+  });
 }

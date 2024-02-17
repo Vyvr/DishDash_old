@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 export class DashboardComponent {
     constructor(private router: Router) {}
 
-    onGoToAuth() {
+    onGoToAuth(): void {
         this.router.navigate(['auth']);
     }
 }

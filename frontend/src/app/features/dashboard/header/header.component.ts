@@ -10,27 +10,27 @@ import { AuthFacade } from 'src/app/store/auth/auth.facade';
 export class HeaderComponent {
   constructor(private router: Router, private authFacade: AuthFacade) {}
 
-  navigateToPosts() {
+  navigateToPosts(): void {
     this.router.navigate(['/dashboard/posts']);
   }
 
-  navigateToMenuBook() {
+  navigateToMenuBook(): void {
     this.router.navigate(['/dashboard/menu-book']);
   }
 
-  navigateToFarmers() {
+  navigateToFarmers(): void {
     this.router.navigate(['/dashboard/farmers']);
   }
 
-  navigateToMarket() {
+  navigateToMarket(): void {
     this.router.navigate(['/dashboard/market']);
   }
 
-  navigateToSettings() {
+  navigateToSettings(): void {
     this.router.navigate(['/dashboard/settings']);
   }
 
-  logout() {
+  logout(): void {
     this.authFacade.logout();
   }
 }

@@ -9,6 +9,7 @@ import "google/protobuf/timestamp.proto";
 service PostService {
     rpc GetAll(GetAllRequest) returns (GetAllResponse);
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
+    rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
 }
 
 message Post {
@@ -42,5 +43,23 @@ message CreatePostRequest {
 }
 
 message CreatePostResponse {
+    string post_id = 1;
+    string owner_id = 2;
+    string owner_name = 3;
+    string owner_surname = 4;
+    string title = 5;
+    string ingredients = 6;
+    int64 portion_quantity = 7;
+    string preparation = 8;
+}
+
+message AddPostImagesRequest {
+    string token = 1;
+    string post_id = 2;
+    string owner_id = 3;
+    repeated string images = 4;
+}
+
+message AddPostImagesResponse {
     string message = 1;
 }

@@ -2,7 +2,7 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  cmd = "protoc --proto_path=proto proto/*.proto --go_out=. --go-grpc_out=. && go build -o ./build/main ./server"
+  cmd = "protoc --proto_path=proto proto/*.proto --go_out=. --go-grpc_out=. && protoc --proto_path=proto proto/*.proto --grpc-web_out=import_style=typescript,mode=grpcwebtext:../frontend/src/app/pb && protoc --proto_path=proto proto/*.proto --js_out=import_style=commonjs:../frontend/src/app/pb && go build -o ./build/main ./server"
   bin = "./build/main"
   include_ext = ["go", "mod", "sum", "proto"]
   exclude_dir = ["build", "tmp", "pb"]

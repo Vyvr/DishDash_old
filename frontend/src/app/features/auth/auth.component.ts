@@ -51,14 +51,14 @@ export class AuthComponent extends OnDestroyMixin {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loginErrors = [];
     this.registrationErrors = [];
     this.registrationSuccessful = false;
 
     this.authState$
       .pipe(untilComponentDestroyed(this))
-      .subscribe(({ data, error, loading }) => {
+      .subscribe(({ error }) => {
         if (this.showRegister) {
           if (error) {
             this.registrationErrors.push(error);
@@ -75,11 +75,11 @@ export class AuthComponent extends OnDestroyMixin {
       });
   }
 
-  toggleForm() {
+  toggleForm(): void {
     this.showRegister = !this.showRegister;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.showRegister) {
       this._submitRegister();
     } else {
@@ -87,7 +87,7 @@ export class AuthComponent extends OnDestroyMixin {
     }
   }
 
-  private _submitLogin() {
+  private _submitLogin(): void {
     this.loginErrors = [];
     this.registrationSuccessful = false;
     if (this.loginForm.invalid) {
@@ -100,7 +100,7 @@ export class AuthComponent extends OnDestroyMixin {
     this.authFacade.login(payload);
   }
 
-  private _submitRegister() {
+  private _submitRegister(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       this.registrationErrors.push('Invalid data passed');

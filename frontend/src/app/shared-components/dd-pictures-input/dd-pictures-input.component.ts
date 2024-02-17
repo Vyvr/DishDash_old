@@ -1,83 +1,105 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  OnDestroyMixin,
+  untilComponentDestroyed,
+} from '@w11k/ngx-componentdestroyed';
 import imageCompression from 'browser-image-compression';
-import { Observable, from, mergeMap, toArray } from 'rxjs';
+import { Observable, combineLatest, from, mergeMap } from 'rxjs';
 
 @Component({
   selector: 'dd-pictures-input',
   templateUrl: './dd-pictures-input.component.html',
   styleUrls: ['./dd-pictures-input.component.scss'],
 })
-export class DdPicturesInputComponent {
+export class DdPicturesInputComponent extends OnDestroyMixin {
+  @Output() imagesChange: EventEmitter<string[][]> = new EventEmitter();
+
   images: string[] = [];
 
-  @Output() imagesChange: EventEmitter<string[]> = new EventEmitter();
+  private get _imageBuckets(): string[][] {
+    return this._getImageBuckets();
+  }
 
-  //@TODO make some limits on picture sizes!!!
-
-  
-  // onFileSelected(event: any): void {
-  //   const files: FileList = event.target.files;
-
-  //   if (files.length === 0) return;
-
-  //   Array.from(files).forEach((file) => {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: any) => {
-  //       this.images.push(e.target.result);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   });
-
-  //   this.imagesChange.emit(this.images);
-  // }
-
+  constructor() {
+    super();
+  }
 
   onFileSelected(event: any): void {
     const files: FileList = event.target.files;
 
     if (files.length === 0) return;
-    
-    from(Array.from(files))
+
+    const fileList = Array.from(files);
+    const compressedFiles = fileList.map((file) =>
+      imageCompression(file, {
+        maxSizeMB: 1,
+        useWebWorker: true,
+      })
+    );
+
+    from(Promise.all(compressedFiles))
       .pipe(
-        mergeMap((file: File) =>
-          from(
-            imageCompression(file, {
-              maxSizeMB: 1,
-              maxWidthOrHeight: 1920,
-              useWebWorker: true,
-            })
-          ).pipe(
-            mergeMap(
-              (compressedFile: Blob) =>
-                new Observable<string>((observer) => {
-                  const reader = new FileReader();
-                  reader.onload = (e: any) => {
-                    observer.next(e.target.result as string);
-                    observer.complete();
-                  };
-                  reader.onerror = (error) => observer.error(error);
-                  reader.readAsDataURL(compressedFile);
-                })
-            )
-          )
-        ),
-        toArray()
+        untilComponentDestroyed(this),
+        mergeMap((files) =>
+          combineLatest(files.map((file) => this._getBase64String$(file)))
+        )
       )
       .subscribe({
-        next: (compressedImages: string[]) => {
-          this.images = [...this.images, ...compressedImages];
-          this.imagesChange.emit(this.images);
+        next: (images) => {
+          this.images = [...this.images, ...images];
+          this.imagesChange.emit(this._imageBuckets);
         },
-        error: (error: any) =>
-          console.error('Error compressing files: ', error),
+        error: (error) => {
+          console.error(`Blad - chuj ci w dupe maciek: ${error}`);
+        },
       });
   }
 
   onDeleteImage(index: number): void {
     this.images.splice(index, 1);
 
-    this.images.map(() => {});
+    this.imagesChange.emit(this._imageBuckets);
+  }
 
-    this.imagesChange.emit(this.images);
+  private _getBase64String$(file: Blob): Observable<string> {
+    return new Observable<string>((observer) => {
+      const reader = new FileReader();
+
+      // @TODO: add proper type
+      reader.onload = (event: any) => {
+        observer.next(event.target?.result as string);
+        observer.complete();
+      };
+      reader.onerror = (error) => observer.error(error);
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private _getImageBuckets(): string[][] {
+    const maxBucketSize = 4_194_304;
+    const imagesWithLengths: [string, number][] = this.images.map((image) => [
+      image,
+      new TextEncoder().encode(image).length,
+    ]);
+
+    let bucket: string[] = [];
+    let remainingBucketSize = maxBucketSize;
+    const imageBuckets: string[][] = [];
+    for (let i = 0; i < imagesWithLengths.length; i++) {
+      const [image, length] = imagesWithLengths[i];
+
+      if (length > remainingBucketSize) {
+        imageBuckets.push(bucket);
+        bucket = [image];
+        remainingBucketSize = maxBucketSize - length;
+      } else {
+        bucket = [...bucket, image];
+        remainingBucketSize -= length;
+      }
+    }
+    imageBuckets.push(bucket);
+
+    return imageBuckets;
   }
 }

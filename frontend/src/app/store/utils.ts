@@ -14,7 +14,9 @@ export const loadedState = {
   error: null,
 };
 
-export const errorState = (error: string) => ({
+export const errorState = (
+  error: string
+): Omit<LoadableState<any>, 'data'> => ({
   error,
   loading: false,
 });

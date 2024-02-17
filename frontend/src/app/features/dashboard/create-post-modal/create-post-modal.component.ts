@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { ModalData } from './create-post-modal.model';
-import { CreatePostRequest } from 'src/app/pb/post_pb';
 import { PostFacade } from 'src/app/store/post/post.facade';
+import { CreatePostPayload } from 'src/app/store/post/post.model';
 
 @Component({
   selector: 'create-post-modal',
@@ -17,29 +17,30 @@ export class CreatePostModalComponent {
   postIngredients: string = '';
   portionQuantity: number = 1;
   postPreparation: string = '';
-  postImages: string[] = [];
+  postImagesBuckets: string[][] = [];
 
   constructor(private postFacade: PostFacade) {}
 
-  openModal(data: ModalData) {
+  openModal(data: ModalData): void {
     this.data = data;
     this.postTitle = data.title;
     this.isVisible = true;
   }
 
-  closeModal() {
+  closeModal(): void {
     this.isVisible = false;
   }
 
-  onImagesChange(images: string[]) {
-    this.postImages = images;
+  onImagesChange(images: string[][]): void {
+    this.postImagesBuckets = images;
   }
 
-  submitPost() {
+  submitPost(): void {
     if (!this.data) {
       return;
     }
-    const payload: CreatePostRequest.AsObject = {
+
+    const payload: CreatePostPayload = {
       token: this.data.token,
       ownerId: this.data.ownerId,
       ownerName: this.data.ownerName,
@@ -48,9 +49,12 @@ export class CreatePostModalComponent {
       ingredients: this.postIngredients,
       portionQuantity: this.portionQuantity,
       preparation: this.postPreparation,
-      picturesList: this.postImages,
+      picturesList: [],
+      picturesBuckets: this.postImagesBuckets,
     };
 
     this.postFacade.createPost(payload);
   }
 }
+
+

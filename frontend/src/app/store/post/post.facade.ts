@@ -4,7 +4,8 @@ import { AppState } from '..';
 
 import * as actions from './post.actions';
 import * as selectors from './post.selectors';
-import { CreatePostRequest, CreatePostResponse } from 'src/app/pb/post_pb';
+import { CreatePostPayload } from './post.model';
+import { AddPostImagesRequest } from 'src/app/pb/post_pb';
 
 @Injectable()
 export class PostFacade {
@@ -13,15 +14,11 @@ export class PostFacade {
   constructor(private store: Store<AppState>) {}
 
   //---------------CREATE---------------------
-  createPost(payload: CreatePostRequest.AsObject): void {
+  createPost(payload: CreatePostPayload): void {
     this.store.dispatch(actions.createPost(payload));
   }
 
-  createPostSuccess(payload: CreatePostResponse.AsObject): void {
-    this.store.dispatch(actions.createPostSuccess(payload));
-  }
-
-  createPostFailure(payload: { message: string }): void {
-    this.store.dispatch(actions.createPostFailure(payload));
+  addImages(payload: AddPostImagesRequest.AsObject): void {
+    this.store.dispatch(actions.addImages(payload));
   }
 }
