@@ -36,7 +36,7 @@ message CreatePostRequest {
     string owner_surname = 4;
     string title = 5;
     string ingredients = 6;
-    int32 portion_quantity = 7;
+    int64 portion_quantity = 7;
     string preparation = 8;
     repeated string pictures = 9;
 }
