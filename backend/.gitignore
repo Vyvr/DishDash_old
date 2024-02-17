@@ -1,4 +1,5 @@
 /build
 /tmp
 /pb
+/images
 .env.local
