@@ -4,7 +4,11 @@
   </div>
 
   <div class="search-bar-wrapper">
-    <input class="search-bar" />
+    <input
+      class="search-bar"
+      [(ngModel)]="queryString"
+      (ngModelChange)="searchForUsers()"
+    />
   </div>
 
   <div class="header-menu-wrapper">
@@ -31,5 +35,13 @@
     <button class="logout-button" (click)="logout()">
       <svg-icon class="logout-icon" src="assets/logout-icon.svg" alt="Logout" />
     </button>
+  </div>
+</div>
+
+<div *ngIf="searchedUsers.length > 0" class="searched-users-list">
+  <div *ngFor="let user of searchedUsers" class="searched-user-card">
+    <p>{{ user.name }}</p>
+    <p>{{ user.surname }}</p>
+    <button>Add to friends</button>
   </div>
 </div>

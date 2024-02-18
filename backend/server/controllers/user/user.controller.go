@@ -161,6 +161,40 @@ func (s *server) Delete(ctx context.Context, in *user.DeleteRequest) (*user.Dele
     }, nil
 }
 
+func (S *server) GetByQuery(ctx context.Context, in  *user.GetByQueryRequest) (*user.GetUsersResponse, error) {
+    _, err := auth_service.ValidateToken(in.Token, in.UserId)
+    if err != nil {
+        // If the token is invalid or the user ID does not match, return an error
+        return nil, status.Error(codes.Unauthenticated, err.Error())
+    }
+
+    var users []*user.UserBasicInfo
+
+    if len(in.QueryString) == 0 {
+        return &user.GetUsersResponse{Users: users}, nil
+    }
+
+    db := database_service.GetDBInstance()
+
+    var userEntities []entities.UserEntity
+    queryString := "%" + in.QueryString + "%"
+    result := db.Where("name ILIKE ? OR surname ILIKE ?", queryString, queryString).Find(&userEntities)
+    if result.Error != nil {
+        return nil, status.Errorf(codes.Internal, "Failed to search users: %v", result.Error)
+    }
+
+    for _, userEntity := range userEntities {
+        grpcUser := &user.UserBasicInfo{
+            Id:      userEntity.Id.String(),
+            Name:    userEntity.Name,
+            Surname: userEntity.Surname,
+        }
+        users = append(users, grpcUser)
+    }
+
+    
+    return &user.GetUsersResponse{Users: users}, nil
+}
 
 // RegisterUserService registers the user service to a gRPC server.
 func RegisterServer() {

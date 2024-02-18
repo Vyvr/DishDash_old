@@ -25,6 +25,8 @@ import { SettingsComponent } from './features/dashboard/settings/settings.compon
 import { CreatePostModalComponent } from './features/dashboard/create-post-modal/create-post-modal.component';
 import { DdInputComponent } from './shared-components/dd-input/dd-input.component';
 import { DdPicturesInputComponent } from './shared-components/dd-pictures-input/dd-pictures-input.component';
+import { SearchApiService } from './core/api/search-api.service';
+import { PostApiService } from './core/api/post-api.service';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -65,7 +67,7 @@ const devImports = [
     StoreRouterConnectingModule.forRoot(),
     devImports,
   ],
-  providers: [AuthApiService, ...facades],
+  providers: [AuthApiService, SearchApiService, PostApiService, ...facades],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

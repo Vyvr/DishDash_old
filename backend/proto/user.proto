@@ -6,6 +6,8 @@ option go_package = "./pb/user";
 
 service User {
     rpc Get(GetRequest) returns (GetResponse);
+    rpc GetAll(GetAllRequest) returns (GetUsersResponse);
+    rpc GetByQuery(GetByQueryRequest) returns (GetUsersResponse);
     rpc Update(UpdateRequest) returns (UpdateResponse);
     rpc Delete(DeleteRequest) returns (DeleteResponse);
 }
@@ -21,6 +23,27 @@ message GetResponse {
     optional string surname = 3;
     optional string email = 4;
     optional string description = 5;
+}
+
+message GetAllRequest {
+    string user_id = 1;
+    string token = 2;
+}
+
+message GetByQueryRequest {
+    string user_id = 1;
+    string token = 2;
+    string query_string = 3;
+}
+
+message GetUsersResponse {
+    repeated UserBasicInfo users = 1;
+}
+
+message UserBasicInfo {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
 }
 
 message UpdateRequest {
