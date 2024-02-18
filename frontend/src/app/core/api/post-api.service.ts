@@ -7,7 +7,7 @@ import {
   CreatePostRequest,
   CreatePostResponse,
 } from 'src/app/pb/post_pb';
-import { handleRequest } from './utils';
+import { bindPayloadToRequest, handleRequest } from './utils';
 
 @Injectable({
   providedIn: 'root',
@@ -23,28 +23,12 @@ export class PostApiService {
     );
   }
 
-  createPost({
-    token,
-    ownerId,
-    ownerName,
-    ownerSurname,
-    title,
-    ingredients,
-    portionQuantity,
-    preparation,
-    picturesList,
-  }: CreatePostRequest.AsObject): Observable<CreatePostResponse.AsObject> {
+  createPost(
+    payload: CreatePostRequest.AsObject
+  ): Observable<CreatePostResponse.AsObject> {
     const request = new CreatePostRequest();
 
-    request.setToken(token);
-    request.setOwnerId(ownerId);
-    request.setOwnerName(ownerName);
-    request.setOwnerSurname(ownerSurname);
-    request.setTitle(title);
-    request.setIngredients(ingredients);
-    request.setPortionQuantity(portionQuantity);
-    request.setPreparation(preparation);
-    request.setPicturesList(picturesList);
+    bindPayloadToRequest(request, payload);
 
     return handleRequest<
       CreatePostRequest,
@@ -66,13 +50,4 @@ export class PostApiService {
       AddPostImagesResponse.AsObject
     >(request, this.postServiceClient.addImages.bind(this.postServiceClient));
   }
-}
-
-// @TODO: to future Maciej - fuck you :)
-function bindPayloadToRequest(request: any, payload: any): void {
-  Object.keys(payload).forEach((prop) => {
-    const propName = [prop.charAt(0).toUpperCase(), ...prop.slice(1)].join('');
-
-    request[`set${propName}`](payload[prop]);
-  });
 }
