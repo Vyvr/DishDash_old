@@ -17,3 +17,18 @@ export const searchByQueryFailure = createAction(
   `[${moduleName} Search by query failure]`,
   props<{ message: string }>()
 );
+
+export const searchByQueryAndAppend = createAction(
+  `[${moduleName} Search by query and append]`,
+  props<GetByQueryRequest.AsObject>()
+);
+
+export const searchByQueryAndAppendSuccess = createAction(
+  `[${moduleName} Search by query and append success]`,
+  props<GetUsersResponse.AsObject>()
+);
+
+export const searchByQueryAndAppendFailure = createAction(
+  `[${moduleName} Search by query and append failure]`,
+  props<{ message: string }>()
+);

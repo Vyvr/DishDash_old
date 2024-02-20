@@ -37,10 +37,13 @@ message GetByQueryRequest {
     string user_id = 1;
     string token = 2;
     string query_string = 3;
+    int64 page = 4;
+    int64 pageSize = 5;
 }
 
 message GetUsersResponse {
     repeated UserBasicInfo users = 1;
+    bool no_more_users_to_load = 2;
 }
 
 message UserBasicInfo {

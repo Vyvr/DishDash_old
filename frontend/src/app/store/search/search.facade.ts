@@ -15,4 +15,8 @@ export class SearchFacade {
     searchByQuery(payload: GetByQueryRequest.AsObject): void {
         this.store.dispatch(actions.searchByQuery(payload));
     }
+
+    searchByQueryAndAppend(payload: GetByQueryRequest.AsObject): void {
+        this.store.dispatch(actions.searchByQueryAndAppend(payload));
+    }
 }

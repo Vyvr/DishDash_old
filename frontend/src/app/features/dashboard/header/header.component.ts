@@ -32,13 +32,17 @@ export class HeaderComponent extends OnDestroyMixin {
   searchedUsers: UserBasicInfo.AsObject[] = [];
   friendsList: UserBasicInfo.AsObject[] = [];
 
+  currentPage = 1;
+  pageSize = 2;
+  noMoreUsersToSearch = false;
+
   constructor(
     private router: Router,
     private authFacade: AuthFacade,
     private searchFacade: SearchFacade,
-    private socialFacade: SocialFacade,
-    // private socketService: SocketApiService
-  ) {
+    private socialFacade: SocialFacade
+  ) // private socketService: SocketApiService
+  {
     super();
   }
 
@@ -74,6 +78,8 @@ export class HeaderComponent extends OnDestroyMixin {
   }
 
   searchForUsers(): void {
+    this.currentPage = 1;
+    this.noMoreUsersToSearch = false;
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((authState) => {
@@ -89,6 +95,8 @@ export class HeaderComponent extends OnDestroyMixin {
           userId: id,
           token,
           queryString: this.queryString,
+          page: this.currentPage,
+          pagesize: this.pageSize,
         };
 
         this.searchFacade.searchByQuery(payload);
@@ -102,11 +110,19 @@ export class HeaderComponent extends OnDestroyMixin {
         }
 
         const {
-          data: { users },
+          data: { users, noMoreUsersToLoad },
         } = searchState;
 
         this.searchedUsers = users;
+        this.noMoreUsersToSearch = noMoreUsersToLoad;
       });
+  }
+
+  searchMoreUsers(): void {
+    if (!this.noMoreUsersToSearch) {
+      this.currentPage++;
+      this.searchForUsersAndAppend();
+    }
   }
 
   isFriend(id: string): boolean {
@@ -180,5 +196,44 @@ export class HeaderComponent extends OnDestroyMixin {
 
   logout(): void {
     this.authFacade.logout();
+  }
+
+  private searchForUsersAndAppend(): void {
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        if (isNil(authState.data) || authState.loading) {
+          return;
+        }
+
+        const {
+          data: { token, id },
+        } = authState;
+
+        const payload: GetByQueryRequest.AsObject = {
+          userId: id,
+          token,
+          queryString: this.queryString,
+          page: this.currentPage,
+          pagesize: this.pageSize,
+        };
+
+        this.searchFacade.searchByQueryAndAppend(payload);
+      });
+
+    this.searchState$
+      .pipe(untilComponentDestroyed(this))
+      .subscribe((searchState) => {
+        if (isNil(searchState.data) || searchState.loading) {
+          return;
+        }
+
+        const {
+          data: { users, noMoreUsersToLoad },
+        } = searchState;
+
+        this.searchedUsers = users
+        this.noMoreUsersToSearch = noMoreUsersToLoad;
+      });
   }
 }

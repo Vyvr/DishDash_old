@@ -28,4 +28,20 @@ export class SearchEffects {
       )
     )
   );
+
+  searchByQueryAndAppendEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.searchByQueryAndAppend),
+      switchMap(({ type: _, ...payload }) =>
+        this.searchApiService.searchUsersByQuery(payload).pipe(
+          map((response) => {
+            return actions.searchByQueryAndAppendSuccess(response);
+          }),
+          catchError((error) =>
+            of(actions.searchByQueryAndAppendFailure(error))
+          )
+        )
+      )
+    )
+  );
 }

@@ -173,10 +173,22 @@ func (S *server) GetByQuery(ctx context.Context, in *user.GetByQueryRequest) (*u
 	db := database_service.GetDBInstance()
 
 	var userEntities []entities.UserEntity
+	offset := int(in.PageSize) * int(in.Page-1)
+	limit := int(in.PageSize) + 1
+
 	queryString := "%" + in.QueryString + "%"
-	result := db.Where("name ILIKE ? OR surname ILIKE ?", queryString, queryString).Find(&userEntities)
+	result := db.Where("name ILIKE ? OR surname ILIKE ?", queryString, queryString).Offset(offset).Limit(limit).Find(&userEntities)
 	if result.Error != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to search users: %v", result.Error)
+	}
+
+	var noMoreUsersToLoad bool
+
+	if len(userEntities) > int(in.PageSize) {
+		noMoreUsersToLoad = false
+		userEntities = userEntities[:int(in.PageSize)]
+	} else {
+		noMoreUsersToLoad = true
 	}
 
 	for _, userEntity := range userEntities {
@@ -188,7 +200,7 @@ func (S *server) GetByQuery(ctx context.Context, in *user.GetByQueryRequest) (*u
 		users = append(users, grpcUser)
 	}
 
-	return &user.GetUsersResponse{Users: users}, nil
+	return &user.GetUsersResponse{Users: users, NoMoreUsersToLoad: noMoreUsersToLoad}, nil
 }
 
 func (s *server) AddToFriends(ctx context.Context, in *user.AddToFriendsRequest) (*user.AddToFriendsResponse, error) {
@@ -211,9 +223,9 @@ func (s *server) AddToFriends(ctx context.Context, in *user.AddToFriendsRequest)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-    if len(friendsEntities) > 0 {
-        return nil, status.Error(codes.AlreadyExists, "Already a friend")
-    }
+	if len(friendsEntities) > 0 {
+		return nil, status.Error(codes.AlreadyExists, "Already a friend")
+	}
 
 	userAUUID, _ := uuid.Parse(in.UserA)
 	userBUUID, _ := uuid.Parse(in.UserB)

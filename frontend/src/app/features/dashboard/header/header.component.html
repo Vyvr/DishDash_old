@@ -42,7 +42,12 @@
   <div *ngFor="let user of searchedUsers" class="searched-user-card">
     <p>{{ user.name }}</p>
     <p>{{ user.surname }}</p>
-    <button *ngIf="!isFriend(user.id)" (click)="addToFriends(user.id)">Add to friends</button>
-    <button  *ngIf="isFriend(user.id)" (click)="deleteFriend(user.id)">Delete from friends</button>
+    <button *ngIf="!isFriend(user.id)" (click)="addToFriends(user.id)">
+      Add to friends
+    </button>
+    <button *ngIf="isFriend(user.id)" (click)="deleteFriend(user.id)">
+      Delete from friends
+    </button>
   </div>
+  <button *ngIf="!noMoreUsersToSearch" (click)="searchMoreUsers()" >Load more</button>
 </div>
