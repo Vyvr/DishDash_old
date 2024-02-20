@@ -206,10 +206,14 @@ func (s *server) AddToFriends(ctx context.Context, in *user.AddToFriendsRequest)
 
 	}
 
-	var friendsEntities entities.FriendsEntity
-	if err = db.Where("(user_a_id = ? AND user_b_id = ?) OR (user_a_id = ? AND user_b_id = ?)", in.UserA, in.UserB, in.UserB, in.UserA).First(&friendsEntities).Error; err == nil {
-		return nil, status.Error(codes.AlreadyExists, "Already a friend")
+	var friendsEntities []entities.FriendsEntity
+	if err = db.Where("(user_a_id = ? AND user_b_id = ?) OR (user_a_id = ? AND user_b_id = ?)", in.UserA, in.UserB, in.UserB, in.UserA).Find(&friendsEntities).Error; err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
 	}
+
+    if len(friendsEntities) > 0 {
+        return nil, status.Error(codes.AlreadyExists, "Already a friend")
+    }
 
 	userAUUID, _ := uuid.Parse(in.UserA)
 	userBUUID, _ := uuid.Parse(in.UserB)
@@ -230,7 +234,7 @@ func (s *server) AddToFriends(ctx context.Context, in *user.AddToFriendsRequest)
 		Surname: userEntities.Surname,
 	}
 
-	return &user.AddToFriendsResponse{ Friend: friend}, nil
+	return &user.AddToFriendsResponse{Friend: friend}, nil
 }
 
 func (s *server) DeleteFromFriends(ctx context.Context, in *user.DeleteFromFriendsRequest) (*user.DeleteFromFriendsResponse, error) {

@@ -28,6 +28,7 @@ import { DdPicturesInputComponent } from './shared-components/dd-pictures-input/
 import { SearchApiService } from './core/api/search-api.service';
 import { PostApiService } from './core/api/post-api.service';
 import { SocialApiService } from './core/api/social-api.service';
+import { SocketApiService } from './core/api/socket-api.service';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -68,7 +69,7 @@ const devImports = [
     StoreRouterConnectingModule.forRoot(),
     devImports,
   ],
-  providers: [AuthApiService, SearchApiService, PostApiService, SocialApiService, ...facades],
+  providers: [AuthApiService, SearchApiService, PostApiService, SocialApiService, SocketApiService, ...facades],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

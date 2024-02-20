@@ -6,6 +6,7 @@ import {
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
 import { take } from 'rxjs';
+// import { SocketApiService } from 'src/app/core/api/socket-api.service';
 import {
   AddToFriendsRequest,
   DeleteFromFriendsRequest,
@@ -35,7 +36,8 @@ export class HeaderComponent extends OnDestroyMixin {
     private router: Router,
     private authFacade: AuthFacade,
     private searchFacade: SearchFacade,
-    private socialFacade: SocialFacade
+    private socialFacade: SocialFacade,
+    // private socketService: SocketApiService
   ) {
     super();
   }
@@ -112,6 +114,7 @@ export class HeaderComponent extends OnDestroyMixin {
   }
 
   addToFriends(userId: string): void {
+    // this.socketService.sendFriendRequest('hej');
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((authState) => {
@@ -135,24 +138,24 @@ export class HeaderComponent extends OnDestroyMixin {
 
   deleteFriend(userId: string): void {
     this.authState$
-    .pipe(untilComponentDestroyed(this), take(1))
-    .subscribe((authState) => {
-      if (isNil(authState.data) || authState.loading) {
-        return;
-      }
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        if (isNil(authState.data) || authState.loading) {
+          return;
+        }
 
-      const {
-        data: { token, id },
-      } = authState;
+        const {
+          data: { token, id },
+        } = authState;
 
-      const payload: DeleteFromFriendsRequest.AsObject = {
-        token,
-        id,
-        friendId: userId,
-      };
+        const payload: DeleteFromFriendsRequest.AsObject = {
+          token,
+          id,
+          friendId: userId,
+        };
 
-      this.socialFacade.deleteFromFriends(payload);
-    });
+        this.socialFacade.deleteFromFriends(payload);
+      });
   }
 
   navigateToPosts(): void {
