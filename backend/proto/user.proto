@@ -10,6 +10,9 @@ service User {
     rpc GetByQuery(GetByQueryRequest) returns (GetUsersResponse);
     rpc Update(UpdateRequest) returns (UpdateResponse);
     rpc Delete(DeleteRequest) returns (DeleteResponse);
+    rpc AddToFriends(AddToFriendsRequest) returns (AddToFriendsResponse);
+    rpc DeleteFromFriends(DeleteFromFriendsRequest) returns (DeleteFromFriendsResponse); 
+    rpc GetFriends(GetFriendsRequest) returns (GetFriendsResponse);
 }
 
 message GetRequest {
@@ -69,4 +72,33 @@ message DeleteRequest {
 
 message DeleteResponse {
     string message = 1;
+}
+
+message AddToFriendsRequest {
+    string token = 1;
+    string user_a = 2;
+    string user_b = 3;
+}
+
+message AddToFriendsResponse {
+    UserBasicInfo friend = 1;
+}
+
+message DeleteFromFriendsRequest {
+    string token = 1;
+    string id = 2;
+    string friend_id = 3;
+}
+
+message DeleteFromFriendsResponse {
+    UserBasicInfo friend = 1;
+}
+
+message GetFriendsRequest {
+    string token = 1;
+    string id = 2;
+}
+
+message GetFriendsResponse {
+    repeated UserBasicInfo users = 1;
 }

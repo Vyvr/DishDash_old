@@ -11,22 +11,25 @@ import {
   SearchState,
   searchReducer,
 } from './search';
+import { SocialEffects, SocialFacade, SocialState, socialReducer } from './social';
 
 export interface AppState {
   auth: AuthState;
   search: SearchState;
   posts: PostsState;
+  social: SocialState
 }
 
 export const reducers = {
   auth: authReducer,
   search: searchReducer,
   post: postReducer,
+  social: socialReducer,
 };
 
-export const effects = [AuthEffects, SearchEffects, PostEffects];
+export const effects = [AuthEffects, SearchEffects, PostEffects, SocialEffects];
 
-export const facades = [AuthFacade, SearchFacade, PostFacade];
+export const facades = [AuthFacade, SearchFacade, PostFacade, SocialFacade];
 
 export function localStorageSyncReducer(
   reducer: ActionReducer<any>

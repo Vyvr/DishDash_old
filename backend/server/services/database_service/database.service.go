@@ -17,7 +17,7 @@ func InitDatabase() error {
 	host := os.Getenv("POSTGRES_HOST")
 
 	dsn := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbname + " sslmode=disable TimeZone=Europe/Warsaw"
-	
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -39,4 +39,5 @@ func autoMigrate(db *gorm.DB) {
 	db.AutoMigrate(&entities.UserEntity{})
 	db.AutoMigrate(&entities.PostEntity{})
 	db.AutoMigrate(&entities.PostPicturesEntity{})
+	db.AutoMigrate(&entities.FriendsEntity{})
 }
