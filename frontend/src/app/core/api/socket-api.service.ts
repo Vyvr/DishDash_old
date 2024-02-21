@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import {  Socket, io } from 'socket.io-client';
 
 @Injectable({
@@ -22,6 +23,14 @@ export class SocketApiService {
     this.socket.emit('friend-request', data);
   }
 
+  getMessages(): Observable<void> {
+    return new Observable(observer => {
+      this.socket.on('message', (message) => {
+        observer.next(message);
+      });
+    });
+  }
+
   private setupListeners(): void {
     this.socket.on('connect', () => {
       console.log('Connected to the socket.io server');
@@ -31,10 +40,8 @@ export class SocketApiService {
       console.log(`Disconnected: ${reason}`);
     });
 
-    // Example listener for a custom event
-    this.socket.on('event-name', (data: any) => {
+    this.socket.on('reply', (data: any) => {
       console.log('Event received:', data);
-      // Handle the data from the event
     });
   }
 }

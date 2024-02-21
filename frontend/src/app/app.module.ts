@@ -29,6 +29,7 @@ import { SearchApiService } from './core/api/search-api.service';
 import { PostApiService } from './core/api/post-api.service';
 import { SocialApiService } from './core/api/social-api.service';
 import { SocketApiService } from './core/api/socket-api.service';
+import { PostComponent } from './features/dashboard/posts/components/post/post.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -50,6 +51,7 @@ const devImports = [
     CreatePostModalComponent,
     DdInputComponent,
     DdPicturesInputComponent,
+    PostComponent,
   ],
   imports: [
     BrowserModule,

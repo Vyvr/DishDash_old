@@ -40,8 +40,9 @@ export class HeaderComponent extends OnDestroyMixin {
     private router: Router,
     private authFacade: AuthFacade,
     private searchFacade: SearchFacade,
-    private socialFacade: SocialFacade
-  ) // private socketService: SocketApiService
+    private socialFacade: SocialFacade,
+  // private socketService: SocketApiService
+  )
   {
     super();
   }
