@@ -11,15 +11,7 @@ export const postReducer = createReducer(
   on(actions.createPostSuccess, (state, { type: _, ...post }) => {
     return {
       ...state,
-      data: [
-        ...(state.data ?? []),
-        {
-          // @TODO: correct postId to just id
-          id: post.postId,
-          ...post,
-          pictures: [],
-        },
-      ],
+      data: [...(state.data ?? []), { ...post, picturesList: [] }],
       loadedState,
     };
   }),
@@ -29,10 +21,22 @@ export const postReducer = createReducer(
       ...errorState(message),
     };
   }),
-
+    //---------------ADD IMAGES---------------------
   on(actions.addImages, (state) => ({ ...state, ...loadingState })),
   on(actions.addImagesSuccess, (state) => ({ ...state, ...loadedState })),
   on(actions.addImagesFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------GET FRIENDS POSTS---------------------
+  on(actions.getFriendsPosts, (state) => ({ ...state, ...loadingState })),
+  on(actions.getFriendsPostsSuccess, (state, { type: _, postsList }) => {
+    return {
+      ...state,
+      data: [...(state.data ?? []), ...postsList],
+    };
+  }),
+  on(actions.getFriendsPostsFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   }))

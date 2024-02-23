@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import {
   LoginRequest,
   LoginResponse,
+  RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
 } from 'src/app/pb/auth_pb';
@@ -31,7 +32,10 @@ export const logout = createAction(`[${moduleName}] Logout`);
 
 export const logoutSuccess = createAction(`[${moduleName}] Logout success`);
 
-export const logoutFailure = createAction(`[${moduleName}] Logout failure`, props<{ error: string }>());
+export const logoutFailure = createAction(
+  `[${moduleName}] Logout failure`,
+  props<{ error: string }>()
+);
 
 //---------------REGISTER---------------------
 
@@ -47,5 +51,20 @@ export const registerSuccess = createAction(
 
 export const registerFailure = createAction(
   `[${moduleName}] Register failure`,
+  props<{ message: string }>()
+);
+
+export const refreshToken = createAction(
+  `[${moduleName}] Refresh token`,
+  props<RefreshTokenRequest.AsObject>()
+);
+
+export const refreshTokenSuccess = createAction(
+  `[${moduleName}] Refresh token success`,
+  props<LoginResponse.AsObject>()
+);
+
+export const refreshTokenFailure = createAction(
+  `[${moduleName}] Refresh token failure`,
   props<{ message: string }>()
 );

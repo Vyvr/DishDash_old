@@ -7,22 +7,32 @@ import { errorState, loadedState, loadingState } from '../utils';
 export const authReducer = createReducer(
   initialState,
   //---------------LOGIN---------------------
-  on(actions.login, (state) => ({ ...state, ...loadingState })),
-  on(actions.loginSuccess, (state, { token, id, name, surname }) => ({
+  on(actions.login, actions.refreshToken, (state) => ({
     ...state,
-    ...loadedState,
-    data: {
-      ...state.data,
-      token,
-      id,
-      name,
-      surname,
-    },
+    ...loadingState,
   })),
-  on(actions.loginFailure, (state, { message }) => ({
-    ...state,
-    ...errorState(message),
-  })),
+  on(
+    actions.loginSuccess,
+    actions.refreshTokenSuccess,
+    (state, { type: _, ...payload }) => ({
+      ...state,
+      ...loadedState,
+      data: {
+        ...state.data,
+        ...payload,
+      },
+      refreshSuccessful: true,
+    })
+  ),
+  on(
+    actions.loginFailure,
+    actions.refreshTokenFailure,
+    (state, { message }) => ({
+      ...state,
+      ...errorState(message),
+      refreshSuccessful: false,
+    })
+  ),
 
   //---------------LOGOUT---------------------
   on(actions.logout, (state) => ({ ...state, ...loadingState })),

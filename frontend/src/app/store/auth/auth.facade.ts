@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { AppState } from '..';
-import {
-  LoginRequest,
-  RegisterRequest,
-} from 'src/app/pb/auth_pb';
+import { LoginRequest, RegisterRequest } from 'src/app/pb/auth_pb';
 
 import * as actions from './auth.actions';
 import * as selectors from './auth.selectors';
@@ -27,17 +24,14 @@ export class AuthFacade {
     this.store.dispatch(actions.logout());
   }
 
-  logoutSuccess(): void {
-    this.store.dispatch(actions.logoutSuccess());
-  }
-
-  logoutFailure(payload: { error: string }): void {
-    this.store.dispatch(actions.logoutFailure(payload));
-  }
-
   //---------------REGISTER---------------------
 
   register(payload: RegisterRequest.AsObject): void {
     this.store.dispatch(actions.register(payload));
+  }
+
+  //---------------REFRESH--------------------
+  refreshToken(payload: { token: string }): void {
+    this.store.dispatch(actions.refreshToken(payload));
   }
 }

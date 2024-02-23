@@ -26,7 +26,7 @@ export class PostEffects {
             picturesBuckets.forEach((images) => {
               this.postFacade.addImages({
                 ownerId: payload.ownerId,
-                postId: response.postId,
+                id: response.id,
                 token: payload.token,
                 imagesList: images,
               });
@@ -49,6 +49,20 @@ export class PostEffects {
             return actions.addImagesSuccess(response);
           }),
           catchError((error) => of(actions.addImagesFailure(error)))
+        )
+      )
+    )
+  );
+
+  getFriendsPostsEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.getFriendsPosts),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.getFriendsPosts(payload).pipe(
+          map((response) => {
+            return actions.getFriendsPostsSuccess(response);
+          }),
+          catchError((error) => of(actions.getFriendsPostsFailure(error)))
         )
       )
     )

@@ -3,6 +3,8 @@ import {
   AddPostImagesRequest,
   CreatePostResponse,
   AddPostImagesResponse,
+  GetPostsRequest,
+  GetPostsResponse,
 } from 'src/app/pb/post_pb';
 import { CreatePostPayload } from './post.model';
 
@@ -35,5 +37,20 @@ export const addImagesSuccess = createAction(
 
 export const addImagesFailure = createAction(
   `[${moduleName}] Add images to post failure`,
+  props<{ message: string }>()
+);
+
+export const getFriendsPosts = createAction(
+  `[${moduleName}] Get friends posts`,
+  props<GetPostsRequest.AsObject>()
+);
+
+export const getFriendsPostsSuccess = createAction(
+  `[${moduleName}] Get friends posts success`,
+  props<GetPostsResponse.AsObject>()
+);
+
+export const getFriendsPostsFailure = createAction(
+  `[${moduleName}] Get friends posts failure`,
   props<{ message: string }>()
 );

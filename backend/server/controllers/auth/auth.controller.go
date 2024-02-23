@@ -104,13 +104,25 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
-	log.Printf(token)
-
 	return &auth.LoginResponse{Token: token, Id: user.Id.String(), Name: user.Name, Surname: user.Surname}, nil
 }
 
+func (s *server) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest) (*auth.LoginResponse, error) {
+	userEntity, token, err := auth_service.RefreshJWTToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	return &auth.LoginResponse{
+		Token:   token,
+		Id:      userEntity.Id.String(),
+		Name:    userEntity.Name,
+		Surname: userEntity.Surname}, nil
+}
+
 func (s *server) ValidateToken(ctx context.Context, in *auth.ValidateTokenRequest) (*auth.ValidateTokenResponse, error) {
-	_, err := auth_service.ValidateToken(in.Token, in.UserId)
+	_, err := auth_service.ValidateToken(in.Token)
 
 	if err != nil {
 		return &auth.ValidateTokenResponse{IsValid: false}, status.Errorf(codes.Unauthenticated, "Invalid token")

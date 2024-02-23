@@ -43,8 +43,6 @@ export class CreatePostModalComponent {
     const payload: CreatePostPayload = {
       token: this.data.token,
       ownerId: this.data.ownerId,
-      ownerName: this.data.ownerName,
-      ownerSurname: this.data.ownerSurname,
       title: this.postTitle,
       ingredients: this.postIngredients,
       portionQuantity: this.portionQuantity,

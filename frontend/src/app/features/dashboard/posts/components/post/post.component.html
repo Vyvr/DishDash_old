@@ -1,8 +1,19 @@
 <div class="post-wrapper">
   <div class="post-header">
-    <p>name surname</p>
+    <p>{{ post?.ownerName }} {{ post?.ownerSurname }}</p>
+    <p>{{ creationDate }}</p>
   </div>
-  <div class="post-content"></div>
+  <div class="post-content">
+    <h1>{{ post?.title }}</h1>
+    <p>
+      Portion for {{ post?.portionQuantity }}
+      {{ post?.portionQuantity != 1 ? "persons" : "person" }}
+    </p>
+    <h2>Ingredients:</h2>
+    <p>{{ post?.ingredients }}</p>
+    <h2>Preparation:</h2>
+    <p>{{ post?.preparation }}</p>
+  </div>
   <div class="post-footer">
     <button class="icon-like-button">
       44

@@ -7,9 +7,12 @@ export interface AuthData {
   surname: string;
 }
 
-export interface AuthState  extends LoadableState<AuthData> {}
+export interface AuthState extends LoadableState<AuthData> {
+  refreshSuccessful: boolean | null;
+}
 
 export const initialState: AuthState = {
+  refreshSuccessful: null,
   data: null,
   ...loadedState,
 };

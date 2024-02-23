@@ -38,7 +38,7 @@ message GetByQueryRequest {
     string token = 2;
     string query_string = 3;
     int64 page = 4;
-    int64 pageSize = 5;
+    int64 page_size = 5;
 }
 
 message GetUsersResponse {

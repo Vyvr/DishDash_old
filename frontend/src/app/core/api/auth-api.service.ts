@@ -3,11 +3,12 @@ import { AuthClient } from '../../pb/AuthServiceClientPb';
 import {
   LoginRequest,
   LoginResponse,
+  RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
 } from '../../pb/auth_pb';
 import { Observable } from 'rxjs';
-import { handleRequest } from './utils';
+import { bindPayloadToRequest, handleRequest } from './utils';
 
 @Injectable({
   providedIn: 'root',
@@ -25,16 +26,11 @@ export class AuthApiService {
   }
 
   register(
-    name: string,
-    surname: string,
-    email: string,
-    password: string
+    payload: RegisterRequest.AsObject
   ): Observable<RegisterResponse.AsObject> {
     const request = new RegisterRequest();
-    request.setName(name);
-    request.setSurname(surname);
-    request.setEmail(email);
-    request.setPassword(password);
+
+    bindPayloadToRequest(request, payload);
 
     return handleRequest<
       RegisterRequest,
@@ -43,14 +39,31 @@ export class AuthApiService {
     >(request, this.authServiceClient.register.bind(this.authServiceClient));
   }
 
-  login(email: string, password: string): Observable<LoginResponse.AsObject> {
+  login(payload: LoginRequest.AsObject): Observable<LoginResponse.AsObject> {
     const request = new LoginRequest();
-    request.setEmail(email);
-    request.setPassword(password);
+
+    bindPayloadToRequest(request, payload);
 
     return handleRequest<LoginRequest, LoginResponse, LoginResponse.AsObject>(
       request,
       this.authServiceClient.login.bind(this.authServiceClient)
+    );
+  }
+
+  refreshToken(
+    payload: RefreshTokenRequest.AsObject
+  ): Observable<LoginResponse.AsObject> {
+    const request = new RefreshTokenRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      RefreshTokenRequest,
+      LoginResponse,
+      LoginResponse.AsObject
+    >(
+      request,
+      this.authServiceClient.refreshToken.bind(this.authServiceClient)
     );
   }
 }

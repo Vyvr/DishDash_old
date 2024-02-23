@@ -7,31 +7,13 @@ option go_package = "./pb/post";
 import "google/protobuf/timestamp.proto";
 
 service PostService {
-    rpc GetAll(GetAllRequest) returns (GetAllResponse);
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
+    rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
 }
 
 message Post {
-    string owner = 1;
-    string title = 2;
-    string ingredients = 3;
-    int32 portion_quantity = 4;
-    string preparation = 5;
-    repeated string pictures = 6;
-    google.protobuf.Timestamp creation_date = 7;
-}
-
-message GetAllRequest {
-    string token = 1;
-}
-
-message GetAllResponse {
-    repeated Post posts = 1;
-}
-
-message CreatePostRequest {
-    string token = 1;
+    string id = 1;
     string owner_id = 2;
     string owner_name = 3;
     string owner_surname = 4;
@@ -40,10 +22,36 @@ message CreatePostRequest {
     int64 portion_quantity = 7;
     string preparation = 8;
     repeated string pictures = 9;
+    google.protobuf.Timestamp creation_date = 10;
+}
+
+message Picture {
+    string path = 1;
+}
+
+message GetPostsRequest {
+    string token = 2;
+    int64 page = 3;
+    int64 page_size = 4;
+    optional string userId = 5;
+}
+
+message GetPostsResponse {
+    repeated Post posts = 1;
+}
+
+message CreatePostRequest {
+    string token = 1;
+    string owner_id = 2;
+    string title = 5;
+    string ingredients = 6;
+    int64 portion_quantity = 7;
+    string preparation = 8;
+    repeated string pictures = 9;
 }
 
 message CreatePostResponse {
-    string post_id = 1;
+    string id = 1;
     string owner_id = 2;
     string owner_name = 3;
     string owner_surname = 4;
@@ -55,7 +63,7 @@ message CreatePostResponse {
 
 message AddPostImagesRequest {
     string token = 1;
-    string post_id = 2;
+    string id = 2;
     string owner_id = 3;
     repeated string images = 4;
 }

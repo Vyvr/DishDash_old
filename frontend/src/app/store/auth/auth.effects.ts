@@ -20,8 +20,8 @@ export class AuthEffects {
   loginEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.login),
-      switchMap(({ email, password }) =>
-        this.authApiService.login(email, password).pipe(
+      switchMap((payload) =>
+        this.authApiService.login(payload).pipe(
           map((response) => {
             return actions.loginSuccess(response);
           }),
@@ -32,11 +32,25 @@ export class AuthEffects {
     )
   );
 
+  refreshTokenEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.refreshToken),
+      switchMap((payload) =>
+        this.authApiService.refreshToken(payload).pipe(
+          map((response) => {
+            return actions.refreshTokenSuccess(response);
+          }),
+          catchError((error) => of(actions.refreshTokenFailure(error)))
+        )
+      )
+    )
+  );
+
   registerEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.register),
-      switchMap(({ name, surname, email, password }) =>
-        this.authApiService.register(name, surname, email, password).pipe(
+      switchMap((payload) =>
+        this.authApiService.register(payload).pipe(
           map((response) => actions.registerSuccess(response)),
           catchError((error) => of(actions.registerFailure(error)))
         )

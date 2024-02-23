@@ -12,6 +12,7 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 40px;
   width: 100%;
   color: #fff;
@@ -22,6 +23,10 @@
 }
 
 .post-content {
+  display: block;
+  overflow-y: scroll;
+  scrollbar-color: #bfbfbf22;
+  scrollbar-width: none;
   height: calc(100% - 70px);
   width: 100%;
 }

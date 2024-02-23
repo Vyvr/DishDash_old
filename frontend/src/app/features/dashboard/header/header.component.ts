@@ -40,9 +40,8 @@ export class HeaderComponent extends OnDestroyMixin {
     private router: Router,
     private authFacade: AuthFacade,
     private searchFacade: SearchFacade,
-    private socialFacade: SocialFacade,
-  // private socketService: SocketApiService
-  )
+    private socialFacade: SocialFacade
+  ) // private socketService: SocketApiService
   {
     super();
   }
@@ -97,7 +96,7 @@ export class HeaderComponent extends OnDestroyMixin {
           token,
           queryString: this.queryString,
           page: this.currentPage,
-          pagesize: this.pageSize,
+          pageSize: this.pageSize,
         };
 
         this.searchFacade.searchByQuery(payload);
@@ -216,7 +215,7 @@ export class HeaderComponent extends OnDestroyMixin {
           token,
           queryString: this.queryString,
           page: this.currentPage,
-          pagesize: this.pageSize,
+          pageSize: this.pageSize,
         };
 
         this.searchFacade.searchByQueryAndAppend(payload);
@@ -233,7 +232,7 @@ export class HeaderComponent extends OnDestroyMixin {
           data: { users, noMoreUsersToLoad },
         } = searchState;
 
-        this.searchedUsers = users
+        this.searchedUsers = users;
         this.noMoreUsersToSearch = noMoreUsersToLoad;
       });
   }

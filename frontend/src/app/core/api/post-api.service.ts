@@ -6,6 +6,8 @@ import {
   AddPostImagesResponse,
   CreatePostRequest,
   CreatePostResponse,
+  GetPostsRequest, 
+  GetPostsResponse
 } from 'src/app/pb/post_pb';
 import { bindPayloadToRequest, handleRequest } from './utils';
 
@@ -49,5 +51,19 @@ export class PostApiService {
       AddPostImagesResponse,
       AddPostImagesResponse.AsObject
     >(request, this.postServiceClient.addImages.bind(this.postServiceClient));
+  }
+
+  getFriendsPosts(
+    payload: GetPostsRequest.AsObject
+  ): Observable<GetPostsResponse.AsObject> {
+    const request = new GetPostsRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      GetPostsRequest,
+      GetPostsResponse,
+      GetPostsResponse.AsObject
+    >(request, this.postServiceClient.getPosts.bind(this.postServiceClient));
   }
 }

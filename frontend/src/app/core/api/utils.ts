@@ -44,6 +44,8 @@ export function bindPayloadToRequest(request: any, payload: any): void {
   Object.keys(payload).forEach((prop) => {
     const propName = [prop.charAt(0).toUpperCase(), ...prop.slice(1)].join('');
 
-    request?.[`set${propName}`](payload[prop]);
+    if (typeof request?.[`set${propName}`] === 'function') {
+      request?.[`set${propName}`](payload[prop]);
+    }
   });
 }

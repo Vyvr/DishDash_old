@@ -11,13 +11,18 @@ import {
   SearchState,
   searchReducer,
 } from './search';
-import { SocialEffects, SocialFacade, SocialState, socialReducer } from './social';
+import {
+  SocialEffects,
+  SocialFacade,
+  SocialState,
+  socialReducer,
+} from './social';
 
 export interface AppState {
   auth: AuthState;
   search: SearchState;
-  posts: PostsState;
-  social: SocialState
+  post: PostsState;
+  social: SocialState;
 }
 
 export const reducers = {
@@ -34,7 +39,9 @@ export const facades = [AuthFacade, SearchFacade, PostFacade, SocialFacade];
 export function localStorageSyncReducer(
   reducer: ActionReducer<any>
 ): ActionReducer<any> {
-  return localStorageSync({ keys: ['auth'], rehydrate: true })(reducer);
+  return localStorageSync({ keys: [{ auth: ['data'] }], rehydrate: true })(
+    reducer
+  );
 }
 
 export const metaReducers: Array<MetaReducer<any, any>> = [

@@ -7,7 +7,7 @@ option go_package = "./pb/auth";
 service Auth {
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
-  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (LoginResponse);
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
 }
 
@@ -35,10 +35,6 @@ message LoginResponse {
 }
 
 message RefreshTokenRequest {
-  string token = 1;
-}
-
-message RefreshTokenResponse {
   string token = 1;
 }
 

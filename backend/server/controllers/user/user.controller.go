@@ -1,7 +1,6 @@
 package user
 
 import (
-	// "context"
 	"context"
 	"dish-dash/pb/user"
 	"dish-dash/server/entities"
@@ -25,22 +24,10 @@ type server struct {
 
 func (s *server) Get(ctx context.Context, in *user.GetRequest) (*user.GetResponse, error) {
 	// Validate the token to authenticate the user and get the claims
-	claims, err := auth_service.ValidateToken(in.GetToken(), in.GetId())
+	userEntity, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		// If the token is invalid or the user ID does not match, return an error
 		return nil, status.Error(codes.Unauthenticated, err.Error())
-	}
-
-	// At this point, the token is valid and the user ID matches, so you can proceed to retrieve the user data
-	db := database_service.GetDBInstance()
-
-	// Retrieve the user by ID
-	var userEntity entities.UserEntity
-	if err := db.First(&userEntity, "id = ?", claims.UserID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Errorf(codes.NotFound, "user not found")
-		}
-		return nil, status.Errorf(codes.Internal, "failed to retrieve user: %v", err)
 	}
 
 	// Construct the response with the user data
@@ -57,22 +44,13 @@ func (s *server) Get(ctx context.Context, in *user.GetRequest) (*user.GetRespons
 
 func (s *server) Update(ctx context.Context, in *user.UpdateRequest) (*user.UpdateResponse, error) {
 	// Validate the token to authenticate the user
-	claims, err := auth_service.ValidateToken(in.GetToken(), in.GetId())
+	userEntity, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		// If the token is invalid or the user ID does not match, return an error
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized access: %v", err)
 	}
 
 	db := database_service.GetDBInstance()
-
-	// Retrieve the user by ID from the claims
-	var userEntity entities.UserEntity
-	if err := db.First(&userEntity, "id = ?", claims.UserID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Errorf(codes.NotFound, "user not found")
-		}
-		return nil, status.Errorf(codes.Internal, "failed to retrieve user: %v", err)
-	}
 
 	// Update fields if they are provided in the request
 	if in.GetName() != "" {
@@ -109,22 +87,13 @@ func (s *server) Update(ctx context.Context, in *user.UpdateRequest) (*user.Upda
 
 func (s *server) Delete(ctx context.Context, in *user.DeleteRequest) (*user.DeleteResponse, error) {
 	// Validate the token first
-	claims, err := auth_service.ValidateToken(in.GetToken(), in.GetId())
+	userEntity, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		// If the token is invalid or the user ID does not match, return an error
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
 	db := database_service.GetDBInstance()
-
-	// Retrieve the user by ID from the claims
-	var userEntity entities.UserEntity
-	if err := db.First(&userEntity, "id = ?", claims.UserID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Errorf(codes.NotFound, "user not found")
-		}
-		return nil, status.Errorf(codes.Internal, "failed to retrieve user: %v", err)
-	}
 
 	if userEntity.Email != in.GetEmail() {
 		return nil, status.Error(codes.PermissionDenied, "Email does not match")
@@ -137,7 +106,7 @@ func (s *server) Delete(ctx context.Context, in *user.DeleteRequest) (*user.Dele
 	}
 
 	// Perform the delete operation
-	result := db.Where("id = ?", claims.UserID).Delete(&entities.UserEntity{})
+	result := db.Where("id = ?", userEntity.Id).Delete(&entities.UserEntity{})
 	if result.Error != nil {
 		// Handle possible errors from the delete operation
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -158,7 +127,7 @@ func (s *server) Delete(ctx context.Context, in *user.DeleteRequest) (*user.Dele
 }
 
 func (S *server) GetByQuery(ctx context.Context, in *user.GetByQueryRequest) (*user.GetUsersResponse, error) {
-	_, err := auth_service.ValidateToken(in.Token, in.UserId)
+	_, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		// If the token is invalid or the user ID does not match, return an error
 		return nil, status.Error(codes.Unauthenticated, err.Error())
@@ -204,7 +173,7 @@ func (S *server) GetByQuery(ctx context.Context, in *user.GetByQueryRequest) (*u
 }
 
 func (s *server) AddToFriends(ctx context.Context, in *user.AddToFriendsRequest) (*user.AddToFriendsResponse, error) {
-	_, err := auth_service.ValidateToken(in.Token, in.UserA)
+	_, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
@@ -250,7 +219,7 @@ func (s *server) AddToFriends(ctx context.Context, in *user.AddToFriendsRequest)
 }
 
 func (s *server) DeleteFromFriends(ctx context.Context, in *user.DeleteFromFriendsRequest) (*user.DeleteFromFriendsResponse, error) {
-	_, err := auth_service.ValidateToken(in.Token, in.Id)
+	_, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
@@ -284,7 +253,7 @@ func (s *server) DeleteFromFriends(ctx context.Context, in *user.DeleteFromFrien
 }
 
 func (s *server) GetFriends(ctx context.Context, in *user.GetFriendsRequest) (*user.GetFriendsResponse, error) {
-	_, err := auth_service.ValidateToken(in.Token, in.Id)
+	_, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
