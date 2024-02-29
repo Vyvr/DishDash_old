@@ -49,3 +49,13 @@ export function bindPayloadToRequest(request: any, payload: any): void {
     }
   });
 }
+
+// @TODO take care of this shit, don't have energy for that now
+type PayloadWithToken<T> = T & { token: string };
+
+export function bindTokenToPayload<PayloadType extends object>(
+  payload: PayloadType
+): PayloadWithToken<PayloadType> {
+  const token = '123';
+  return { ...payload, token };
+}

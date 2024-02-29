@@ -5,6 +5,8 @@ import {
   AddPostImagesResponse,
   GetPostsRequest,
   GetPostsResponse,
+  GetImageStreamRequest,
+  GetImageStreamResponse,
 } from 'src/app/pb/post_pb';
 import { CreatePostPayload } from './post.model';
 
@@ -52,5 +54,20 @@ export const getFriendsPostsSuccess = createAction(
 
 export const getFriendsPostsFailure = createAction(
   `[${moduleName}] Get friends posts failure`,
+  props<{ message: string }>()
+);
+
+export const getImageStream = createAction(
+  `[${moduleName}] Get image stream posts`,
+  props<GetImageStreamRequest.AsObject>()
+);
+
+export const getImageStreamSuccess = createAction(
+  `[${moduleName}] Get image stream success`,
+  props<GetImageStreamResponse.AsObject>()
+);
+
+export const getImageStreamFailure = createAction(
+  `[${moduleName}] Get image stream failure`,
   props<{ message: string }>()
 );

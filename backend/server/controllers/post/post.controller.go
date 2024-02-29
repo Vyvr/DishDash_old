@@ -4,6 +4,7 @@ import (
 	"context"
 	"dish-dash/pb/post"
 	"encoding/base64"
+	"io"
 	"os"
 	"strings"
 
@@ -135,27 +136,6 @@ func (s *server) AddImages(ctx context.Context, in *post.AddPostImagesRequest) (
 	}, nil
 }
 
-// func (s *server) GetUserPosts(ctx context.Context, in *post.GetUserPostsRequest) (*post.GetUserPostsResponse, error) {
-// 	db := database_service.GetDBInstance()
-
-// 	_, err := auth_service.ValidateToken(in.Token, in.Id)
-
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
-// 	}
-
-// 	// Retrieve posts
-// 	var posts []entities.PostEntity
-// 	err = db.Where("owner_id = ?", in.Id).Find(&posts).Error
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.Internal, "Failed to retrieve posts: %v", err)
-// 		}
-
-// 	return &post.GetUserPostsResponse{
-// 		Posts: posts,
-// 	}, nil
-// }
-
 func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.GetPostsResponse, error) {
 	db := database_service.GetDBInstance()
 
@@ -216,6 +196,41 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 	return &post.GetPostsResponse{
 		Posts: grpcPosts,
 	}, nil
+}
+
+func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.PostService_GetImageStreamServer) error {
+	_, err := auth_service.ValidateToken(req.Token)
+
+	if err != nil {
+		return status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	imagePath := req.PicturePath
+
+	file, err := os.Open(imagePath)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Can't open picture from path")
+	}
+	defer file.Close()
+
+	postId := strings.Split(imagePath, "/")[1]
+
+	buffer := make([]byte, 5000000) // Adjust the buffer size to your needs
+	for {
+		n, err := file.Read(buffer)
+		if err == io.EOF {
+			break // EOF is expected when reading the last chunk of the file
+		}
+		if err != nil {
+			return status.Errorf(codes.Internal, "Error reading picture: %v", err)
+		}
+
+		if err := stream.Send(&post.GetImageStreamResponse{ImageData: buffer[:n], PostId: postId}); err != nil {
+			return status.Errorf(codes.Internal, "Error sending chunk to client: %v", err)
+		}
+	}
+	// At the end of the stream, return nil to indicate the stream is complete without errors
+	return nil
 }
 
 func RegisterServer() {

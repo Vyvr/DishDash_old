@@ -67,4 +67,18 @@ export class PostEffects {
       )
     )
   );
+
+  getImageStreamEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.getImageStream),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.getImageStream(payload).pipe(
+          map((response) => {
+            return actions.getImageStreamSuccess(response);
+          }),
+          catchError((error) => of(actions.getImageStreamFailure(error)))
+        )
+      )
+    )
+  );
 }

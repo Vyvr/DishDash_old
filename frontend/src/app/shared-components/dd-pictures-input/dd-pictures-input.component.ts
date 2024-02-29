@@ -50,7 +50,7 @@ export class DdPicturesInputComponent extends OnDestroyMixin {
           this.imagesChange.emit(this._imageBuckets);
         },
         error: (error) => {
-          console.error(`Blad - chuj ci w dupe maciek: ${error}`);
+          console.error(`error dd-pictues-input: ${error}`);
         },
       });
   }

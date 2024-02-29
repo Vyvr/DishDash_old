@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { PostServiceClient } from 'src/app/pb/PostServiceClientPb';
 import {
   AddPostImagesRequest,
   AddPostImagesResponse,
   CreatePostRequest,
   CreatePostResponse,
-  GetPostsRequest, 
-  GetPostsResponse
+  GetImageStreamRequest,
+  GetImageStreamResponse,
+  GetPostsRequest,
+  GetPostsResponse,
 } from 'src/app/pb/post_pb';
 import { bindPayloadToRequest, handleRequest } from './utils';
 
@@ -65,5 +67,48 @@ export class PostApiService {
       GetPostsResponse,
       GetPostsResponse.AsObject
     >(request, this.postServiceClient.getPosts.bind(this.postServiceClient));
+  }
+
+  getImageStream(
+    payload: GetImageStreamRequest.AsObject
+  ): Observable<GetImageStreamResponse.AsObject> {
+    const request = new GetImageStreamRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return new Observable(
+      (observer: Subscriber<GetImageStreamResponse.AsObject>) => {
+        const call = this.postServiceClient.getImageStream(request, {});
+
+        call.on('data', (response) => {
+          const imageDataBase64 = this._arrayBufferToBase64(
+            response.getImageData_asU8()
+          );
+          observer.next({
+            imageData: imageDataBase64,
+            postId: response.getPostId(),
+          });
+        });
+
+        call.on('error', (err) => {
+          console.error('Stream error:', err);
+          observer.error(err);
+        });
+
+        call.on('end', () => {
+          observer.complete();
+        });
+      }
+    );
+  }
+
+  private _arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
   }
 }

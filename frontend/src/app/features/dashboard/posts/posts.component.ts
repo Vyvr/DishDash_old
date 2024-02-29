@@ -6,9 +6,9 @@ import {
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
-import { filter, take } from 'rxjs';
+import { combineLatest, filter, take } from 'rxjs';
 import { PostFacade } from 'src/app/store/post/post.facade';
-import { GetPostsRequest } from 'src/app/pb/post_pb';
+import { GetImageStreamRequest, GetPostsRequest } from 'src/app/pb/post_pb';
 
 @Component({
   selector: 'app-posts',
@@ -30,32 +30,29 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
 
   ngOnInit(): void {
     this._loadPosts();
-    
-}
+    this._loadPictures();
+  }
 
-openCreatePostModal(): void {
-  this.postState$.subscribe(post => {
-    console.log(post?.data)
-  })
-  this.authState$
-  .pipe(untilComponentDestroyed(this), take(1))
-  .subscribe((authState) => {
-    if (isNil(this.modal) || authState.loading || isNil(authState.data)) {
-      return;
-    }
-    
-    const {
-      data: { token, id },
-    } = authState;
-    const title = this.postTitle;
-    
-    this.modal.openModal({
-      title,
-      token,
-      ownerId: id,
-    });
-  });
-}
+  openCreatePostModal(): void {
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        if (isNil(this.modal) || authState.loading || isNil(authState.data)) {
+          return;
+        }
+
+        const {
+          data: { token, id },
+        } = authState;
+        const title = this.postTitle;
+
+        this.modal.openModal({
+          title,
+          token,
+          ownerId: id,
+        });
+      });
+  }
 
   private _loadPosts(): void {
     this.authState$
@@ -76,6 +73,33 @@ openCreatePostModal(): void {
         };
 
         this.postFacade.getPosts(payload);
+      });
+  }
+
+  private _loadPictures(): void {
+    combineLatest([this.authState$, this.postState$])
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(
+          ([authState, postState]) => !authState?.loading && !postState?.loading
+        ),
+        take(1)
+      )
+      .subscribe(([{ data: authData }, { data: postData }]) => {
+        if (isNil(postData) || isNil(authData)) {
+          return;
+        }
+
+        postData.map((post) => {
+          post.picturesList.map((path) => {
+            const payload: GetImageStreamRequest.AsObject = {
+              token: authData.token,
+              picturePath: path,
+            };
+
+            this.postFacade.getImageStream(payload);
+          });
+        });
       });
   }
 }

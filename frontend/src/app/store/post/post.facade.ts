@@ -5,7 +5,7 @@ import { AppState } from '..';
 import * as actions from './post.actions';
 import * as selectors from './post.selectors';
 import { CreatePostPayload } from './post.model';
-import { AddPostImagesRequest, GetPostsRequest } from 'src/app/pb/post_pb';
+import { AddPostImagesRequest, GetImageStreamRequest, GetPostsRequest } from 'src/app/pb/post_pb';
 
 @Injectable()
 export class PostFacade {
@@ -23,5 +23,9 @@ export class PostFacade {
 
   getPosts(payload: GetPostsRequest.AsObject): void {
     this.store.dispatch(actions.getFriendsPosts(payload));
+  }
+
+  getImageStream(payload: GetImageStreamRequest.AsObject): void {
+    this.store.dispatch(actions.getImageStream(payload));
   }
 }
