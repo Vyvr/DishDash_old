@@ -13,10 +13,9 @@
     <p>{{ post?.ingredients }}</p>
     <h2>Preparation:</h2>
     <p>{{ post?.preparation }}</p>
+    <app-dd-pictures-grid [images] = "urlImages" />
   </div>
 
-  <img [src]="image" alt="Uploaded Picture">
-  
   <div class="post-footer">
     <button class="icon-like-button">
       44

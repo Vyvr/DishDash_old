@@ -30,6 +30,7 @@ import { PostApiService } from './core/api/post-api.service';
 import { SocialApiService } from './core/api/social-api.service';
 import { SocketApiService } from './core/api/socket-api.service';
 import { PostComponent } from './features/dashboard/posts/components/post/post.component';
+import { DdPicturesGridComponent } from './shared-components/dd-pictures-grid/dd-pictures-grid.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -52,6 +53,7 @@ const devImports = [
     DdInputComponent,
     DdPicturesInputComponent,
     PostComponent,
+    DdPicturesGridComponent,
   ],
   imports: [
     BrowserModule,

@@ -81,9 +81,8 @@ export class PostApiService {
         const call = this.postServiceClient.getImageStream(request, {});
 
         call.on('data', (response) => {
-          const imageDataBase64 = this._arrayBufferToBase64(
-            response.getImageData_asU8()
-          );
+          const imageDataBase64 = response.getImageData_asB64();
+
           observer.next({
             imageData: imageDataBase64,
             postId: response.getPostId(),
@@ -102,6 +101,7 @@ export class PostApiService {
     );
   }
 
+  // currently not used because i'm using blob instead, but better leave it here
   private _arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = '';
     const bytes = new Uint8Array(buffer);
