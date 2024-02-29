@@ -1,0 +1,20 @@
+.pictures-input-container {
+  margin-top: 10px;
+}
+
+.pictures-grid {
+  margin-top: 10px;
+  column-count: 4;
+  column-gap: 10px;
+}
+
+.picture {
+  break-inside: avoid;
+  margin-bottom: 10px;
+}
+
+.picture img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
