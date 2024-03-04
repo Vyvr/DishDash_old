@@ -77,19 +77,6 @@ export const postReducer = createReducer(
         ...loadedState,
         data: newData,
       };
-
-      // const post: Post.AsObject = state.data[postIndex];
-
-      // post.picturesDataList.push(imageData);
-
-      // const newData = state.data;
-      // newData[postIndex] = post;
-
-      // return {
-      //   ...state,
-      //   ...loadedState,
-      //   data: newData,
-      // };
     }
 
     return defaultReturn;

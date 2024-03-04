@@ -13,7 +13,10 @@
     <p>{{ post?.ingredients }}</p>
     <h2>Preparation:</h2>
     <p>{{ post?.preparation }}</p>
-    <app-dd-pictures-grid [images] = "urlImages" />
+    <app-dd-pictures-grid
+      [images]="urlImages"
+      [itemsCount]="itemsLoadingSquareCount"
+    />
   </div>
 
   <div class="post-footer">

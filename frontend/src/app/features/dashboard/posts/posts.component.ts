@@ -29,8 +29,14 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
   }
 
   ngOnInit(): void {
-    this._loadPosts();
-    this._loadPictures();
+    this.postState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((postState) => {
+        if (isNil(postState.data)) {
+          this._loadPosts();
+          this._loadPictures();
+        }
+      });
   }
 
   openCreatePostModal(): void {
@@ -68,7 +74,7 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
 
         const payload: GetPostsRequest.AsObject = {
           page: 0,
-          pageSize: 5,
+          pageSize: 10,
           token: data.token,
         };
 

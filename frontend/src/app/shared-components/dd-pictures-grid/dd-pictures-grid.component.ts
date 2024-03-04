@@ -5,6 +5,7 @@ import { Component, Input } from '@angular/core';
   templateUrl: './dd-pictures-grid.component.html',
   styleUrls: ['./dd-pictures-grid.component.scss'],
 })
-export class DdPicturesGridComponent {
+export class DdPicturesGridComponent{
   @Input() images: string[] = [];
+  @Input() itemsCount: number = 0;
 }

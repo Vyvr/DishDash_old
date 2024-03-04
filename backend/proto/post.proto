@@ -24,7 +24,6 @@ message Post {
     string preparation = 8;
     repeated string pictures = 9;
     repeated bytes pictures_data = 10;
-    // repeated string picturesData = 10;
     google.protobuf.Timestamp creation_date = 11;
 }
 

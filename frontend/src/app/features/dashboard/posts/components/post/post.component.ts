@@ -13,6 +13,7 @@ export class PostComponent implements OnInit {
 
   creationDate: Date | string | null = null;
   urlImages: string[] = [];
+  itemsLoadingSquareCount: number = 0;
 
   ngOnInit(): void {
     if (
@@ -23,26 +24,31 @@ export class PostComponent implements OnInit {
         this.post?.creationDate?.seconds * 1000
       ).toDateString();
 
-        this._loadPictures();
+      if (this.post.picturesList) {
+        this.itemsLoadingSquareCount = this.post.picturesList.length;
+      }
+
+      this._loadPictures();
 
       return;
     }
   }
 
-private _loadPictures(): void {
-  if (isNil(this.post) || isEmpty(this.post.picturesDataList)) {
-    return;
+  private _loadPictures(): void {
+    if (isNil(this.post) || isEmpty(this.post.picturesDataList)) {
+      return;
+    }
+    const contentType = 'image/png'; // MIME type of the blob you're creating
+
+    this.post.picturesDataList.forEach((picture) => {
+      const base64String: string = picture.toString();
+      const imageBlob = this._base64ToBlob(base64String, contentType);
+
+      const imageUrl = URL.createObjectURL(imageBlob);
+      this.itemsLoadingSquareCount -= 1;
+      this.urlImages.push(imageUrl);
+    });
   }
-  const contentType = 'image/png'; // MIME type of the blob you're creating
-
-  this.post.picturesDataList.forEach((picture) => {
-    const base64String: string = picture.toString();
-    const imageBlob = this._base64ToBlob(base64String, contentType);
-
-    const imageUrl = URL.createObjectURL(imageBlob);
-    this.urlImages.push(imageUrl);
-  });
-}
 
   private _base64ToBlob(base64: string, contentType: string): Blob {
     // Decode base64 string

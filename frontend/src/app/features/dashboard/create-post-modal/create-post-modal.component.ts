@@ -52,6 +52,14 @@ export class CreatePostModalComponent {
     };
 
     this.postFacade.createPost(payload);
+    this.closeModal();
+
+    this.postTitle = '';
+    this.postIngredients = '';
+    this.portionQuantity = 1;
+    this.postPreparation = '';
+    this.postImagesBuckets = [];
+
   }
 }
 
