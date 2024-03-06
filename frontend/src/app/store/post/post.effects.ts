@@ -81,4 +81,32 @@ export class PostEffects {
       )
     )
   );
+
+  likePostEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.likePost),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.likePost(payload).pipe(
+          map((response) => {
+            return actions.likePostSuccess(response);
+          }),
+          catchError((error) => of(actions.likePostFailure(error)))
+        )
+      )
+    )
+  );
+
+  unlikePostPostEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.unlikePost),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.unlikePost(payload).pipe(
+          map((response) => {
+            return actions.unlikePostSuccess(response);
+          }),
+          catchError((error) => of(actions.unlikePostFailure(error)))
+        )
+      )
+    )
+  );
 }

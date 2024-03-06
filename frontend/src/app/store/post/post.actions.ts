@@ -7,6 +7,8 @@ import {
   GetPostsResponse,
   GetImageStreamRequest,
   GetImageStreamResponse,
+  ToggleLikeRequest,
+  ToggleLikeResponse,
 } from 'src/app/pb/post_pb';
 import { CreatePostPayload } from './post.model';
 
@@ -69,5 +71,35 @@ export const getImageStreamSuccess = createAction(
 
 export const getImageStreamFailure = createAction(
   `[${moduleName}] Get image stream failure`,
+  props<{ message: string }>()
+);
+
+export const likePost = createAction(
+  `[${moduleName}] Like post`,
+  props<ToggleLikeRequest.AsObject>()
+);
+
+export const likePostSuccess = createAction(
+  `[${moduleName}] Like post success`,
+  props<ToggleLikeResponse.AsObject>()
+);
+
+export const likePostFailure = createAction(
+  `[${moduleName}] Like post failure`,
+  props<{ message: string }>()
+);
+
+export const unlikePost = createAction(
+  `[${moduleName}] Unlike post`,
+  props<ToggleLikeRequest.AsObject>()
+);
+
+export const unlikePostSuccess = createAction(
+  `[${moduleName}] Unlike post success`,
+  props<ToggleLikeResponse.AsObject>()
+);
+
+export const unlikePostFailure = createAction(
+  `[${moduleName}] Unlike post failure`,
   props<{ message: string }>()
 );

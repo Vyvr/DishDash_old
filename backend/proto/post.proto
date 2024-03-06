@@ -7,10 +7,18 @@ option go_package = "./pb/post";
 import "google/protobuf/timestamp.proto";
 
 service PostService {
+    //@TODO Add delete and edit post methods
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
+
+    rpc LikePost(ToggleLikeRequest) returns (ToggleLikeResponse);
+    rpc UnlikePost(ToggleLikeRequest) returns (ToggleLikeResponse);
+
+    rpc CommentPost(CommentPostRequest) returns (CommentPostResponse);
+    rpc EditComment(EditCommentRequest) returns (EditCommentResponse);
+    rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);
 }
 
 message Post {
@@ -24,7 +32,10 @@ message Post {
     string preparation = 8;
     repeated string pictures = 9;
     repeated bytes pictures_data = 10;
-    google.protobuf.Timestamp creation_date = 11;
+    int64 likes_count = 11;
+    int64 comments_count = 12;
+    bool liked = 13;
+    google.protobuf.Timestamp creation_date = 14;
 }
 
 message Picture {
@@ -82,4 +93,46 @@ message AddPostImagesRequest {
 
 message AddPostImagesResponse {
     string message = 1;
+}
+
+message ToggleLikeRequest {
+    string token = 1;
+    string id = 2;
+}
+
+message ToggleLikeResponse {
+    string message = 1;
+    string post_id = 2;
+}
+
+message CommentPostRequest {
+    string token = 1;
+    string id = 2;
+    string comment_text = 3;
+}
+
+message CommentPostResponse {
+    string message = 1;
+
+}
+
+message EditCommentRequest {
+    string token = 1;
+    string id = 2;
+    string comment_text = 3;
+}
+
+message EditCommentResponse {
+    string message = 1;
+
+}
+
+message DeleteCommentRequest {
+    string token = 1;
+    string id = 2;
+}
+
+message DeleteCommentResponse {
+    string message = 1;
+
 }

@@ -10,6 +10,8 @@ import {
   GetImageStreamResponse,
   GetPostsRequest,
   GetPostsResponse,
+  ToggleLikeRequest,
+  ToggleLikeResponse,
 } from 'src/app/pb/post_pb';
 import { bindPayloadToRequest, handleRequest } from './utils';
 
@@ -99,6 +101,34 @@ export class PostApiService {
         });
       }
     );
+  }
+
+  likePost(
+    payload: ToggleLikeRequest.AsObject
+  ): Observable<ToggleLikeResponse.AsObject> {
+    const request = new ToggleLikeRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      ToggleLikeRequest,
+      ToggleLikeResponse,
+      ToggleLikeResponse.AsObject
+    >(request, this.postServiceClient.likePost.bind(this.postServiceClient));
+  }
+
+  unlikePost(
+    payload: ToggleLikeRequest.AsObject
+  ): Observable<ToggleLikeResponse.AsObject> {
+    const request = new ToggleLikeRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      ToggleLikeRequest,
+      ToggleLikeResponse,
+      ToggleLikeResponse.AsObject
+    >(request, this.postServiceClient.unlikePost.bind(this.postServiceClient));
   }
 
   // currently not used because i'm using blob instead, but better leave it here

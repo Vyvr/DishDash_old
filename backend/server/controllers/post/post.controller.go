@@ -4,7 +4,9 @@ import (
 	"context"
 	"dish-dash/pb/post"
 	"encoding/base64"
+	"errors"
 	"io"
+	"log"
 	"os"
 	"strings"
 
@@ -17,6 +19,8 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type server struct {
@@ -52,6 +56,8 @@ func (s *server) Create(ctx context.Context, in *post.CreatePostRequest) (*post.
 		Ingredients:     in.Ingredients,
 		PortionQuantity: in.PortionQuantity,
 		Preparation:     in.Preparation,
+		LikesCount:      0,
+		CommentsCount:   0,
 	}
 
 	result := db.Create(newPost)
@@ -90,7 +96,6 @@ func (s *server) AddImages(ctx context.Context, in *post.AddPostImagesRequest) (
 	ownerId, _ := uuid.Parse(in.OwnerId)
 	postPictures := []string{}
 
-	// @TODO ogarnac zdjecia
 	for _, picture := range in.Images {
 		parts := strings.SplitN(picture, ",", 2)
 		if len(parts) != 2 {
@@ -171,7 +176,31 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 	var grpcPosts []*post.Post
 	for _, postEntity := range postEntities {
 		var picturesEntities []entities.PostPicturesEntity
+		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
 		db.Where("post_id = ?", postEntity.Id).Find(&picturesEntities)
+
+		/*@TODO do something with this fucking logger
+		* without this switches it's logging "not found"
+		* for every not liked post. It's annoying
+		 */
+		// Backup the original logger
+		originalLogger := db.Logger
+
+		// Set a temporary logger that ignores "record not found" errors
+		db.Logger = db.Logger.LogMode(logger.Silent)
+
+		var liked = false
+		err := db.Where("user_id = ? AND post_id = ?", userEntity.Id.String(), postEntity.Id).First(&entities.PostLikesEntity{}).Error
+		if err != nil {
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				log.Printf("Unexpected error while checking post like status: %v", err)
+			}
+		} else {
+			liked = true
+		}
+
+		// Restore the original logger
+		db.Logger = originalLogger
 
 		picturePaths := make([]string, 0, len(picturesEntities))
 		for _, pictureEntity := range picturesEntities {
@@ -188,6 +217,9 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 			PortionQuantity: postEntity.PortionQuantity,
 			Preparation:     postEntity.Preparation,
 			Pictures:        picturePaths,
+			LikesCount:      postEntity.LikesCount,
+			CommentsCount:   postEntity.CommentsCount,
+			Liked:           liked,
 			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
 		}
 		grpcPosts = append(grpcPosts, grpcPost)
@@ -231,6 +263,128 @@ func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.Pos
 	}
 	// At the end of the stream, return nil to indicate the stream is complete without errors
 	return nil
+}
+
+// @TODO pomyslec nad zastosowaniem transakcji
+func (s *server) LikePost(ctx context.Context, in *post.ToggleLikeRequest) (*post.ToggleLikeResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostEntity
+	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	likeEntity := &entities.PostLikesEntity{
+		UserId: userEntity.Id,
+		PostId: postEntity.Id,
+	}
+
+	result := db.Create(likeEntity)
+	if err := result.Error; err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	postEntity.LikesCount += 1
+	err = db.Model(&entities.PostEntity{}).Where("id = ?", postEntity.Id).Update("likes_count", postEntity.LikesCount).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "FailToggleLikeed to update likes count: %v", err)
+	}
+
+	return &post.ToggleLikeResponse{Message: "Success", PostId: postEntity.Id.String()}, nil
+}
+
+func (s *server) UnlikePost(ctx context.Context, in *post.ToggleLikeRequest) (*post.ToggleLikeResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity *entities.PostEntity
+	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	likesEntity := &entities.PostLikesEntity{
+		UserId: userEntity.Id,
+		PostId: postEntity.Id,
+	}
+
+	if err := db.Where("user_id = ? AND post_id = ?", likesEntity.UserId, likesEntity.PostId).Delete(&entities.PostLikesEntity{}).Error; err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to dislike: %v", err)
+	}
+
+	postEntity.LikesCount -= 1
+	err = db.Model(&entities.PostEntity{}).Where("id = ?", postEntity.Id).Update("likes_count", postEntity.LikesCount).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to update likes count: %v", err)
+	}
+
+	return &post.ToggleLikeResponse{Message: "Success", PostId: postEntity.Id.String()}, nil
+}
+
+func (s *server) CommentPost(ctx context.Context, in *post.CommentPostRequest) (*post.CommentPostResponse, error) {
+	db := database_service.GetDBInstance()
+
+	_, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostEntity
+	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	return &post.CommentPostResponse{Message: "Success"}, nil
+}
+
+func (s *server) EditComment(ctx context.Context, in *post.EditCommentRequest) (*post.EditCommentResponse, error) {
+	db := database_service.GetDBInstance()
+
+	_, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostEntity
+	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	return &post.EditCommentResponse{Message: "Success"}, nil
+}
+
+func (s *server) DeleteComment(ctx context.Context, in *post.DeleteCommentRequest) (*post.DeleteCommentResponse, error) {
+	db := database_service.GetDBInstance()
+
+	_, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostEntity
+	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	return &post.DeleteCommentResponse{Message: "Success"}, nil
 }
 
 func RegisterServer() {

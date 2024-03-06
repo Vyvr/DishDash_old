@@ -3,7 +3,6 @@ import { initialState } from './post.model';
 
 import * as actions from './post.actions';
 import { errorState, loadedState, loadingState } from '../utils';
-// import { Post } from 'src/app/pb/post_pb';
 import { isNil } from 'lodash-es';
 
 export const postReducer = createReducer(
@@ -16,7 +15,14 @@ export const postReducer = createReducer(
       ...loadedState,
       data: [
         ...(state.data ?? []),
-        { ...post, picturesList: [], picturesDataList: [] },
+        {
+          ...post,
+          picturesList: [],
+          picturesDataList: [],
+          likesCount: 0,
+          commentsCount: 0,
+          liked: false,
+        },
       ],
     };
   }),
@@ -82,6 +88,70 @@ export const postReducer = createReducer(
     return defaultReturn;
   }),
   on(actions.getImageStreamFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------LIKE POST---------------------
+  on(actions.likePost, (state) => ({ ...state, ...loadingState })),
+  on(actions.likePostSuccess, (state, { type: _, postId }) => {
+    const defaultReturn = { ...state, ...loadedState };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        likesCount: state.data[postIndex].likesCount + 1,
+        liked: true,
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  on(actions.likePostFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------UNLIKE POST---------------------
+  on(actions.unlikePost, (state) => ({ ...state, ...loadingState })),
+  on(actions.unlikePostSuccess, (state, { type: _, postId }) => {
+    const defaultReturn = { ...state, ...loadedState };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        likesCount: state.data[postIndex].likesCount - 1,
+        liked: false,
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  on(actions.unlikePostFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   }))

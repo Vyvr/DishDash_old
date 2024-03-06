@@ -1,19 +1,28 @@
 import { Component, Input, OnInit } from '@angular/core';
+import {
+  OnDestroyMixin,
+  untilComponentDestroyed,
+} from '@w11k/ngx-componentdestroyed';
 import { isEmpty, isNil } from 'lodash-es';
-import { Post } from 'src/app/pb/post_pb';
+import { filter, take } from 'rxjs';
+import { Post, ToggleLikeRequest } from 'src/app/pb/post_pb';
+import { AuthFacade } from 'src/app/store/auth';
+import { PostFacade } from 'src/app/store/post/post.facade';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.scss'],
 })
-export class PostComponent implements OnInit {
+export class PostComponent extends OnDestroyMixin implements OnInit {
   @Input()
   post: Post.AsObject | null = null;
 
   creationDate: Date | string | null = null;
   urlImages: string[] = [];
   itemsLoadingSquareCount: number = 0;
+
+  authState$ = this.authFacade.authState$;
 
   ngOnInit(): void {
     if (
@@ -32,6 +41,41 @@ export class PostComponent implements OnInit {
 
       return;
     }
+  }
+
+  constructor(private authFacade: AuthFacade, private postFacade: PostFacade) {
+    super();
+  }
+
+  toggleLike(postId: string | undefined): void {
+    if (isNil(postId) || isNil(this.post)) {
+      return;
+    }
+
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe(({ data }) => {
+        if (isNil(data)) {
+          return;
+        }
+
+        if (!isNil(this.post)) {
+          const payload: ToggleLikeRequest.AsObject = {
+            token: data.token,
+            id: this.post.id,
+          };
+
+          if (this.post.liked) {
+            this.postFacade.unlikePost(payload);
+          } else {
+            this.postFacade.likePost(payload);
+          }
+        }
+      });
   }
 
   private _loadPictures(): void {
