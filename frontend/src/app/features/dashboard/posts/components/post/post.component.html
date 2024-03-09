@@ -20,12 +20,16 @@
   </div>
 
   <div class="post-footer">
-    <button class="icon-like-button">
-      44
+    <button
+      class="icon-like-button"
+      [style.fill]="post?.liked ? 'blue' : 'black'"
+      (click)="toggleLike(post?.id)"
+    >
+      {{ post?.likesCount }}
       <svg-icon src="assets/thumb-up-icon.svg" alt="Like"></svg-icon>
     </button>
-    <button class="icon-comment-button">
-      44
+    <button class="icon-comment-button" (click)="openCommentsModal()">
+      {{ post?.commentsCount }}
       <svg-icon src="assets/comment-icon.svg" alt="Comment"></svg-icon>
     </button>
     <button class="icon-add-button">
@@ -33,3 +37,5 @@
     </button>
   </div>
 </div>
+
+<app-comments-modal [data]="commentsModalData"></app-comments-modal>

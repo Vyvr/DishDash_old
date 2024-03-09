@@ -7,10 +7,19 @@ option go_package = "./pb/post";
 import "google/protobuf/timestamp.proto";
 
 service PostService {
+    //@TODO Add delete and edit post methods
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
+
+    rpc LikePost(ToggleLikeRequest) returns (ToggleLikeResponse);
+    rpc UnlikePost(ToggleLikeRequest) returns (ToggleLikeResponse);
+
+    rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
+    rpc CommentPost(CommentPostRequest) returns (CommentPostResponse);
+    rpc EditComment(EditCommentRequest) returns (CommentOperationMessageResponse);
+    rpc DeleteComment(DeleteCommentRequest) returns (CommentOperationMessageResponse);
 }
 
 message Post {
@@ -24,7 +33,20 @@ message Post {
     string preparation = 8;
     repeated string pictures = 9;
     repeated bytes pictures_data = 10;
-    google.protobuf.Timestamp creation_date = 11;
+    int64 likes_count = 11;
+    int64 comments_count = 12;
+    repeated Comment comments = 13;
+    bool liked = 14;
+    google.protobuf.Timestamp creation_date = 15;
+}
+
+message Comment {
+    string user_id = 1;
+    string user_name = 2;
+    string user_surname = 3;
+    string comment_text = 4;
+    bool owned = 5;
+    google.protobuf.Timestamp creation_date = 6;
 }
 
 message Picture {
@@ -49,7 +71,8 @@ message GetImageStreamRequest {
 
 message GetImageStreamResponse {
     bytes image_data = 1;
-    string post_id = 2;
+    string picture_path = 2;
+    string post_id = 3;
 }
 
 message CreatePostRequest {
@@ -82,4 +105,53 @@ message AddPostImagesRequest {
 
 message AddPostImagesResponse {
     string message = 1;
+}
+
+message ToggleLikeRequest {
+    string token = 1;
+    string id = 2;
+}
+
+message ToggleLikeResponse {
+    string post_id = 1;
+}
+
+message GetCommentsRequest {
+    string post_id = 1;
+    string token = 2;
+    int64 page = 3;
+    int64 page_size = 4;
+}
+
+message GetCommentsResponse {
+    repeated Comment comments = 1;
+    string post_id = 2;
+}
+
+message CommentPostRequest {
+    string token = 1;
+    string id = 2;
+    string comment_text = 3;
+}
+
+message CommentPostResponse {
+    string post_id = 1;
+    Comment comment = 2;
+}
+
+
+message EditCommentRequest {
+    string token = 1;
+    string id = 2;
+    string comment_text = 3;
+}
+
+message DeleteCommentRequest {
+    string token = 1;
+    string id = 2;
+}
+
+message CommentOperationMessageResponse {
+    string post_id = 1;
+    string comment_text = 2;
 }

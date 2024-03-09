@@ -9,6 +9,7 @@ import { MarketComponent } from './features/dashboard/market/market.component';
 import { SettingsComponent } from './features/dashboard/settings/settings.component';
 import { canEnterGuard } from './core/guards/can-enter.guard';
 import { canActivateDashboard } from './core/guards/can-activate-dashboard.guard';
+import { canActivatePosts } from './core/guards/can-activate-posts.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -22,7 +23,11 @@ const routes: Routes = [
         component: DashboardComponent,
         canActivate: [canActivateDashboard],
         children: [
-          { path: 'posts', component: PostsComponent },
+          {
+            path: 'posts',
+            canActivate: [canActivatePosts],
+            component: PostsComponent,
+          },
           { path: 'menu-book', component: MenuBookComponent },
           { path: 'market', component: MarketComponent },
           { path: 'farmers', component: FarmersComponent },

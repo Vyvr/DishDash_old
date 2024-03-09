@@ -40,4 +40,6 @@ func autoMigrate(db *gorm.DB) {
 	db.AutoMigrate(&entities.PostEntity{})
 	db.AutoMigrate(&entities.PostPicturesEntity{})
 	db.AutoMigrate(&entities.FriendsEntity{})
+	db.AutoMigrate(&entities.PostLikesEntity{})
+	db.AutoMigrate(&entities.PostCommentsEntity{})
 }

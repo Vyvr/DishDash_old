@@ -9,6 +9,7 @@ import { isNil } from 'lodash-es';
 import { combineLatest, filter, take } from 'rxjs';
 import { PostFacade } from 'src/app/store/post/post.facade';
 import { GetImageStreamRequest, GetPostsRequest } from 'src/app/pb/post_pb';
+import { bindTokenToPayload } from 'src/app/core/api/utils';
 
 @Component({
   selector: 'app-posts',
@@ -29,14 +30,7 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
   }
 
   ngOnInit(): void {
-    this.postState$
-      .pipe(untilComponentDestroyed(this), take(1))
-      .subscribe((postState) => {
-        if (isNil(postState.data)) {
-          this._loadPosts();
-          this._loadPictures();
-        }
-      });
+    this._loadPictures();
   }
 
   openCreatePostModal(): void {
@@ -60,6 +54,7 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
       });
   }
 
+  // implemented in guard but i'll leave it here for now
   private _loadPosts(): void {
     this.authState$
       .pipe(
@@ -67,16 +62,18 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
         filter(({ data, loading }) => !isNil(data) && !loading),
         take(1)
       )
-      .subscribe(({ data }) => {
-        if (isNil(data)) {
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<GetPostsRequest.AsObject>(
+          {
+            page: 0,
+            pageSize: 10,
+          },
+          authState
+        );
+
+        if (isNil(payload)) {
           return;
         }
-
-        const payload: GetPostsRequest.AsObject = {
-          page: 0,
-          pageSize: 10,
-          token: data.token,
-        };
 
         this.postFacade.getPosts(payload);
       });
@@ -96,8 +93,12 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
           return;
         }
 
-        postData.map((post) => {
-          post.picturesList.map((path) => {
+        postData.forEach((post) => {
+          post.pictures.forEach(({ path, data }) => {
+            if (!isNil(data)) {
+              return;
+            }
+
             const payload: GetImageStreamRequest.AsObject = {
               token: authData.token,
               picturePath: path,

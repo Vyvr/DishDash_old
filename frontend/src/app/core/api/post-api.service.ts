@@ -4,12 +4,21 @@ import { PostServiceClient } from 'src/app/pb/PostServiceClientPb';
 import {
   AddPostImagesRequest,
   AddPostImagesResponse,
+  CommentOperationMessageResponse,
+  CommentPostRequest,
+  CommentPostResponse,
   CreatePostRequest,
   CreatePostResponse,
+  DeleteCommentRequest,
+  EditCommentRequest,
+  GetCommentsRequest,
+  GetCommentsResponse,
   GetImageStreamRequest,
   GetImageStreamResponse,
   GetPostsRequest,
   GetPostsResponse,
+  ToggleLikeRequest,
+  ToggleLikeResponse,
 } from 'src/app/pb/post_pb';
 import { bindPayloadToRequest, handleRequest } from './utils';
 
@@ -82,9 +91,11 @@ export class PostApiService {
 
         call.on('data', (response) => {
           const imageDataBase64 = response.getImageData_asB64();
+          const picturePath = response.getPicturePath();
 
           observer.next({
             imageData: imageDataBase64,
+            picturePath,
             postId: response.getPostId(),
           });
         });
@@ -98,6 +109,93 @@ export class PostApiService {
           observer.complete();
         });
       }
+    );
+  }
+
+  likePost(
+    payload: ToggleLikeRequest.AsObject
+  ): Observable<ToggleLikeResponse.AsObject> {
+    const request = new ToggleLikeRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      ToggleLikeRequest,
+      ToggleLikeResponse,
+      ToggleLikeResponse.AsObject
+    >(request, this.postServiceClient.likePost.bind(this.postServiceClient));
+  }
+
+  unlikePost(
+    payload: ToggleLikeRequest.AsObject
+  ): Observable<ToggleLikeResponse.AsObject> {
+    const request = new ToggleLikeRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      ToggleLikeRequest,
+      ToggleLikeResponse,
+      ToggleLikeResponse.AsObject
+    >(request, this.postServiceClient.unlikePost.bind(this.postServiceClient));
+  }
+
+  getComments(
+    payload: GetCommentsRequest.AsObject
+  ): Observable<GetCommentsResponse.AsObject> {
+    const request = new GetCommentsRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      GetCommentsRequest,
+      GetCommentsResponse,
+      GetCommentsResponse.AsObject
+    >(request, this.postServiceClient.getComments.bind(this.postServiceClient));
+  }
+
+  commentPost(
+    payload: CommentPostRequest.AsObject
+  ): Observable<CommentPostResponse.AsObject> {
+    const request = new CommentPostRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      CommentPostRequest,
+      CommentPostResponse,
+      CommentPostResponse.AsObject
+    >(request, this.postServiceClient.commentPost.bind(this.postServiceClient));
+  }
+
+  editComment(
+    payload: EditCommentRequest.AsObject
+  ): Observable<CommentOperationMessageResponse.AsObject> {
+    const request = new EditCommentRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      EditCommentRequest,
+      CommentOperationMessageResponse,
+      CommentOperationMessageResponse.AsObject
+    >(request, this.postServiceClient.editComment.bind(this.postServiceClient));
+  }
+
+  deleteComment(
+    payload: DeleteCommentRequest.AsObject
+  ): Observable<CommentOperationMessageResponse.AsObject> {
+    const request = new DeleteCommentRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      DeleteCommentRequest,
+      CommentOperationMessageResponse,
+      CommentOperationMessageResponse.AsObject
+    >(
+      request,
+      this.postServiceClient.deleteComment.bind(this.postServiceClient)
     );
   }
 

@@ -3,26 +3,32 @@
     postState: postState$ | async
   } as viewData"
 >
-  <div class="posts-outside-wrapper">
-    <div class="posts-inside-wrapper">
-      <div class="create-post-wrapper">
-        <div class="create-post-content-wrapper">
-          <div class="user-picture-wrapper"></div>
-          <div class="inputs-wrapper">
-            <input class="create-title-input" [(ngModel)]="postTitle" />
-            <button class="create-button" (click)="openCreatePostModal()">
-              Create post
-            </button>
+  <ng-container *ngIf="viewData?.postState?.loading; else content">
+    LOADING - TEMPLATE ADD A LOADER COMPONENT
+  </ng-container>
+
+  <ng-template #content>
+    <div class="posts-outside-wrapper">
+      <div class="posts-inside-wrapper">
+        <div class="create-post-wrapper">
+          <div class="create-post-content-wrapper">
+            <div class="user-picture-wrapper"></div>
+            <div class="inputs-wrapper">
+              <input class="create-title-input" [(ngModel)]="postTitle" />
+              <button class="create-button" (click)="openCreatePostModal()">
+                Create post
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="posts-list-wrapper">
-        <ng-container *ngFor="let post of viewData?.postState?.data">
-          <app-post [post]="post"></app-post>
-        </ng-container>
+        <div class="posts-list-wrapper">
+          <ng-container *ngFor="let post of viewData?.postState?.data">
+            <app-post [post]="post"></app-post>
+          </ng-container>
+        </div>
       </div>
     </div>
-  </div>
 
-  <create-post-modal></create-post-modal>
+    <create-post-modal></create-post-modal>
+  </ng-template>
 </ng-container>

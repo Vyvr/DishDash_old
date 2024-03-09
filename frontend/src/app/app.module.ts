@@ -23,14 +23,16 @@ import { MarketComponent } from './features/dashboard/market/market.component';
 import { FarmersComponent } from './features/dashboard/farmers/farmers.component';
 import { SettingsComponent } from './features/dashboard/settings/settings.component';
 import { CreatePostModalComponent } from './features/dashboard/create-post-modal/create-post-modal.component';
-import { DdInputComponent } from './shared-components/dd-input/dd-input.component';
-import { DdPicturesInputComponent } from './shared-components/dd-pictures-input/dd-pictures-input.component';
+import { DdInputComponent } from './shared/components/dd-input/dd-input.component';
+import { DdPicturesInputComponent } from './shared/components/dd-pictures-input/dd-pictures-input.component';
 import { SearchApiService } from './core/api/search-api.service';
 import { PostApiService } from './core/api/post-api.service';
 import { SocialApiService } from './core/api/social-api.service';
 import { SocketApiService } from './core/api/socket-api.service';
 import { PostComponent } from './features/dashboard/posts/components/post/post.component';
-import { DdPicturesGridComponent } from './shared-components/dd-pictures-grid/dd-pictures-grid.component';
+import { DdPicturesGridComponent } from './shared/components/dd-pictures-grid/dd-pictures-grid.component';
+import { DdModalComponent } from './shared/components/dd-modal/dd-modal.component';
+import { CommentsModalComponent } from './features/dashboard/posts/components/post/components/comments-modal/comments-modal.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -54,6 +56,8 @@ const devImports = [
     DdPicturesInputComponent,
     PostComponent,
     DdPicturesGridComponent,
+    DdModalComponent,
+    CommentsModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -16,6 +16,8 @@ type PostEntity struct {
 	Ingredients     string    `gorm:"type:text"`
 	PortionQuantity int64     `gorm:"type:integer"`
 	Preparation     string    `gorm:"type:text"`
+	LikesCount      int64     `gorm:"type:integer;default:0"`
+	CommentsCount   int64     `gorm:"type:integer;default:0"`
 	CreationDate    time.Time `gorm:"type:timestamp;default:current_timestamp"`
 
 	Owner UserEntity `gorm:"foreignKey:OwnerId;constraint:OnDelete:CASCADE"`
@@ -30,4 +32,23 @@ type PostPicturesEntity struct {
 
 	Post  PostEntity `gorm:"foreignKey:PostId;constraint:OnDelete:CASCADE"`
 	Owner UserEntity `gorm:"foreignKey:OwnerId;constraint:OnDelete:CASCADE"`
+}
+
+type PostLikesEntity struct {
+	PostId       uuid.UUID `gorm:"type:uuid;not null;primaryKey"`
+	UserId       uuid.UUID `gorm:"type:uuid;not null;primaryKey"`
+	CreationDate time.Time `gorm:"type:timestamp;default:current_timestamp"`
+
+	Post PostEntity `gorm:"foreignKey:PostId;constraint:OnDelete:CASCADE"`
+	User UserEntity `gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE"`
+}
+
+type PostCommentsEntity struct {
+	PostId       uuid.UUID `gorm:"type:uuid;not null;primaryKey"`
+	UserId       uuid.UUID `gorm:"type:uuid;not null;primaryKey"`
+	CommentText  string    `gorm:"type:text;not null"`
+	CreationDate time.Time `gorm:"type:timestamp;default:current_timestamp"`
+
+	Post PostEntity `gorm:"foreignKey:PostId;constraint:OnDelete:CASCADE"`
+	User UserEntity `gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE"`
 }
