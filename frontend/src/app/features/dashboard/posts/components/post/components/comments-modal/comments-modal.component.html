@@ -1,0 +1,21 @@
+<div class="modal-overlay" *ngIf="data?.isModalOpened">
+  <div class="modal">
+    <button class="close-button" (click)="closeModal()">×</button>
+    <div class="modal-header">
+      <h2>{{ "Comments" }}</h2>
+    </div>
+    <div class="modal-body">
+      <div class="comments-container">
+        <div *ngFor="let comment of commentsList">
+          <p>{{comment.commentText}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <input class="comment-input" [(ngModel)]="commentText" />
+      <button class="submit-modal-button" (click)="commentPost($event)">
+        Comment
+      </button>
+    </div>
+  </div>
+</div>

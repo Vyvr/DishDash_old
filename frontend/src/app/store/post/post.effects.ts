@@ -109,4 +109,60 @@ export class PostEffects {
       )
     )
   );
+
+  getCommentsEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.getComments),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.getComments(payload).pipe(
+          map((response) => {
+            return actions.getCommentsSuccess(response);
+          }),
+          catchError((error) => of(actions.getCommentsFailure(error)))
+        )
+      )
+    )
+  );
+
+  commentPostEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.commentPost),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.commentPost(payload).pipe(
+          map((response) => {
+            return actions.commentPostSuccess(response);
+          }),
+          catchError((error) => of(actions.commentPostFailure(error)))
+        )
+      )
+    )
+  );
+
+  editCommentEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.editComment),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.editComment(payload).pipe(
+          map((response) => {
+            return actions.editCommentSuccess(response);
+          }),
+          catchError((error) => of(actions.editCommentFailure(error)))
+        )
+      )
+    )
+  );
+
+  deleteCommentEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.deleteComment),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.deleteComment(payload).pipe(
+          map((response) => {
+            return actions.deleteCommentSuccess(response);
+          }),
+          catchError((error) => of(actions.deleteCommentFailure(error)))
+        )
+      )
+    )
+  );
 }

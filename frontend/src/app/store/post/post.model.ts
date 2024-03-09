@@ -5,7 +5,11 @@ export interface CreatePostPayload extends CreatePostRequest.AsObject {
   picturesBuckets: string[][];
 }
 
-export type PostsState = LoadableState<Post.AsObject[]>;
+export type InternalPost = Omit<Post.AsObject, 'picturesList' | 'picturesDataList'> & {
+  pictures: { path: string; data?: (string | Uint8Array) }[];
+};
+
+export type PostsState = LoadableState<InternalPost[]>;
 
 export const initialState: PostsState = {
   data: null,

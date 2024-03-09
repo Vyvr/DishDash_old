@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as actions from './auth.actions';
-import { catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AuthApiService } from 'src/app/core/api/auth-api.service';
 
 @Injectable()
@@ -58,13 +58,10 @@ export class AuthEffects {
     )
   );
 
-  logout$ = createEffect(() =>
+  logoutEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.logout),
-      exhaustMap(() => {
-        localStorage.removeItem('auth');
-        return of(actions.logoutSuccess());
-      }),
+      switchMap(() => of(actions.logoutSuccess())),
       tap(() => this.router.navigate(['/auth'])),
       catchError((error) => of(actions.logoutFailure(error)))
     )

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { initialState } from './post.model';
+import { InternalPost, initialState } from './post.model';
 
 import * as actions from './post.actions';
 import { errorState, loadedState, loadingState } from '../utils';
@@ -17,10 +17,10 @@ export const postReducer = createReducer(
         ...(state.data ?? []),
         {
           ...post,
-          picturesList: [],
-          picturesDataList: [],
+          pictures: [],
           likesCount: 0,
           commentsCount: 0,
+          commentsList: [],
           liked: false,
         },
       ],
@@ -41,60 +41,102 @@ export const postReducer = createReducer(
   })),
   //---------------GET FRIENDS POSTS---------------------
   on(actions.getFriendsPosts, (state) => ({ ...state, ...loadingState })),
-  on(actions.getFriendsPostsSuccess, (state, { type: _, postsList }) => {
+  on(actions.getFriendsPostsSuccess, (state, { postsList }) => {
+    // Create a map from the existing posts for quick lookup
+    const existingPostsMap = new Map(
+      state.data?.map((post) => [post.id, post]) ?? []
+    );
+
+    // Filter new posts to include only those not already present
+    const newUniquePosts = postsList.filter(
+      (post) => !existingPostsMap.has(post.id)
+    );
+
+    // Transform new posts to match the InternalPost structure
+    const transformedNewPosts = newUniquePosts.map<InternalPost>(
+      ({ picturesList, picturesDataList: _, ...post }) => ({
+        ...post,
+        pictures: picturesList.map((path) => ({ path })),
+      })
+    );
+
+    // Combine the existing posts with the new, unique, transformed posts
+    const combinedPosts = [...(state.data ?? []), ...transformedNewPosts];
+
     return {
       ...state,
       ...loadedState,
-      data: [...(state.data ?? []), ...postsList],
+      data: combinedPosts,
     };
   }),
+
+  //@TODO delete this shit after CR
+  // on(actions.getFriendsPostsSuccess, (state, { type: _, postsList }) => {
+  //   return {
+  //     ...state,
+  //     ...loadedState,
+  //     data: [
+  //       ...new Map(
+  //         [
+  //           ...(state.data ?? []),
+  //           ...postsList.map<InternalPost>(
+  //             ({ picturesList, picturesDataList: _, ...post }) => ({
+  //               ...post,
+  //               pictures: picturesList.map((path) => ({ path })),
+  //             })
+  //           ),
+  //         ].map((post) => [post.id, post])
+  //       ).values(),
+  //     ],
+  //   };
+  // }),
   on(actions.getFriendsPostsFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),
   //---------------GET IMAGE STREAM---------------------
-  /*@TODO Finish this crap,
-   * think how bind response (base64 string) to right post.PicturesData[]
-   */
-  on(actions.getImageStream, (state) => ({ ...state, ...loadingState })),
-  on(actions.getImageStreamSuccess, (state, { type: _, imageData, postId }) => {
-    const defaultReturn = { ...state, ...loadedState };
+  on(actions.getImageStream, (state) => ({ ...state })),
+  on(
+    actions.getImageStreamSuccess,
+    (state, { type: _, imageData, postId, picturePath }) => {
+      const defaultReturn = { ...state };
 
-    if (isNil(state.data)) {
-      return defaultReturn;
-    }
+      if (isNil(state.data)) {
+        return defaultReturn;
+      }
 
-    const postIndex = state.data.findIndex((post) => post.id === postId);
-    if (!!(postIndex + 1)) {
-      const post = { ...state.data[postIndex] };
+      const post = state.data.find((post) => post.id === postId);
 
-      // Create a new picturesDataList array with the new imageData
-      const picturesDataList = [...post.picturesDataList, imageData];
+      if (isNil(post)) {
+        return defaultReturn;
+      }
 
-      // Create a new post object with the updated picturesDataList
-      const updatedPost = { ...post, picturesDataList };
-
-      // Create a new data array with the updated post
-      const newData = [...state.data];
-      newData[postIndex] = updatedPost;
+      const updatedPost = {
+        ...post,
+        pictures: post.pictures.map(({ path, data }) => ({
+          path,
+          data: path === picturePath ? imageData : data,
+        })),
+      };
 
       return {
         ...state,
-        ...loadedState,
-        data: newData,
+        data: [
+          ...new Map(
+            [...(state.data ?? []), updatedPost].map((post) => [post.id, post])
+          ).values(),
+        ],
       };
     }
-
-    return defaultReturn;
-  }),
+  ),
   on(actions.getImageStreamFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),
   //---------------LIKE POST---------------------
-  on(actions.likePost, (state) => ({ ...state, ...loadingState })),
+  on(actions.likePost, (state) => ({ ...state })),
   on(actions.likePostSuccess, (state, { type: _, postId }) => {
-    const defaultReturn = { ...state, ...loadedState };
+    const defaultReturn = { ...state };
     const postIndex = state.data?.findIndex((p) => p.id === postId);
 
     if (!isNil(postIndex) && !isNil(state.data)) {
@@ -124,9 +166,9 @@ export const postReducer = createReducer(
     ...errorState(message),
   })),
   //---------------UNLIKE POST---------------------
-  on(actions.unlikePost, (state) => ({ ...state, ...loadingState })),
+  on(actions.unlikePost, (state) => ({ ...state })),
   on(actions.unlikePostSuccess, (state, { type: _, postId }) => {
-    const defaultReturn = { ...state, ...loadedState };
+    const defaultReturn = { ...state };
     const postIndex = state.data?.findIndex((p) => p.id === postId);
 
     if (!isNil(postIndex) && !isNil(state.data)) {
@@ -152,6 +194,157 @@ export const postReducer = createReducer(
     return defaultReturn;
   }),
   on(actions.unlikePostFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------GET COMMENTS---------------------
+  on(actions.getComments, (state) => ({ ...state })),
+  on(actions.getCommentsSuccess, (state, { type: _, postId, commentsList }) => {
+    const defaultReturn = { ...state };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data) && !isNil(commentsList)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        commentsList: commentsList,
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  on(actions.getCommentsFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------CLEAR COMMENTS---------------------
+  on(actions.clearCommentsSuccess, (state, { type: _, postId }) => {
+    const defaultReturn = { ...state };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        commentsList: [],
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  //---------------COMMENT POST---------------------
+  on(actions.commentPost, (state) => ({ ...state })),
+  on(actions.commentPostSuccess, (state, { type: _, postId, comment }) => {
+    const defaultReturn = { ...state };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data) && !isNil(comment)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        commentsList: [...state.data[postIndex].commentsList, comment],
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  on(actions.commentPostFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------EDIT COMMENT---------------------
+  on(actions.editComment, (state) => ({ ...state })),
+  on(actions.editCommentSuccess, (state, { type: _, postId }) => {
+    const defaultReturn = { ...state };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        liked: false,
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  on(actions.editCommentFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------DELETE COMMENT---------------------
+  on(actions.deleteComment, (state) => ({ ...state })),
+  on(actions.deleteCommentSuccess, (state, { type: _, postId }) => {
+    const defaultReturn = { ...state };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        commentsCount: state.data[postIndex].commentsCount - 1,
+        liked: false,
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
+  }),
+  on(actions.deleteCommentFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   }))

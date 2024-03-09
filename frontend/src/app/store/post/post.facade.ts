@@ -5,7 +5,16 @@ import { AppState } from '..';
 import * as actions from './post.actions';
 import * as selectors from './post.selectors';
 import { CreatePostPayload } from './post.model';
-import { AddPostImagesRequest, GetImageStreamRequest, GetPostsRequest, ToggleLikeRequest } from 'src/app/pb/post_pb';
+import {
+  AddPostImagesRequest,
+  CommentPostRequest,
+  DeleteCommentRequest,
+  EditCommentRequest,
+  GetCommentsRequest,
+  GetImageStreamRequest,
+  GetPostsRequest,
+  ToggleLikeRequest,
+} from 'src/app/pb/post_pb';
 
 @Injectable()
 export class PostFacade {
@@ -30,10 +39,30 @@ export class PostFacade {
   }
 
   likePost(payload: ToggleLikeRequest.AsObject): void {
-    this.store.dispatch(actions.likePost(payload))
+    this.store.dispatch(actions.likePost(payload));
   }
 
   unlikePost(payload: ToggleLikeRequest.AsObject): void {
-    this.store.dispatch(actions.unlikePost(payload))
+    this.store.dispatch(actions.unlikePost(payload));
+  }
+
+  getComments(payload: GetCommentsRequest.AsObject): void {
+    this.store.dispatch(actions.getComments(payload));
+  }
+
+  clearComments(payload: { postId: string }): void {
+    this.store.dispatch(actions.clearCommentsSuccess(payload));
+  }
+
+  commentPost(payload: CommentPostRequest.AsObject): void {
+    this.store.dispatch(actions.commentPost(payload));
+  }
+
+  editComment(payload: EditCommentRequest.AsObject): void {
+    this.store.dispatch(actions.editComment(payload));
+  }
+
+  deleteComment(payload: DeleteCommentRequest.AsObject): void {
+    this.store.dispatch(actions.deleteComment(payload));
   }
 }

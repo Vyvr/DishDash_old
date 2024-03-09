@@ -4,8 +4,15 @@ import { PostServiceClient } from 'src/app/pb/PostServiceClientPb';
 import {
   AddPostImagesRequest,
   AddPostImagesResponse,
+  CommentOperationMessageResponse,
+  CommentPostRequest,
+  CommentPostResponse,
   CreatePostRequest,
   CreatePostResponse,
+  DeleteCommentRequest,
+  EditCommentRequest,
+  GetCommentsRequest,
+  GetCommentsResponse,
   GetImageStreamRequest,
   GetImageStreamResponse,
   GetPostsRequest,
@@ -84,9 +91,11 @@ export class PostApiService {
 
         call.on('data', (response) => {
           const imageDataBase64 = response.getImageData_asB64();
+          const picturePath = response.getPicturePath();
 
           observer.next({
             imageData: imageDataBase64,
+            picturePath,
             postId: response.getPostId(),
           });
         });
@@ -129,6 +138,65 @@ export class PostApiService {
       ToggleLikeResponse,
       ToggleLikeResponse.AsObject
     >(request, this.postServiceClient.unlikePost.bind(this.postServiceClient));
+  }
+
+  getComments(
+    payload: GetCommentsRequest.AsObject
+  ): Observable<GetCommentsResponse.AsObject> {
+    const request = new GetCommentsRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      GetCommentsRequest,
+      GetCommentsResponse,
+      GetCommentsResponse.AsObject
+    >(request, this.postServiceClient.getComments.bind(this.postServiceClient));
+  }
+
+  commentPost(
+    payload: CommentPostRequest.AsObject
+  ): Observable<CommentPostResponse.AsObject> {
+    const request = new CommentPostRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      CommentPostRequest,
+      CommentPostResponse,
+      CommentPostResponse.AsObject
+    >(request, this.postServiceClient.commentPost.bind(this.postServiceClient));
+  }
+
+  editComment(
+    payload: EditCommentRequest.AsObject
+  ): Observable<CommentOperationMessageResponse.AsObject> {
+    const request = new EditCommentRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      EditCommentRequest,
+      CommentOperationMessageResponse,
+      CommentOperationMessageResponse.AsObject
+    >(request, this.postServiceClient.editComment.bind(this.postServiceClient));
+  }
+
+  deleteComment(
+    payload: DeleteCommentRequest.AsObject
+  ): Observable<CommentOperationMessageResponse.AsObject> {
+    const request = new DeleteCommentRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      DeleteCommentRequest,
+      CommentOperationMessageResponse,
+      CommentOperationMessageResponse.AsObject
+    >(
+      request,
+      this.postServiceClient.deleteComment.bind(this.postServiceClient)
+    );
   }
 
   // currently not used because i'm using blob instead, but better leave it here

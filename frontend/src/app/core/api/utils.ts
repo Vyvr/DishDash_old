@@ -1,5 +1,7 @@
 import { ClientReadableStream, Metadata, RpcError } from 'grpc-web';
+import { isNil } from 'lodash-es';
 import { Observable } from 'rxjs';
+import { AuthState } from 'src/app/store/auth';
 
 type ToObject = { toObject: () => any };
 
@@ -50,12 +52,16 @@ export function bindPayloadToRequest(request: any, payload: any): void {
   });
 }
 
-// @TODO take care of this shit, don't have energy for that now
-type PayloadWithToken<T> = T & { token: string };
+type Token = { token: string };
 
-export function bindTokenToPayload<PayloadType extends object>(
-  payload: PayloadType
-): PayloadWithToken<PayloadType> {
-  const token = '123';
-  return { ...payload, token };
+export function bindTokenToPayload<PayloadType extends Token>(
+  payload: Omit<PayloadType, 'token'>,
+  authState: AuthState
+): PayloadType | null {
+  if (isNil(authState.data) || isNil(authState.data.token)) {
+    return null;
+  }
+
+  const { token } = authState.data;
+  return { ...payload, token } as any as PayloadType;
 }
