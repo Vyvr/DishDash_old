@@ -1,6 +1,7 @@
 <ng-container
   *ngIf="{
-    postState: postState$ | async
+    postState: postState$ | async,
+    authState: authState$ | async
   } as viewData"
 >
   <ng-container *ngIf="viewData?.postState?.loading; else content">
@@ -23,7 +24,14 @@
         </div>
         <div class="posts-list-wrapper">
           <ng-container *ngFor="let post of viewData?.postState?.data">
-            <app-post [post]="post"></app-post>
+            <app-post
+              [post]="post"
+              [isCommentsOpen]="post?.id === commentsOpenPostId"
+              (toggleLike)="onToggleLike($event)"
+              (newComment)="onNewComment($event)"
+              (postCommentsOpen)="onPostCommentsOpen($event)"
+              (postCommentsClose)="onPostCommentsClose()"
+            ></app-post>
           </ng-container>
         </div>
       </div>

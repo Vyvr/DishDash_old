@@ -1,35 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {
-  OnDestroyMixin,
-  untilComponentDestroyed,
-} from '@w11k/ngx-componentdestroyed';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { isEmpty, isNil } from 'lodash-es';
-import { filter, take } from 'rxjs';
-import { ToggleLikeRequest } from 'src/app/pb/post_pb';
-import { AuthFacade } from 'src/app/store/auth';
-import { PostFacade } from 'src/app/store/post/post.facade';
 import { InternalPost } from 'src/app/store/post';
-import { CommentsModalData } from './components/comments-modal/comments-modal.model';
+import { NewCommentEvent, ToggleLikeEvent } from './post.model';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.scss'],
 })
-export class PostComponent extends OnDestroyMixin implements OnInit {
-  // @ViewChild(CommentsModalComponent) modal: CommentsModalComponent | null =
-  //   null;
-  commentsModalData: CommentsModalData | null = null;
+export class PostComponent implements OnInit {
+  @Input() post: InternalPost | null = null;
+  @Input() isCommentsOpen = false;
 
-  @Input()
-  post: InternalPost | null = null;
+  @Output() toggleLike = new EventEmitter<ToggleLikeEvent>();
+  @Output() newComment = new EventEmitter<NewCommentEvent>();
+  @Output() postCommentsOpen = new EventEmitter<string>();
+  @Output() postCommentsClose = new EventEmitter<void>();
 
   creationDate: Date | string | null = null;
   urlImages: string[] = [];
   itemsLoadingSquareCount: number = 0;
-
-  authState$ = this.authFacade.authState$;
-  postState$ = this.postFacade.postState$;
 
   ngOnInit(): void {
     if (
@@ -50,88 +40,30 @@ export class PostComponent extends OnDestroyMixin implements OnInit {
     }
   }
 
-  constructor(private authFacade: AuthFacade, private postFacade: PostFacade) {
-    super();
-  }
+  constructor() {}
 
-  toggleLike(postId: string | undefined): void {
+  onToggleLike(postId: string | undefined): void {
     if (isNil(postId) || isNil(this.post)) {
       return;
     }
 
-    this.authState$
-      .pipe(
-        untilComponentDestroyed(this),
-        filter(({ data, loading }) => !isNil(data) && !loading),
-        take(1)
-      )
-      .subscribe(({ data }) => {
-        if (isNil(data)) {
-          return;
-        }
-
-        if (!isNil(this.post)) {
-          const payload: ToggleLikeRequest.AsObject = {
-            token: data.token,
-            id: this.post.id,
-          };
-
-          if (this.post.liked) {
-            this.postFacade.unlikePost(payload);
-          } else {
-            this.postFacade.likePost(payload);
-          }
-        }
-      });
+    this.toggleLike.emit({ postId, liked: this.post.liked });
   }
 
-  openCommentsModal(): void {
-    // this.authState$
-    //   .pipe(untilComponentDestroyed(this), take(1))
-    //   .subscribe((authState) => {
-    //     if (isNil(this.post) || authState.loading || isNil(authState.data)) {
-    //       return;
-    //     }
+  onNewComment(commentText: string): void {
+    if (isNil(this.post)) {
+      return;
+    }
 
-    //     const {
-    //       data: { id, token },
-    //     } = authState;
+    this.newComment.emit({ postId: this.post.id, commentText });
+  }
 
-    //     const getCommentsPayload: GetCommentsRequest.AsObject = {
-    //       postId: this.post.id,
-    //       token,
-    //       page: 0,
-    //       pageSize: 10,
-    //     };
+  onOpenCommentsModal(): void {
+    this.postCommentsOpen.emit(this.post?.id);
+  }
 
-    //     this.postFacade.getComments(getCommentsPayload);
-
-    //     this.commentsModalData = {
-    //       token: token,
-    //       userId: id,
-    //       postId: this.post.id,
-    //       commentsList: this.post.commentsList,
-    //       isModalOpened: true,
-    //     };
-    //   });
-    this.authState$
-      .pipe(untilComponentDestroyed(this), take(1))
-      .subscribe((authState) => {
-        if (isNil(this.post) || authState.loading || isNil(authState.data)) {
-          return;
-        }
-
-        const {
-          data: { id, token },
-        } = authState;
-
-        this.commentsModalData = {
-          token: token,
-          userId: id,
-          postId: this.post.id,
-          isModalOpened: true,
-        };
-      });
+  onCloseCommentsModal(): void {
+    this.postCommentsClose.emit();
   }
 
   private _loadPictures(): void {

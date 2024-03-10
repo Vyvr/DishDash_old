@@ -1,5 +1,11 @@
-import { ActionReducer, MetaReducer } from '@ngrx/store';
-import { AuthFacade, AuthEffects, AuthState, authReducer } from './auth';
+import { Action, ActionReducer, MetaReducer } from '@ngrx/store';
+import {
+  AuthFacade,
+  AuthEffects,
+  AuthState,
+  authReducer,
+  logoutSuccess,
+} from './auth';
 import { localStorageSync } from 'ngrx-store-localstorage';
 import { PostsState } from './post/post.model';
 import { postReducer } from './post/post.reducer';
@@ -44,6 +50,16 @@ export function localStorageSyncReducer(
   );
 }
 
+function logoutMetaReducer(reducer: ActionReducer<any>) {
+  return function (state: AppState, action: Action) {
+    return reducer(
+      action.type === logoutSuccess.type ? undefined : state,
+      action
+    );
+  };
+}
+
 export const metaReducers: Array<MetaReducer<any, any>> = [
   localStorageSyncReducer,
+  logoutMetaReducer,
 ];

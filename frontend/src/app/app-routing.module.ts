@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from './features/auth/auth.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { PostsComponent } from './features/dashboard/posts/posts.component';
+import { PostListComponent } from './features/dashboard/posts/post-list.component';
 import { FarmersComponent } from './features/dashboard/farmers/farmers.component';
 import { MenuBookComponent } from './features/dashboard/menu-book/menu-book.component';
 import { MarketComponent } from './features/dashboard/market/market.component';
@@ -26,7 +26,7 @@ const routes: Routes = [
           {
             path: 'posts',
             canActivate: [canActivatePosts],
-            component: PostsComponent,
+            component: PostListComponent,
           },
           { path: 'menu-book', component: MenuBookComponent },
           { path: 'market', component: MarketComponent },

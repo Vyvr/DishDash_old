@@ -23,12 +23,12 @@
     <button
       class="icon-like-button"
       [style.fill]="post?.liked ? 'blue' : 'black'"
-      (click)="toggleLike(post?.id)"
+      (click)="onToggleLike(post?.id)"
     >
       {{ post?.likesCount }}
       <svg-icon src="assets/thumb-up-icon.svg" alt="Like"></svg-icon>
     </button>
-    <button class="icon-comment-button" (click)="openCommentsModal()">
+    <button class="icon-comment-button" (click)="onOpenCommentsModal()">
       {{ post?.commentsCount }}
       <svg-icon src="assets/comment-icon.svg" alt="Comment"></svg-icon>
     </button>
@@ -38,4 +38,9 @@
   </div>
 </div>
 
-<app-comments-modal [data]="commentsModalData"></app-comments-modal>
+<app-comments-modal
+  [isOpen]="isCommentsOpen"
+  [commentsList]="post?.commentsList"
+  (close)="onCloseCommentsModal()"
+  (newComment)="onNewComment($event)"
+></app-comments-modal>

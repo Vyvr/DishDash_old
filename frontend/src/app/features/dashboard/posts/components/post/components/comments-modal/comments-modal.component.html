@@ -1,21 +1,26 @@
-<div class="modal-overlay" *ngIf="data?.isModalOpened">
+<div class="modal-overlay" *ngIf="isOpen && formGroup && commentsList">
   <div class="modal">
-    <button class="close-button" (click)="closeModal()">×</button>
+    <button class="close-button" (click)="onCloseModal()">×</button>
     <div class="modal-header">
       <h2>{{ "Comments" }}</h2>
     </div>
     <div class="modal-body">
       <div class="comments-container">
         <div *ngFor="let comment of commentsList">
-          <p>{{comment.commentText}}</p>
+          <p>{{ comment.commentText }}</p>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <input class="comment-input" [(ngModel)]="commentText" />
-      <button class="submit-modal-button" (click)="commentPost($event)">
+
+    <form class="modal-footer" [formGroup]="formGroup">
+      <input class="comment-input" formControlName="commentText" />
+      <button
+        class="submit-modal-button"
+        (click)="onNewComment($event)"
+        [disabled]="!formGroup.valid"
+      >
         Comment
       </button>
-    </div>
+    </form>
   </div>
 </div>

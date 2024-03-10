@@ -8,22 +8,30 @@ import {
 import { isNil } from 'lodash-es';
 import { combineLatest, filter, take } from 'rxjs';
 import { PostFacade } from 'src/app/store/post/post.facade';
-import { GetImageStreamRequest, GetPostsRequest } from 'src/app/pb/post_pb';
+import {
+  CommentPostRequest,
+  GetCommentsRequest,
+  GetImageStreamRequest,
+  GetPostsRequest,
+  ToggleLikeRequest,
+} from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
+import { NewCommentEvent, ToggleLikeEvent } from './components/post/post.model';
 
 @Component({
   selector: 'app-posts',
-  templateUrl: './posts.component.html',
-  styleUrls: ['./posts.component.scss'],
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.scss'],
 })
-export class PostsComponent extends OnDestroyMixin implements OnInit {
+export class PostListComponent extends OnDestroyMixin implements OnInit {
   @ViewChild(CreatePostModalComponent) modal: CreatePostModalComponent | null =
     null;
 
-  postTitle: string = '';
-
   authState$ = this.authFacade.authState$;
   postState$ = this.postFacade.postState$;
+
+  postTitle: string = '';
+  commentsOpenPostId: string | null = null;
 
   constructor(private authFacade: AuthFacade, private postFacade: PostFacade) {
     super();
@@ -51,6 +59,76 @@ export class PostsComponent extends OnDestroyMixin implements OnInit {
           token,
           ownerId: id,
         });
+      });
+  }
+
+  onPostCommentsOpen(postId: string): void {
+    this.commentsOpenPostId = postId;
+
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<GetCommentsRequest.AsObject>(
+          { page: 0, pageSize: 10, postId },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.postFacade.getComments(payload);
+      });
+  }
+
+  onPostCommentsClose(): void {
+    this.commentsOpenPostId = null;
+  }
+
+  onToggleLike({ liked, postId }: ToggleLikeEvent): void {
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<ToggleLikeRequest.AsObject>(
+          { id: postId },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        if (liked) {
+          this.postFacade.unlikePost(payload);
+          return;
+        }
+
+        this.postFacade.likePost(payload);
+      });
+  }
+
+  onNewComment({ postId, commentText }: NewCommentEvent): void {
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<CommentPostRequest.AsObject>(
+          { id: postId, commentText },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.postFacade.commentPost(payload);
       });
   }
 
