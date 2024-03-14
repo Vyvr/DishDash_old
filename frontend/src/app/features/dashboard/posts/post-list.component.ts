@@ -10,13 +10,20 @@ import { combineLatest, filter, take } from 'rxjs';
 import { PostFacade } from 'src/app/store/post/post.facade';
 import {
   CommentPostRequest,
+  DeleteCommentRequest,
+  EditCommentRequest,
   GetCommentsRequest,
   GetImageStreamRequest,
   GetPostsRequest,
   ToggleLikeRequest,
 } from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
-import { NewCommentEvent, ToggleLikeEvent } from './components/post/post.model';
+import {
+  DeleteCommentEvent,
+  EditCommentEvent,
+  NewCommentEvent,
+  ToggleLikeEvent,
+} from './components/post/post.model';
 
 @Component({
   selector: 'app-posts',
@@ -129,6 +136,48 @@ export class PostListComponent extends OnDestroyMixin implements OnInit {
         }
 
         this.postFacade.commentPost(payload);
+      });
+  }
+
+  onEditComment({ postId, commentId, commentText }: EditCommentEvent): void {
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<EditCommentRequest.AsObject>(
+          { postId, commentId, commentText },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.postFacade.editComment(payload);
+      });
+  }
+
+  onDeleteComment({ postId, commentId }: DeleteCommentEvent): void {
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<DeleteCommentRequest.AsObject>(
+          { postId, commentId },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.postFacade.deleteComment(payload);
       });
   }
 

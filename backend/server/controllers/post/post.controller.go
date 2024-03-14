@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 	"strings"
 
 	"dish-dash/server/entities"
@@ -362,6 +363,7 @@ func (s *server) GetComments(ctx context.Context, in *post.GetCommentsRequest) (
 		}
 
 		grpcComment := &post.Comment{
+			Id:           commentEntity.Id.String(),
 			UserId:       userEntity.Id.String(),
 			UserName:     userEntity.Name,
 			UserSurname:  userEntity.Surname,
@@ -372,6 +374,10 @@ func (s *server) GetComments(ctx context.Context, in *post.GetCommentsRequest) (
 
 		grpcComments = append(grpcComments, grpcComment)
 	}
+
+	sort.Slice(grpcComments, func(i, j int) bool {
+		return grpcComments[j].CreationDate.AsTime().Before(grpcComments[i].CreationDate.AsTime())
+	})
 
 	return &post.GetCommentsResponse{Comments: grpcComments, PostId: in.PostId}, nil
 }
@@ -430,49 +436,49 @@ func (s *server) CommentPost(ctx context.Context, in *post.CommentPostRequest) (
 func (s *server) EditComment(ctx context.Context, in *post.EditCommentRequest) (*post.CommentOperationMessageResponse, error) {
 	db := database_service.GetDBInstance()
 
-	userEntity, err := auth_service.ValidateToken(in.Token)
+	_, err := auth_service.ValidateToken(in.Token)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
 	var postEntity entities.PostEntity
-	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	err = db.Where("id = ?", in.PostId).First(&postEntity).Error
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "No post found")
 	}
 
 	var commentEntity entities.PostCommentsEntity
-	err = db.Where("user_id = ? AND post_id = ?", userEntity.Id, postEntity.Id).First(&commentEntity).Error
+	err = db.Where("id = ?", in.CommentId).First(&commentEntity).Error
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "Comment not found: %v", err)
 	}
 
 	commentEntity.CommentText = in.CommentText
-	err = db.Model(&entities.PostCommentsEntity{}).Where("user_id = ? AND post_id = ?", commentEntity.UserId, commentEntity.PostId).Update("comment_text", commentEntity.CommentText).Error
+	err = db.Model(&entities.PostCommentsEntity{}).Where("id = ?", commentEntity.Id).Update("comment_text", commentEntity.CommentText).Error
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to update comment %v", err)
 	}
 
-	return &post.CommentOperationMessageResponse{PostId: in.Id, CommentText: in.CommentText}, nil
+	return &post.CommentOperationMessageResponse{PostId: in.PostId, CommentId: in.CommentId, CommentText: in.CommentText}, nil
 }
 
 func (s *server) DeleteComment(ctx context.Context, in *post.DeleteCommentRequest) (*post.CommentOperationMessageResponse, error) {
 	db := database_service.GetDBInstance()
 
-	userEntity, err := auth_service.ValidateToken(in.Token)
+	_, err := auth_service.ValidateToken(in.Token)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
 	var postEntity entities.PostEntity
-	err = db.Where("id = ?", in.Id).First(&postEntity).Error
+	err = db.Where("id = ?", in.PostId).First(&postEntity).Error
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "No post found")
 	}
 
-	if err = db.Where("user_id = ? AND post_id = ?", userEntity.Id, postEntity.Id).Delete(&entities.PostCommentsEntity{}).Error; err != nil {
+	if err = db.Where("id = ?", in.CommentId).Delete(&entities.PostCommentsEntity{}).Error; err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to delete comment: %v", err)
 	}
 
@@ -482,7 +488,7 @@ func (s *server) DeleteComment(ctx context.Context, in *post.DeleteCommentReques
 		return nil, status.Errorf(codes.Internal, "Failed to update comments count: %v", err)
 	}
 
-	return &post.CommentOperationMessageResponse{PostId: in.Id}, nil
+	return &post.CommentOperationMessageResponse{PostId: in.PostId, CommentId: in.CommentId}, nil
 }
 
 func RegisterServer() {

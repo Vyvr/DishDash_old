@@ -43,4 +43,6 @@
   [commentsList]="post?.commentsList"
   (close)="onCloseCommentsModal()"
   (newComment)="onNewComment($event)"
+  (editComment)="onEditComment($event)"
+  (deleteComment)="onDeleteComment($event)"
 ></app-comments-modal>

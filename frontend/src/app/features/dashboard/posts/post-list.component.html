@@ -29,6 +29,8 @@
               [isCommentsOpen]="post?.id === commentsOpenPostId"
               (toggleLike)="onToggleLike($event)"
               (newComment)="onNewComment($event)"
+              (editComment)="onEditComment($event)"
+              (deleteComment)="onDeleteComment($event)"
               (postCommentsOpen)="onPostCommentsOpen($event)"
               (postCommentsClose)="onPostCommentsClose()"
             ></app-post>

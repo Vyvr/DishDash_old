@@ -1,0 +1,98 @@
+.comment-tile-wrapper {
+  margin-bottom: 10px;
+}
+
+.sides-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.left-side {
+  flex-grow: 1; /* Take up the available space */
+}
+
+.right-side {
+  margin-left: 10px;
+}
+
+.comment-tile-content {
+  display: block;
+  border-radius: 10px;
+  border: solid 1px #ccc;
+  background-color: #bfbfbf22;
+  padding: 10px;
+}
+
+.comment-tile-date {
+  margin-left: 10px;
+  color: #0000006a;
+  font-size: 12px;
+}
+
+.comment-tile-user {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.options-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.comment-tile-textarea {
+  width: 100%;
+  height: 300px;
+  border: solid 1px #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  box-sizing: border-box;
+  resize: none;
+}
+
+/* context-menu.component.scss */
+.context-menu {
+  position: absolute;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu ul li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.context-menu ul li:hover {
+  background-color: #f0f0f0;
+}
+
+.icon-button {
+  background-color: rgb(196, 196, 196);
+  border-radius: 10px;
+  border: solid 1px #ccc;
+  padding: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.3s ease;
+  margin-right: 5px;
+}
+
+.icon-button svg-icon {
+  width: 24px;
+  height: 24px;
+  fill: #ffff;
+  transition: filter 0.3s ease-in-out;
+}

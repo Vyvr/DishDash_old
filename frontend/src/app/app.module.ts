@@ -33,6 +33,7 @@ import { PostComponent } from './features/dashboard/posts/components/post/post.c
 import { DdPicturesGridComponent } from './shared/components/dd-pictures-grid/dd-pictures-grid.component';
 import { DdModalComponent } from './shared/components/dd-modal/dd-modal.component';
 import { CommentsModalComponent } from './features/dashboard/posts/components/post/components/comments-modal/comments-modal.component';
+import { CommentTileComponent } from './features/dashboard/posts/components/post/components/comments-modal/components/comment-tile/comment-tile.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -58,6 +59,7 @@ const devImports = [
     DdPicturesGridComponent,
     DdModalComponent,
     CommentsModalComponent,
+    CommentTileComponent,
   ],
   imports: [
     BrowserModule,

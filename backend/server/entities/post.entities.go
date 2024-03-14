@@ -44,6 +44,7 @@ type PostLikesEntity struct {
 }
 
 type PostCommentsEntity struct {
+	BaseEntity
 	PostId       uuid.UUID `gorm:"type:uuid;not null;primaryKey"`
 	UserId       uuid.UUID `gorm:"type:uuid;not null;primaryKey"`
 	CommentText  string    `gorm:"type:text;not null"`

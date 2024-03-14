@@ -7,7 +7,11 @@
     <div class="modal-body">
       <div class="comments-container">
         <div *ngFor="let comment of commentsList">
-          <p>{{ comment.commentText }}</p>
+          <app-comment-tile
+            [data]="comment"
+            (editComment)="onEditComment($event)"
+            (deleteComment)="onDeleteComment($event)"
+          ></app-comment-tile>
         </div>
       </div>
     </div>

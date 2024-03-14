@@ -1,0 +1,41 @@
+<div class="comment-tile-wrapper">
+  <div class="sides-wrapper">
+    <div class="left-side">
+      <div class="comment-tile-content">
+        <div class="comment-tile-user">
+          {{ data?.userName }} {{ data?.userSurname }}
+        </div>
+        <div class="comment-tile-text">
+          <p *ngIf="!isEditMode">{{ data?.commentText }}</p>
+          <textarea
+            class="comment-tile-textarea"
+            *ngIf="isEditMode"
+            [(ngModel)]="commentText"
+            placeholder="Edit comment"
+          ></textarea>
+          <button class="icon-button" *ngIf="isEditMode" (click)="onEditComment()">
+            <svg-icon src="assets/confirm-icon.svg" alt="Confirm"></svg-icon>
+          </button>
+          <button class="icon-button" *ngIf="isEditMode" (click)="cancelEditComment()">
+            <svg-icon src="assets/close-icon.svg" alt="Cancel"></svg-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-side">
+      <div *ngIf="data?.owned" class="options-button-wrapper">
+        <button (click)="toggleContextMenu($event)" #optionsButton>...</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="comment-tile-date">{{ creationDate }}</div>
+</div>
+
+<div class="context-menu" *ngIf="isContextMenuOpen" #contextMenu>
+  <ul>
+    <li (click)="toggleEditMode()">Edit</li>
+    <li (click)="onDeleteComment()">Delete</li>
+  </ul>
+</div>

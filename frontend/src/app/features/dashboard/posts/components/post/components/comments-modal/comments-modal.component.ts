@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { isNil } from 'lodash-es';
+import { PartialDeleteCommentEvent, PartialEditCommentEvent } from '../../post.model';
 
 @Component({
   selector: 'app-comments-modal',
@@ -19,6 +20,8 @@ export class CommentsModalComponent {
 
   @Output() close = new EventEmitter<void>();
   @Output() newComment = new EventEmitter<string>();
+  @Output() editComment = new EventEmitter<PartialEditCommentEvent>();
+  @Output() deleteComment = new EventEmitter<PartialDeleteCommentEvent>();
 
   formGroup: FormGroup | null = null;
 
@@ -42,5 +45,13 @@ export class CommentsModalComponent {
     }
 
     this.newComment.emit(this.formGroup.get('commentText')?.value);
+  }
+
+  onEditComment({commentId, commentText}: PartialEditCommentEvent): void {
+    this.editComment.emit({commentId, commentText});
+  }
+
+  onDeleteComment({commentId}: PartialDeleteCommentEvent): void {
+    this.deleteComment.emit({commentId});
   }
 }

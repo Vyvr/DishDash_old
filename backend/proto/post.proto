@@ -41,12 +41,13 @@ message Post {
 }
 
 message Comment {
-    string user_id = 1;
-    string user_name = 2;
-    string user_surname = 3;
-    string comment_text = 4;
-    bool owned = 5;
-    google.protobuf.Timestamp creation_date = 6;
+    string id = 1;
+    string user_id = 2;
+    string user_name = 3;
+    string user_surname = 4;
+    string comment_text = 5;
+    bool owned = 6;
+    google.protobuf.Timestamp creation_date = 7;
 }
 
 message Picture {
@@ -142,16 +143,19 @@ message CommentPostResponse {
 
 message EditCommentRequest {
     string token = 1;
-    string id = 2;
-    string comment_text = 3;
+    string post_id = 2;
+    string comment_id = 3;
+    string comment_text = 4;
 }
 
 message DeleteCommentRequest {
     string token = 1;
-    string id = 2;
+    string post_id = 2;
+    string comment_id = 3;
 }
 
 message CommentOperationMessageResponse {
     string post_id = 1;
-    string comment_text = 2;
+    string comment_id = 2;
+    string comment_text = 3;
 }

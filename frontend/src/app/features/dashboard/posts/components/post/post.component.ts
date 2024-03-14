@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { isEmpty, isNil } from 'lodash-es';
 import { InternalPost } from 'src/app/store/post';
-import { NewCommentEvent, ToggleLikeEvent } from './post.model';
+import { DeleteCommentEvent, EditCommentEvent, NewCommentEvent, PartialDeleteCommentEvent, PartialEditCommentEvent, ToggleLikeEvent } from './post.model';
 
 @Component({
   selector: 'app-post',
@@ -14,6 +14,8 @@ export class PostComponent implements OnInit {
 
   @Output() toggleLike = new EventEmitter<ToggleLikeEvent>();
   @Output() newComment = new EventEmitter<NewCommentEvent>();
+  @Output() editComment = new EventEmitter<EditCommentEvent>();
+  @Output() deleteComment = new EventEmitter<DeleteCommentEvent>();
   @Output() postCommentsOpen = new EventEmitter<string>();
   @Output() postCommentsClose = new EventEmitter<void>();
 
@@ -56,6 +58,22 @@ export class PostComponent implements OnInit {
     }
 
     this.newComment.emit({ postId: this.post.id, commentText });
+  }
+
+  onEditComment({commentId, commentText}: PartialEditCommentEvent): void {
+    if (isNil(this.post)) {
+      return;
+    }
+
+    this.editComment.emit({ postId: this.post.id, commentId, commentText });
+  }
+
+  onDeleteComment({commentId}: PartialDeleteCommentEvent): void {
+    if (isNil(this.post)) {
+      return;
+    }
+
+    this.deleteComment.emit({ postId: this.post.id, commentId });
   }
 
   onOpenCommentsModal(): void {

@@ -4,6 +4,7 @@ import { InternalPost, initialState } from './post.model';
 import * as actions from './post.actions';
 import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
+import { Comment } from 'src/app/pb/post_pb';
 
 export const postReducer = createReducer(
   initialState,
@@ -69,27 +70,6 @@ export const postReducer = createReducer(
       data: combinedPosts,
     };
   }),
-
-  //@TODO delete this shit after CR
-  // on(actions.getFriendsPostsSuccess, (state, { type: _, postsList }) => {
-  //   return {
-  //     ...state,
-  //     ...loadedState,
-  //     data: [
-  //       ...new Map(
-  //         [
-  //           ...(state.data ?? []),
-  //           ...postsList.map<InternalPost>(
-  //             ({ picturesList, picturesDataList: _, ...post }) => ({
-  //               ...post,
-  //               pictures: picturesList.map((path) => ({ path })),
-  //             })
-  //           ),
-  //         ].map((post) => [post.id, post])
-  //       ).values(),
-  //     ],
-  //   };
-  // }),
   on(actions.getFriendsPostsFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
@@ -272,6 +252,22 @@ export const postReducer = createReducer(
         ...state.data.slice(postIndex + 1),
       ];
 
+      updatedData[postIndex].commentsList.sort(
+        (a: Comment.AsObject, b: Comment.AsObject) => {
+          if (isNil(a.creationDate) || isNil(b.creationDate)) {
+            return 0;
+          }
+          const timeA = a.creationDate
+            ? a.creationDate.seconds * 1000 + a.creationDate.nanos / 1000000
+            : Number.MAX_SAFE_INTEGER;
+          const timeB = b.creationDate
+            ? b.creationDate.seconds * 1000 + b.creationDate.nanos / 1000000
+            : Number.MAX_SAFE_INTEGER;
+
+          return timeB - timeA;
+        }
+      );
+
       return {
         ...state,
         ...loadedState,
@@ -287,46 +283,73 @@ export const postReducer = createReducer(
   })),
   //---------------EDIT COMMENT---------------------
   on(actions.editComment, (state) => ({ ...state })),
-  on(actions.editCommentSuccess, (state, { type: _, postId }) => {
-    const defaultReturn = { ...state };
-    const postIndex = state.data?.findIndex((p) => p.id === postId);
+  on(
+    actions.editCommentSuccess,
+    (state, { type: _, postId, commentId, commentText }) => {
+      const defaultReturn = { ...state };
+      const postIndex = state.data?.findIndex((p) => p.id === postId);
 
-    if (!isNil(postIndex) && !isNil(state.data)) {
-      const updatedPost = {
-        ...state.data[postIndex],
-        liked: false,
-      };
+      if (isNil(postIndex) || isNil(state.data)) {
+        return defaultReturn;
+      }
 
-      const updatedData = [
-        ...state.data.slice(0, postIndex),
-        updatedPost,
-        ...state.data.slice(postIndex + 1),
-      ];
+      const commentIndex = state.data[postIndex].commentsList.findIndex(
+        (comment) => comment.id === commentId
+      );
 
-      return {
-        ...state,
-        ...loadedState,
-        data: updatedData,
-      };
+      if (!isNil(commentIndex)) {
+        const updatedComment = {
+          ...state.data[postIndex].commentsList[commentIndex],
+        };
+        updatedComment.commentText = commentText;
+
+        const updatedPost = {
+          ...state.data[postIndex],
+          commentsList: [
+            ...state.data[postIndex].commentsList.slice(0, commentIndex),
+            updatedComment,
+            ...state.data[postIndex].commentsList.slice(commentIndex + 1),
+          ],
+        };
+
+        const updatedData = [
+          ...state.data.slice(0, postIndex),
+          updatedPost,
+          ...state.data.slice(postIndex + 1),
+        ];
+
+        return {
+          ...state,
+          ...loadedState,
+          data: updatedData,
+        };
+      }
+
+      return defaultReturn;
     }
-
-    return defaultReturn;
-  }),
+  ),
   on(actions.editCommentFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),
   //---------------DELETE COMMENT---------------------
   on(actions.deleteComment, (state) => ({ ...state })),
-  on(actions.deleteCommentSuccess, (state, { type: _, postId }) => {
+  on(actions.deleteCommentSuccess, (state, { type: _, postId, commentId }) => {
     const defaultReturn = { ...state };
     const postIndex = state.data?.findIndex((p) => p.id === postId);
 
     if (!isNil(postIndex) && !isNil(state.data)) {
+      const deletedCommentIndex = state.data[postIndex].commentsList.findIndex(
+        (comment) => comment.id === commentId
+      );
+      const updatedCommentsList = [
+        ...state.data[postIndex].commentsList.slice(0, deletedCommentIndex),
+        ...state.data[postIndex].commentsList.slice(deletedCommentIndex + 1),
+      ];
       const updatedPost = {
         ...state.data[postIndex],
         commentsCount: state.data[postIndex].commentsCount - 1,
-        liked: false,
+        commentsList: updatedCommentsList,
       };
 
       const updatedData = [
