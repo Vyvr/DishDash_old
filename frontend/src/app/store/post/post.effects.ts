@@ -40,6 +40,20 @@ export class PostEffects {
     )
   );
 
+  addToMenuBookEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.addToMenuBook),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.addToMenuBook(payload).pipe(
+          map((response) => {
+            return actions.addToMenuBookSuccess(response);
+          }),
+          catchError((error) => of(actions.addToMenuBookFailure(error)))
+        )
+      )
+    )
+  );
+
   addImagesEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.addImages),

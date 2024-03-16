@@ -4,6 +4,8 @@ import { PostServiceClient } from 'src/app/pb/PostServiceClientPb';
 import {
   AddPostImagesRequest,
   AddPostImagesResponse,
+  AddToMenuBookRequest,
+  AddToMenuBookResponse,
   CommentOperationMessageResponse,
   CommentPostRequest,
   CommentPostResponse,
@@ -48,6 +50,23 @@ export class PostApiService {
       CreatePostResponse,
       CreatePostResponse.AsObject
     >(request, this.postServiceClient.create.bind(this.postServiceClient));
+  }
+
+  addToMenuBook(
+    payload: AddToMenuBookRequest.AsObject
+  ): Observable<AddToMenuBookResponse.AsObject> {
+    const request = new AddToMenuBookRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      AddToMenuBookRequest,
+      AddToMenuBookResponse,
+      AddToMenuBookResponse.AsObject
+    >(
+      request,
+      this.postServiceClient.addToMenuBook.bind(this.postServiceClient)
+    );
   }
 
   addImages(

@@ -7,6 +7,7 @@ import * as selectors from './post.selectors';
 import { CreatePostPayload } from './post.model';
 import {
   AddPostImagesRequest,
+  AddToMenuBookRequest,
   CommentPostRequest,
   DeleteCommentRequest,
   EditCommentRequest,
@@ -24,6 +25,10 @@ export class PostFacade {
 
   createPost(payload: CreatePostPayload): void {
     this.store.dispatch(actions.createPost(payload));
+  }
+
+  addToMenuBook(payload: AddToMenuBookRequest.AsObject): void {
+    this.store.dispatch(actions.addToMenuBook(payload));
   }
 
   addImages(payload: AddPostImagesRequest.AsObject): void {

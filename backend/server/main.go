@@ -4,9 +4,9 @@ import (
 	"dish-dash/server/controllers"
 	"dish-dash/server/services/database_service"
 	"dish-dash/server/services/registrar_service"
-	// "dish-dash/server/services/socket_service"
-
 	"log"
+
+	// "dish-dash/server/services/socket_service"
 
 	"github.com/joho/godotenv"
 )

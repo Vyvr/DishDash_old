@@ -9,7 +9,9 @@ import "google/protobuf/timestamp.proto";
 service PostService {
     //@TODO Add delete and edit post methods
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
+    rpc AddToMenuBook(AddToMenuBookRequest) returns (AddToMenuBookResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
+    rpc GetFromMenuBookPosts(GetPostsFromMenuBookRequest) returns (GetPostsFromMenuBookResponse);
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
 
@@ -40,6 +42,21 @@ message Post {
     google.protobuf.Timestamp creation_date = 15;
 }
 
+message MenuBookPost {
+    string id = 1;
+    string owner_id = 2;
+    string owner_name = 3;
+    string owner_surname = 4;
+    string title = 5;
+    string ingredients = 6;
+    int64 portion_quantity = 7;
+    string preparation = 8;
+    repeated string pictures = 9;
+    repeated bytes pictures_data = 10;
+    google.protobuf.Timestamp creation_date = 11;
+}
+
+
 message Comment {
     string id = 1;
     string user_id = 2;
@@ -63,6 +80,17 @@ message GetPostsRequest {
 
 message GetPostsResponse {
     repeated Post posts = 1;
+}
+
+message GetPostsFromMenuBookRequest {
+    string token = 1;
+    int64 page = 2;
+    int64 page_size = 3;
+    optional string userId = 4;
+}
+
+message GetPostsFromMenuBookResponse {
+    repeated MenuBookPost posts = 1;
 }
 
 message GetImageStreamRequest {
@@ -95,6 +123,15 @@ message CreatePostResponse {
     string ingredients = 6;
     int64 portion_quantity = 7;
     string preparation = 8;
+}
+
+message AddToMenuBookRequest {
+    string post_id = 1;
+    string token = 2;
+}
+
+message AddToMenuBookResponse {
+    string post_id = 1;
 }
 
 message AddPostImagesRequest {

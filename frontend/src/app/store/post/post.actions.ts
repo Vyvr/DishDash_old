@@ -16,6 +16,8 @@ import {
   DeleteCommentRequest,
   CommentOperationMessageResponse,
   CommentPostResponse,
+  AddToMenuBookRequest,
+  AddToMenuBookResponse,
 } from 'src/app/pb/post_pb';
 import { CreatePostPayload } from './post.model';
 
@@ -34,6 +36,22 @@ export const createPostSuccess = createAction(
 
 export const createPostFailure = createAction(
   `[${moduleName}] Create post failure`,
+  props<{ message: string }>()
+);
+
+//---------------ADD TO MENU BOOK---------------------
+export const addToMenuBook = createAction(
+  `[${moduleName}] Add to menu book`,
+  props<AddToMenuBookRequest.AsObject>()
+);
+
+export const addToMenuBookSuccess = createAction(
+  `[${moduleName}] Add to menu book success`,
+  props<AddToMenuBookResponse.AsObject>()
+);
+
+export const addToMenuBookFailure = createAction(
+  `[${moduleName}] Add to menu book failure`,
   props<{ message: string }>()
 );
 

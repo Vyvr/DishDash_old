@@ -1,7 +1,8 @@
-:host {  // Ensures that the component itself fills the available space
-    display: block;
-    height: 100%;
-  }
+:host {
+  // Ensures that the component itself fills the available space
+  display: block;
+  height: 100%;
+}
 
 .dashboard-content-wrapper {
   display: grid;

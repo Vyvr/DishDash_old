@@ -10,6 +10,7 @@
 
   <ng-template #content>
     <div class="posts-outside-wrapper">
+      <div class="posts-left-panel"></div>
       <div class="posts-inside-wrapper">
         <div class="create-post-wrapper">
           <div class="create-post-content-wrapper">
@@ -28,6 +29,7 @@
               [post]="post"
               [isCommentsOpen]="post?.id === commentsOpenPostId"
               (toggleLike)="onToggleLike($event)"
+              (addToMenuBook)="onAddToMenuBook($event)"
               (newComment)="onNewComment($event)"
               (editComment)="onEditComment($event)"
               (deleteComment)="onDeleteComment($event)"
@@ -37,8 +39,8 @@
           </ng-container>
         </div>
       </div>
+      <div class="posts-right-panel"></div>
     </div>
-
     <create-post-modal></create-post-modal>
   </ng-template>
 </ng-container>

@@ -16,6 +16,7 @@ export class PostComponent implements OnInit {
   @Output() newComment = new EventEmitter<NewCommentEvent>();
   @Output() editComment = new EventEmitter<EditCommentEvent>();
   @Output() deleteComment = new EventEmitter<DeleteCommentEvent>();
+  @Output() addToMenuBook = new EventEmitter<string>();
   @Output() postCommentsOpen = new EventEmitter<string>();
   @Output() postCommentsClose = new EventEmitter<void>();
 
@@ -50,6 +51,14 @@ export class PostComponent implements OnInit {
     }
 
     this.toggleLike.emit({ postId, liked: this.post.liked });
+  }
+
+  onAddToMenuBook(): void {
+    if(isNil(this.post) || isNil(this.post.id)) {
+      return;
+    }
+
+    this.addToMenuBook.emit(this.post.id);
   }
 
   onNewComment(commentText: string): void {

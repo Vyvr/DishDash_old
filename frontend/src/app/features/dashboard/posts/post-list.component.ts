@@ -9,6 +9,7 @@ import { isNil } from 'lodash-es';
 import { combineLatest, filter, take } from 'rxjs';
 import { PostFacade } from 'src/app/store/post/post.facade';
 import {
+  AddToMenuBookRequest,
   CommentPostRequest,
   DeleteCommentRequest,
   EditCommentRequest,
@@ -178,6 +179,27 @@ export class PostListComponent extends OnDestroyMixin implements OnInit {
         }
 
         this.postFacade.deleteComment(payload);
+      });
+  }
+
+  onAddToMenuBook(postId: string): void {
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<AddToMenuBookRequest.AsObject>(
+          { postId },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.postFacade.addToMenuBook(payload);
       });
   }
 

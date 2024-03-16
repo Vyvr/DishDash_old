@@ -33,6 +33,19 @@ export const postReducer = createReducer(
       ...errorState(message),
     };
   }),
+  //---------------CREATE---------------------
+  on(actions.addToMenuBook, (state) => ({ ...state })),
+  on(actions.addToMenuBookSuccess, (state) => {
+    return {
+      ...state,
+    };
+  }),
+  on(actions.addToMenuBookFailure, (state, { message }) => {
+    return {
+      ...state,
+      ...errorState(message),
+    };
+  }),
   //---------------ADD IMAGES---------------------
   on(actions.addImages, (state) => ({ ...state, ...loadingState })),
   on(actions.addImagesSuccess, (state) => ({ ...state, ...loadedState })),

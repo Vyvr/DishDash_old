@@ -79,6 +79,61 @@ func (s *server) Create(ctx context.Context, in *post.CreatePostRequest) (*post.
 	}, nil
 }
 
+func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookRequest) (*post.AddToMenuBookResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostEntity
+	err = db.Where("id = ?", in.PostId).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	postInMenuBook := &entities.PostInMenuBookEntity{
+		OriginalPostId:  postEntity.Id,
+		OwnerId:         postEntity.OwnerId,
+		HolderId:        userEntity.Id,
+		OwnerName:       postEntity.OwnerName,
+		OwnerSurname:    postEntity.OwnerSurname,
+		Title:           postEntity.Title,
+		Ingredients:     postEntity.Ingredients,
+		PortionQuantity: postEntity.PortionQuantity,
+		Preparation:     postEntity.Preparation,
+		CreationDate:    postEntity.CreationDate,
+	}
+
+	/*@TODO do something with this fucking logger
+	* without this switches it's logging "not found"
+	* for every not liked post. It's annoying
+	 */
+	// Backup the original logger
+	originalLogger := db.Logger
+
+	// Set a temporary logger that ignores "record not found" errors
+	db.Logger = db.Logger.LogMode(logger.Silent)
+
+	if err := db.Where("original_post_id = ? AND holder_id = ?", postEntity.Id, userEntity.Id).Find(&entities.PostInMenuBookEntity{}).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+	}
+
+	// Restore the original logger
+	db.Logger = originalLogger
+
+	result := db.Create(postInMenuBook)
+	if err := result.Error; err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &post.AddToMenuBookResponse{PostId: in.PostId}, nil
+}
+
 func (s *server) AddImages(ctx context.Context, in *post.AddPostImagesRequest) (*post.AddPostImagesResponse, error) {
 	db := database_service.GetDBInstance()
 
@@ -230,6 +285,54 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 	return &post.GetPostsResponse{
 		Posts: grpcPosts,
 	}, nil
+}
+
+func (s *server) GetPostsFromMenuBook(ctx context.Context, in *post.GetPostsFromMenuBookRequest) (*post.GetPostsFromMenuBookResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	offset := int((in.Page - 1) * in.PageSize)
+
+	var menuBookPostEntities []*entities.PostInMenuBookEntity
+	result := db.Where("holder_id = ?", userEntity.Id).Order("creation_date DESC").Limit(int(in.PageSize)).
+		Offset(offset).
+		Find(&menuBookPostEntities)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var grpcPosts []*post.MenuBookPost
+	for _, postEntity := range menuBookPostEntities {
+		var picturesEntities []entities.PostPicturesEntity
+		db.Where("post_id = ?", postEntity.OriginalPostId).Find(&picturesEntities)
+
+		picturePaths := make([]string, 0, len(picturesEntities))
+		for _, pictureEntity := range picturesEntities {
+			picturePaths = append(picturePaths, pictureEntity.PicturePath)
+		}
+
+		grpcPost := &post.MenuBookPost{
+			Id:              postEntity.Id.String(),
+			OwnerId:         postEntity.OwnerId.String(),
+			OwnerName:       postEntity.OwnerName,
+			OwnerSurname:    postEntity.OwnerSurname,
+			Title:           postEntity.Title,
+			Ingredients:     postEntity.Ingredients,
+			PortionQuantity: postEntity.PortionQuantity,
+			Preparation:     postEntity.Preparation,
+			Pictures:        picturePaths,
+			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
+		}
+		grpcPosts = append(grpcPosts, grpcPost)
+	}
+
+	return &post.GetPostsFromMenuBookResponse{Posts: grpcPosts}, nil
 }
 
 func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.PostService_GetImageStreamServer) error {
