@@ -1,0 +1,37 @@
+
+syntax = "proto3";
+
+package menu_book_post;
+
+option go_package = "./pb/menu_book_post";
+
+import "google/protobuf/timestamp.proto";
+
+service MenuBookPostService {
+    rpc GetPostsFromMenuBook(GetPostsFromMenuBookRequest) returns (GetPostsFromMenuBookResponse);
+}
+
+message MenuBookPost {
+    string id = 1;
+    string owner_id = 2;
+    string owner_name = 3;
+    string owner_surname = 4;
+    string title = 5;
+    string ingredients = 6;
+    int64 portion_quantity = 7;
+    string preparation = 8;
+    repeated string pictures = 9;
+    repeated bytes pictures_data = 10;
+    google.protobuf.Timestamp creation_date = 11;
+}
+
+message GetPostsFromMenuBookRequest {
+    string token = 1;
+    int64 page = 2;
+    int64 page_size = 3;
+    optional string userId = 4;
+}
+
+message GetPostsFromMenuBookResponse {
+    repeated MenuBookPost posts = 1;
+}

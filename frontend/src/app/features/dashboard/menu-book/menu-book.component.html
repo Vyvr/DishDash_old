@@ -1,8 +1,29 @@
-<div class="menu-book-wrapper">
-    <div class="post-list-wrapper">
+<ng-container
+  *ngIf="{
+    menuBookPostState: menuBookPostState$ | async,
+    authState: authState$ | async
+  } as viewData"
+>
+  <ng-container *ngIf="viewData?.menuBookPostState?.loading; else content">
+    LOADING - TEMPLATE ADD A LOADER COMPONENT
+  </ng-container>
 
+  <ng-template #content>
+    <div class="menu-book-wrapper">
+      <div class="post-list-wrapper">
+        <ng-container *ngFor="let post of viewData?.menuBookPostState?.data">
+          <app-post-card
+            [post]="post"
+            [isSelected]="selectedPostId === post.id"
+            (postSelected)="onPostSelected(post.id)"
+          />
+        </ng-container>
+      </div>
+      <div class="post-content-wrapper">
+        <ng-container *ngIf="selectedPostId">
+          <app-post-content [post]="selectedPostData" />
+        </ng-container>
+      </div>
     </div>
-    <div class="post-content-wrapper">
-        
-    </div>
-</div>
+  </ng-template>
+</ng-container>

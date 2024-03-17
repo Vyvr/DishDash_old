@@ -11,7 +11,6 @@ service PostService {
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
     rpc AddToMenuBook(AddToMenuBookRequest) returns (AddToMenuBookResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
-    rpc GetFromMenuBookPosts(GetPostsFromMenuBookRequest) returns (GetPostsFromMenuBookResponse);
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
 
@@ -36,26 +35,12 @@ message Post {
     repeated string pictures = 9;
     repeated bytes pictures_data = 10;
     int64 likes_count = 11;
-    int64 comments_count = 12;
+    int64 comments_count = 12;  
     repeated Comment comments = 13;
     bool liked = 14;
-    google.protobuf.Timestamp creation_date = 15;
+    bool is_in_menu_book = 15;
+    google.protobuf.Timestamp creation_date = 16;
 }
-
-message MenuBookPost {
-    string id = 1;
-    string owner_id = 2;
-    string owner_name = 3;
-    string owner_surname = 4;
-    string title = 5;
-    string ingredients = 6;
-    int64 portion_quantity = 7;
-    string preparation = 8;
-    repeated string pictures = 9;
-    repeated bytes pictures_data = 10;
-    google.protobuf.Timestamp creation_date = 11;
-}
-
 
 message Comment {
     string id = 1;
@@ -82,16 +67,7 @@ message GetPostsResponse {
     repeated Post posts = 1;
 }
 
-message GetPostsFromMenuBookRequest {
-    string token = 1;
-    int64 page = 2;
-    int64 page_size = 3;
-    optional string userId = 4;
-}
 
-message GetPostsFromMenuBookResponse {
-    repeated MenuBookPost posts = 1;
-}
 
 message GetImageStreamRequest {
     string token = 1;

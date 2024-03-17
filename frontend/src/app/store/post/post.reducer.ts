@@ -23,6 +23,7 @@ export const postReducer = createReducer(
           commentsCount: 0,
           commentsList: [],
           liked: false,
+          isInMenuBook: false,
         },
       ],
     };
@@ -33,7 +34,7 @@ export const postReducer = createReducer(
       ...errorState(message),
     };
   }),
-  //---------------CREATE---------------------
+  //---------------ADD TO MENU BOOK---------------------
   on(actions.addToMenuBook, (state) => ({ ...state })),
   on(actions.addToMenuBookSuccess, (state) => {
     return {

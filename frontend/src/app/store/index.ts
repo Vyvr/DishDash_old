@@ -23,11 +23,18 @@ import {
   SocialState,
   socialReducer,
 } from './social';
+import {
+  MenuBookPostEffects,
+  MenuBookPostFacade,
+  MenuBookPostsState,
+  menubookPostReducer,
+} from './menuBookPost';
 
 export interface AppState {
   auth: AuthState;
   search: SearchState;
   post: PostsState;
+  menuBook: MenuBookPostsState;
   social: SocialState;
 }
 
@@ -35,12 +42,25 @@ export const reducers = {
   auth: authReducer,
   search: searchReducer,
   post: postReducer,
+  menuBook: menubookPostReducer,
   social: socialReducer,
 };
 
-export const effects = [AuthEffects, SearchEffects, PostEffects, SocialEffects];
+export const effects = [
+  AuthEffects,
+  SearchEffects,
+  PostEffects,
+  MenuBookPostEffects,
+  SocialEffects,
+];
 
-export const facades = [AuthFacade, SearchFacade, PostFacade, SocialFacade];
+export const facades = [
+  AuthFacade,
+  SearchFacade,
+  PostFacade,
+  MenuBookPostFacade,
+  SocialFacade,
+];
 
 export function localStorageSyncReducer(
   reducer: ActionReducer<any>

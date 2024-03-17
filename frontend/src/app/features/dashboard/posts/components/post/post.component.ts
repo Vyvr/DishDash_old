@@ -54,7 +54,7 @@ export class PostComponent implements OnInit {
   }
 
   onAddToMenuBook(): void {
-    if(isNil(this.post) || isNil(this.post.id)) {
+    if(isNil(this.post) || isNil(this.post.id) || this.post.isInMenuBook) {
       return;
     }
 

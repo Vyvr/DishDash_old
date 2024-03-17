@@ -10,6 +10,7 @@ import { SettingsComponent } from './features/dashboard/settings/settings.compon
 import { canEnterGuard } from './core/guards/can-enter.guard';
 import { canActivateDashboard } from './core/guards/can-activate-dashboard.guard';
 import { canActivatePosts } from './core/guards/can-activate-posts.guard';
+import { canActivateMenuBook } from './core/guards/can-activate-menu-book.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -28,7 +29,11 @@ const routes: Routes = [
             canActivate: [canActivatePosts],
             component: PostListComponent,
           },
-          { path: 'menu-book', component: MenuBookComponent },
+          {
+            path: 'menu-book',
+            canActivate: [canActivateMenuBook],
+            component: MenuBookComponent,
+          },
           { path: 'market', component: MarketComponent },
           { path: 'farmers', component: FarmersComponent },
           { path: 'settings', component: SettingsComponent },

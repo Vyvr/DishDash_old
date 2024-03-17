@@ -1,0 +1,8 @@
+<div
+  class="{{ isSelected ? 'selected-post-card-wrapper' : 'post-card-wrapper' }}"
+  (click)="selectPost()"
+>
+  <div class="post-card-title">
+    {{ post?.title }}
+  </div>
+</div>

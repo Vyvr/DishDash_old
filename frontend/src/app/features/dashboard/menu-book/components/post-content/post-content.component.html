@@ -1,0 +1,23 @@
+<div class="post-content-wrapper">
+  <div class="post-content-header">
+    <div class="post-content-title">{{ post?.title }}</div>
+    <div class="post-content-creation-date">
+      {{ "Created: " + creationDate }}
+    </div>
+    <div class="post-content-owner">
+      {{ "by: " + post?.ownerName + " " + post?.ownerSurname }}
+    </div>
+  </div>
+  <div class="post-content-portion-quantity">
+    Portion for {{ post?.portionQuantity }}
+    {{ post?.portionQuantity != 1 ? "persons" : "person" }}
+  </div>
+  <div class="post-content-ingredients">
+    <h2>Ingredients:</h2>
+    {{ post?.ingredients }}
+  </div>
+  <div class="post-content-ingredients">
+    <h2>Preparation:</h2>
+    {{ post?.preparation }}
+  </div>
+</div>

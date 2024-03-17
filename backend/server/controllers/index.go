@@ -2,8 +2,9 @@ package controllers
 
 import (
 	"dish-dash/server/controllers/auth"
-	"dish-dash/server/controllers/user"
+	"dish-dash/server/controllers/menu_book_post"
 	"dish-dash/server/controllers/post"
+	"dish-dash/server/controllers/user"
 )
 
 func Register() {
@@ -11,4 +12,5 @@ func Register() {
 	auth.RegisterServer()
 	user.RegisterServer()
 	post.RegisterServer()
+	menu_book_post.RegisterServer()
 }

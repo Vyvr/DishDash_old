@@ -34,6 +34,8 @@ import { DdPicturesGridComponent } from './shared/components/dd-pictures-grid/dd
 import { DdModalComponent } from './shared/components/dd-modal/dd-modal.component';
 import { CommentsModalComponent } from './features/dashboard/posts/components/post/components/comments-modal/comments-modal.component';
 import { CommentTileComponent } from './features/dashboard/posts/components/post/components/comments-modal/components/comment-tile/comment-tile.component';
+import { PostCardComponent } from './features/dashboard/menu-book/components/post-card/post-card.component';
+import { PostContentComponent } from './features/dashboard/menu-book/components/post-content/post-content.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -60,6 +62,8 @@ const devImports = [
     DdModalComponent,
     CommentsModalComponent,
     CommentTileComponent,
+    PostCardComponent,
+    PostContentComponent,
   ],
   imports: [
     BrowserModule,

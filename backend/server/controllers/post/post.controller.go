@@ -236,6 +236,7 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
 		db.Where("post_id = ?", postEntity.Id).Find(&picturesEntities)
 
+		// check if post is liked
 		/*@TODO do something with this fucking logger
 		* without this switches it's logging "not found"
 		* for every not liked post. It's annoying
@@ -256,6 +257,16 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 			liked = true
 		}
 
+		//check if post is in menu book
+		var isInMenuBook = false
+		err = db.Where("holder_id = ? AND original_post_id = ?", userEntity.Id.String(), postEntity.Id).First(&entities.PostInMenuBookEntity{}).Error
+		if err != nil {
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				log.Printf("Unexpected error while checking post like status: %v", err)
+			}
+		} else {
+			isInMenuBook = true
+		}
 		// Restore the original logger
 		db.Logger = originalLogger
 
@@ -277,6 +288,7 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 			LikesCount:      postEntity.LikesCount,
 			CommentsCount:   postEntity.CommentsCount,
 			Liked:           liked,
+			IsInMenuBook:    isInMenuBook,
 			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
 		}
 		grpcPosts = append(grpcPosts, grpcPost)
@@ -285,54 +297,6 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 	return &post.GetPostsResponse{
 		Posts: grpcPosts,
 	}, nil
-}
-
-func (s *server) GetPostsFromMenuBook(ctx context.Context, in *post.GetPostsFromMenuBookRequest) (*post.GetPostsFromMenuBookResponse, error) {
-	db := database_service.GetDBInstance()
-
-	userEntity, err := auth_service.ValidateToken(in.Token)
-
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
-	}
-
-	offset := int((in.Page - 1) * in.PageSize)
-
-	var menuBookPostEntities []*entities.PostInMenuBookEntity
-	result := db.Where("holder_id = ?", userEntity.Id).Order("creation_date DESC").Limit(int(in.PageSize)).
-		Offset(offset).
-		Find(&menuBookPostEntities)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var grpcPosts []*post.MenuBookPost
-	for _, postEntity := range menuBookPostEntities {
-		var picturesEntities []entities.PostPicturesEntity
-		db.Where("post_id = ?", postEntity.OriginalPostId).Find(&picturesEntities)
-
-		picturePaths := make([]string, 0, len(picturesEntities))
-		for _, pictureEntity := range picturesEntities {
-			picturePaths = append(picturePaths, pictureEntity.PicturePath)
-		}
-
-		grpcPost := &post.MenuBookPost{
-			Id:              postEntity.Id.String(),
-			OwnerId:         postEntity.OwnerId.String(),
-			OwnerName:       postEntity.OwnerName,
-			OwnerSurname:    postEntity.OwnerSurname,
-			Title:           postEntity.Title,
-			Ingredients:     postEntity.Ingredients,
-			PortionQuantity: postEntity.PortionQuantity,
-			Preparation:     postEntity.Preparation,
-			Pictures:        picturePaths,
-			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
-		}
-		grpcPosts = append(grpcPosts, grpcPost)
-	}
-
-	return &post.GetPostsFromMenuBookResponse{Posts: grpcPosts}, nil
 }
 
 func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.PostService_GetImageStreamServer) error {
