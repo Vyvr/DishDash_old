@@ -27,11 +27,12 @@ export class CommentTileComponent implements OnInit, OnChanges {
 
   @Output() editComment = new EventEmitter<PartialEditCommentEvent>();
   @Output() deleteComment = new EventEmitter<PartialDeleteCommentEvent>();
+  @Output() contextMenuToggler = new EventEmitter<string | null>();
 
   @ViewChild('contextMenu') contextMenu!: ElementRef;
   @ViewChild('optionsButton') optionsButton!: ElementRef<HTMLButtonElement>;
 
-  isContextMenuOpen = false;
+  @Input() isContextMenuOpen = false;
   commentText: string = '';
 
   isEditMode: boolean = false;
@@ -67,25 +68,19 @@ export class CommentTileComponent implements OnInit, OnChanges {
 
   toggleContextMenu(event: MouseEvent): void {
     event.stopPropagation();
-    this.isContextMenuOpen = !this.isContextMenuOpen;
 
-    if (this.isContextMenuOpen) {
-      setTimeout(() => {
-        const buttonRect =
-          this.optionsButton.nativeElement.getBoundingClientRect();
-        const menuElement = this.contextMenu.nativeElement;
-
-        menuElement.style.top = `${buttonRect.bottom + window.scrollY}px`;
-        menuElement.style.left = `${buttonRect.left + window.scrollX}px`;
-      }, 0);
+    if (!this.isContextMenuOpen) {
+      this.contextMenuToggler.emit(this.data?.id);
+      return;
     }
+    this.contextMenuToggler.emit(null);
   }
 
   @HostListener('document:click', ['$event'])
   closeContextMenu(event: MouseEvent): void {
     if (!this._eref.nativeElement.contains(event.target)) {
-      this.isContextMenuOpen = false;
     }
+    this.contextMenuToggler.emit(null);
   }
 
   onEditComment(): void {
@@ -112,7 +107,6 @@ export class CommentTileComponent implements OnInit, OnChanges {
 
   toggleEditMode(): void {
     this.isEditMode = !this.isEditMode;
-    this.isContextMenuOpen = !this.isContextMenuOpen;
   }
 
   cancelEditComment(): void {

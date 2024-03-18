@@ -9,6 +9,8 @@
         <div *ngFor="let comment of commentsList">
           <app-comment-tile
             [data]="comment"
+            [isContextMenuOpen]="commentContextMenuOpen === comment.id"
+            (contextMenuToggler)="onContextMenuToggle($event)"
             (editComment)="onEditComment($event)"
             (deleteComment)="onDeleteComment($event)"
           ></app-comment-tile>

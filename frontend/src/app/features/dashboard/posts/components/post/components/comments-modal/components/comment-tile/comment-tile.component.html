@@ -13,10 +13,18 @@
             [(ngModel)]="commentText"
             placeholder="Edit comment"
           ></textarea>
-          <button class="icon-button" *ngIf="isEditMode" (click)="onEditComment()">
+          <button
+            class="icon-button"
+            *ngIf="isEditMode"
+            (click)="onEditComment()"
+          >
             <svg-icon src="assets/confirm-icon.svg" alt="Confirm"></svg-icon>
           </button>
-          <button class="icon-button" *ngIf="isEditMode" (click)="cancelEditComment()">
+          <button
+            class="icon-button"
+            *ngIf="isEditMode"
+            (click)="cancelEditComment()"
+          >
             <svg-icon src="assets/close-icon.svg" alt="Cancel"></svg-icon>
           </button>
         </div>
@@ -25,17 +33,22 @@
 
     <div class="right-side">
       <div *ngIf="data?.owned" class="options-button-wrapper">
-        <button (click)="toggleContextMenu($event)" #optionsButton>...</button>
+        <button
+          (click)="toggleContextMenu($event)"
+          *ngIf="!isEditMode"
+          #optionsButton
+        >
+          ...
+        </button>
+        <div class="context-menu" *ngIf="isContextMenuOpen" #contextMenu>
+          <ul>
+            <li (click)="toggleEditMode()">Edit</li>
+            <li (click)="onDeleteComment()">Delete</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="comment-tile-date">{{ creationDate }}</div>
-</div>
-
-<div class="context-menu" *ngIf="isContextMenuOpen" #contextMenu>
-  <ul>
-    <li (click)="toggleEditMode()">Edit</li>
-    <li (click)="onDeleteComment()">Delete</li>
-  </ul>
 </div>

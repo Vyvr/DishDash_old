@@ -8,10 +8,11 @@
 }
 
 .left-side {
-  flex-grow: 1; /* Take up the available space */
+  flex-grow: 1;
 }
 
 .right-side {
+  position: relative;
   margin-left: 10px;
 }
 
@@ -53,9 +54,10 @@
   resize: none;
 }
 
-/* context-menu.component.scss */
 .context-menu {
   position: absolute;
+  top: 65%;
+  right: 10%;
   border: 1px solid #ccc;
   background-color: #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);

@@ -1,5 +1,7 @@
 .post-content-wrapper {
-padding: 20px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 10px 10px 10px;
   font-size: 18px;
 }
 
@@ -7,27 +9,27 @@ padding: 20px 10px 10px 10px;
 }
 
 .post-content-title {
-    font-size: 2em;
-    font-weight: 700;
+  font-size: 2em;
+  font-weight: 700;
 }
 
 .post-content-creation-date {
-    font-size: 16px;
-    color: rgba(71, 71, 71, 0.588);
+  font-size: 16px;
+  color: rgba(71, 71, 71, 0.588);
 }
 
 .post-content-owner {
-    font-size: 16px;
-    color: rgba(71, 71, 71, 0.588);
-
+  font-size: 16px;
+  color: rgba(71, 71, 71, 0.588);
 }
 
 .post-content-portion-quantity {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .post-content-ingredients {
 }
 
-.post-content-ingredients {
+.post-content-preparation pre {
+  font-family: Arial, Helvetica, sans-serif;
 }

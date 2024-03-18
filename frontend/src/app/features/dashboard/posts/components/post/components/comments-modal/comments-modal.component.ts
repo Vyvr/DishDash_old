@@ -23,6 +23,8 @@ export class CommentsModalComponent {
   @Output() editComment = new EventEmitter<PartialEditCommentEvent>();
   @Output() deleteComment = new EventEmitter<PartialDeleteCommentEvent>();
 
+  commentContextMenuOpen: string | null = null;
+
   formGroup: FormGroup | null = null;
 
   constructor(private formBuilder: FormBuilder) {}
@@ -53,5 +55,11 @@ export class CommentsModalComponent {
 
   onDeleteComment({commentId}: PartialDeleteCommentEvent): void {
     this.deleteComment.emit({commentId});
+  }
+
+  onContextMenuToggle(commentId: string|null): void {
+    console.log(commentId)
+    this.commentContextMenuOpen = commentId
+    console.log(this.commentContextMenuOpen)
   }
 }
