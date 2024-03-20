@@ -2,7 +2,6 @@ package menu_book_post
 
 import (
 	"context"
-	"log"
 
 	"dish-dash/pb/menu_book_post"
 	"dish-dash/server/entities"
@@ -29,7 +28,6 @@ func (s *server) GetPostsFromMenuBook(ctx context.Context, in *menu_book_post.Ge
 	}
 
 	offset := int((in.Page - 1) * in.PageSize)
-	log.Println("before getting posts")
 
 	var menuBookPostEntities []*entities.PostInMenuBookEntity
 	result := db.Where("holder_id = ?", userEntity.Id).Order("creation_date DESC").Limit(int(in.PageSize)).
@@ -52,6 +50,7 @@ func (s *server) GetPostsFromMenuBook(ctx context.Context, in *menu_book_post.Ge
 
 		grpcPost := &menu_book_post.MenuBookPost{
 			Id:              postEntity.Id.String(),
+			OriginalPostId:  postEntity.OriginalPostId.String(),
 			OwnerId:         postEntity.OwnerId.String(),
 			OwnerName:       postEntity.OwnerName,
 			OwnerSurname:    postEntity.OwnerSurname,

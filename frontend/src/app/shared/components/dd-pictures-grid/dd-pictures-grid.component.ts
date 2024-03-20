@@ -6,6 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./dd-pictures-grid.component.scss'],
 })
 export class DdPicturesGridComponent{
-  @Input() images: string[] = [];
+  @Input() images?: string[] | null = [];
   @Input() itemsCount: number = 0;
 }

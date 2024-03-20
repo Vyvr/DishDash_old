@@ -13,16 +13,17 @@ service MenuBookPostService {
 
 message MenuBookPost {
     string id = 1;
-    string owner_id = 2;
-    string owner_name = 3;
-    string owner_surname = 4;
-    string title = 5;
-    string ingredients = 6;
-    int64 portion_quantity = 7;
-    string preparation = 8;
-    repeated string pictures = 9;
-    repeated bytes pictures_data = 10;
-    google.protobuf.Timestamp creation_date = 11;
+    string original_post_id = 2;
+    string owner_id = 3;
+    string owner_name = 4;
+    string owner_surname = 5;
+    string title = 6;
+    string ingredients = 7;
+    int64 portion_quantity = 8;
+    string preparation = 9;
+    repeated string pictures = 10;
+    repeated bytes pictures_data = 11;
+    google.protobuf.Timestamp creation_date = 12;
 }
 
 message GetPostsFromMenuBookRequest {

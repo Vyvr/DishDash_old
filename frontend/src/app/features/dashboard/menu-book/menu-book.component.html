@@ -1,7 +1,9 @@
 <ng-container
   *ngIf="{
     menuBookPostState: menuBookPostState$ | async,
-    authState: authState$ | async
+    selectedPostData: selectedPostData$ | async,
+    selectedPostId: selectedPostId$ | async,
+    images: images$ | async
   } as viewData"
 >
   <ng-container *ngIf="viewData?.menuBookPostState?.loading; else content">
@@ -14,14 +16,17 @@
         <ng-container *ngFor="let post of viewData?.menuBookPostState?.data">
           <app-post-card
             [post]="post"
-            [isSelected]="selectedPostId === post.id"
+            [isSelected]="viewData?.selectedPostId === post.id"
             (postSelected)="onPostSelected(post.id)"
           />
         </ng-container>
       </div>
       <div class="post-content-wrapper">
-        <ng-container *ngIf="selectedPostId">
-          <app-post-content [post]="selectedPostData" />
+        <ng-container *ngIf="viewData?.selectedPostId">
+          <app-post-content
+            [post]="viewData?.selectedPostData"
+            [images]="viewData?.images"
+          />
         </ng-container>
       </div>
     </div>

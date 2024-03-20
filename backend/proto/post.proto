@@ -67,8 +67,6 @@ message GetPostsResponse {
     repeated Post posts = 1;
 }
 
-
-
 message GetImageStreamRequest {
     string token = 1;
     string picture_path = 2;

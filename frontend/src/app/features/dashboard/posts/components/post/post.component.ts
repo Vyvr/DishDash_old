@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { isEmpty, isNil } from 'lodash-es';
 import { InternalPost } from 'src/app/store/post';
 import { DeleteCommentEvent, EditCommentEvent, NewCommentEvent, PartialDeleteCommentEvent, PartialEditCommentEvent, ToggleLikeEvent } from './post.model';
+import { base64ToBlob } from 'src/app/features/utils';
 
 @Component({
   selector: 'app-post',
@@ -104,24 +105,11 @@ export class PostComponent implements OnInit {
         return;
       }
       const base64String: string = picture.data?.toString();
-      const imageBlob = this._base64ToBlob(base64String, contentType);
+      const imageBlob = base64ToBlob(base64String, contentType);
 
       const imageUrl = URL.createObjectURL(imageBlob);
       this.itemsLoadingSquareCount -= 1;
       this.urlImages.push(imageUrl);
     });
-  }
-
-  private _base64ToBlob(base64: string, contentType: string): Blob {
-    // Decode base64 string
-    const binaryString = window.atob(base64);
-    // Create a Uint8Array from binary string
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    // Create and return a Blob from the Uint8Array
-    return new Blob([bytes], { type: contentType });
   }
 }

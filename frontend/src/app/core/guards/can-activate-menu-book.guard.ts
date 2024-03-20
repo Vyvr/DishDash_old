@@ -17,8 +17,6 @@ export const canActivateMenuBook: CanActivateFn = (): Observable<
 
   const errorPageUrlTree = router.createUrlTree(['/', 'generic-error']);
 
-  console.log('start');
-
   return authFacade.authState$.pipe(
     take(1),
     map((authState) => {

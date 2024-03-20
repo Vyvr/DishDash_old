@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { isNil } from 'lodash-es';
-import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
+import { InternalMenuBookPost } from 'src/app/store/menuBookPost/menuBookPost.model';
 
 @Component({
   selector: 'app-post-card',
@@ -8,7 +8,7 @@ import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
   styleUrls: ['./post-card.component.scss'],
 })
 export class PostCardComponent {
-  @Input() post: MenuBookPost.AsObject | null = null;
+  @Input() post: InternalMenuBookPost | null = null;
   @Input() isSelected: boolean = false;
 
   @Output() postSelected = new EventEmitter<string>();

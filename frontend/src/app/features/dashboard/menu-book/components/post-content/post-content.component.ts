@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { isNil } from 'lodash-es';
-import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
+import { InternalMenuBookPost } from 'src/app/store/menuBookPost/menuBookPost.model';
 
 @Component({
   selector: 'app-post-content',
@@ -8,7 +8,8 @@ import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
   styleUrls: ['./post-content.component.scss'],
 })
 export class PostContentComponent implements OnInit {
-  @Input() post: MenuBookPost.AsObject | undefined = undefined;
+  @Input() post?: InternalMenuBookPost | null = null;
+  @Input() images?: string[] | null = [];
 
   creationDate: Date | string | null = null;
 
@@ -20,12 +21,6 @@ export class PostContentComponent implements OnInit {
       this.creationDate = new Date(
         this.post?.creationDate?.seconds * 1000
       ).toDateString();
-
-      // if (this.post.pictures) {
-      //   this.itemsLoadingSquareCount = this.post.pictures.length;
-      // }
-
-      // this._loadPictures();
 
       return;
     }

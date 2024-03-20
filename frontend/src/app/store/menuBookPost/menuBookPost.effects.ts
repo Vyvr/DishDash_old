@@ -7,6 +7,7 @@ import * as actions from './menuBookPost.actions';
 import { catchError, concatMap, map, of } from 'rxjs';
 import { MenuBookPostFacade } from './menuBookPost.facade';
 import { MenuBookPostApiService } from 'src/app/core/api/menu-book-api.service';
+import { PostApiService } from 'src/app/core/api/post-api.service';
 
 @Injectable()
 export class MenuBookPostEffects {
@@ -14,6 +15,7 @@ export class MenuBookPostEffects {
     private actions$: Actions,
     private store: Store<AppState>,
     private menuBookPostApoService: MenuBookPostApiService,
+    private postApiService: PostApiService,
     private postFacade: MenuBookPostFacade
   ) {}
 
@@ -45,17 +47,17 @@ export class MenuBookPostEffects {
   //   )
   // );
 
-  // getImageStreamEffect$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(actions.getImageStream),
-  //     concatMap(({ type: _, ...payload }) =>
-  //       this.postApiService.getImageStream(payload).pipe(
-  //         map((response) => {
-  //           return actions.getImageStreamSuccess(response);
-  //         }),
-  //         catchError((error) => of(actions.getImageStreamFailure(error)))
-  //       )
-  //     )
-  //   )
-  // );
+  getImageStreamEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.getImageStream),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.getImageStream(payload).pipe(
+          map((response) => {
+            return actions.getImageStreamSuccess(response);
+          }),
+          catchError((error) => of(actions.getImageStreamFailure(error)))
+        )
+      )
+    )
+  );
 }

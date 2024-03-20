@@ -7,7 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { isNil } from 'lodash-es';
-import { PartialDeleteCommentEvent, PartialEditCommentEvent } from '../../post.model';
+import {
+  PartialDeleteCommentEvent,
+  PartialEditCommentEvent,
+} from '../../post.model';
 
 @Component({
   selector: 'app-comments-modal',
@@ -49,17 +52,15 @@ export class CommentsModalComponent {
     this.newComment.emit(this.formGroup.get('commentText')?.value);
   }
 
-  onEditComment({commentId, commentText}: PartialEditCommentEvent): void {
-    this.editComment.emit({commentId, commentText});
+  onEditComment({ commentId, commentText }: PartialEditCommentEvent): void {
+    this.editComment.emit({ commentId, commentText });
   }
 
-  onDeleteComment({commentId}: PartialDeleteCommentEvent): void {
-    this.deleteComment.emit({commentId});
+  onDeleteComment({ commentId }: PartialDeleteCommentEvent): void {
+    this.deleteComment.emit({ commentId });
   }
 
-  onContextMenuToggle(commentId: string|null): void {
-    console.log(commentId)
-    this.commentContextMenuOpen = commentId
-    console.log(this.commentContextMenuOpen)
+  onContextMenuToggle(commentId: string | null): void {
+    this.commentContextMenuOpen = commentId;
   }
 }

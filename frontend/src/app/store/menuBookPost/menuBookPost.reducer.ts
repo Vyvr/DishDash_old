@@ -1,9 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
-import { initialState } from './menuBookPost.model';
+import { InternalMenuBookPost, initialState } from './menuBookPost.model';
 
 import * as actions from './menuBookPost.actions';
 import { errorState, loadedState, loadingState } from '../utils';
-import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
+import { isNil } from 'lodash-es';
 // import { isNil } from 'lodash-es';
 
 export const menubookPostReducer = createReducer(
@@ -23,9 +23,10 @@ export const menubookPostReducer = createReducer(
     );
 
     // Transform new posts to match the InternalPost structure
-    const transformedNewPosts = newUniquePosts.map<MenuBookPost.AsObject>(
-      ({ ...post }) => ({
+    const transformedNewPosts = newUniquePosts.map<InternalMenuBookPost>(
+      ({ picturesList, picturesDataList: _, ...post }) => ({
         ...post,
+        pictures: picturesList.map((path) => ({ path })),
       })
     );
     // const transformedNewPosts = newUniquePosts.map<InternalMenuBookPost>(
@@ -56,42 +57,42 @@ export const menubookPostReducer = createReducer(
   //   ...errorState(message),
   // })),
   //---------------GET IMAGE STREAM---------------------
-//   on(actions.getImageStream, (state) => ({ ...state })),
-//   on(
-//     actions.getImageStreamSuccess,
-//     (state, { type: _, imageData, postId, picturePath }) => {
-//       const defaultReturn = { ...state };
+  on(actions.getImageStream, (state) => ({ ...state })),
+  on(
+    actions.getImageStreamSuccess,
+    (state, { type: _, imageData, postId, picturePath }) => {
+      const defaultReturn = { ...state };
 
-//       if (isNil(state.data)) {
-//         return defaultReturn;
-//       }
+      if (isNil(state.data)) {
+        return defaultReturn;
+      }
 
-//       const post = state.data.find((post) => post.id === postId);
+      const post = state.data.find((post) => post.originalPostId === postId);
 
-//       if (isNil(post)) {
-//         return defaultReturn;
-//       }
+      if (isNil(post)) {
+        return defaultReturn;
+      }
 
-//       const updatedPost = {
-//         ...post,
-//         pictures: post.pictures.map(({ path, data }) => ({
-//           path,
-//           data: path === picturePath ? imageData : data,
-//         })),
-//       };
+      const updatedPost = {
+        ...post,
+        pictures: post.pictures.map(({ path, data }) => ({
+          path,
+          data: path === picturePath ? imageData : data,
+        })),
+      };
 
-//       return {
-//         ...state,
-//         data: [
-//           ...new Map(
-//             [...(state.data ?? []), updatedPost].map((post) => [post.id, post])
-//           ).values(),
-//         ],
-//       };
-//     }
-//   ),
-//   on(actions.getImageStreamFailure, (state, { message }) => ({
-//     ...state,
-//     ...errorState(message),
-//   }))
+      return {
+        ...state,
+        data: [
+          ...new Map(
+            [...(state.data ?? []), updatedPost].map((post) => [post.id, post])
+          ).values(),
+        ],
+      };
+    }
+  ),
+  on(actions.getImageStreamFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  }))
 );

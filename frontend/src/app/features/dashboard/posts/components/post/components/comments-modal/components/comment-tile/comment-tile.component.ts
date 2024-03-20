@@ -101,7 +101,6 @@ export class CommentTileComponent implements OnInit, OnChanges {
     if (isNil(this.data)) {
       return;
     }
-    console.log(this.data);
     this.deleteComment.emit({ commentId: this.data.id });
   }
 
