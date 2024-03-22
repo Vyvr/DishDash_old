@@ -9,6 +9,8 @@ import "google/protobuf/timestamp.proto";
 
 service MenuBookPostService {
     rpc GetPostsFromMenuBook(GetPostsFromMenuBookRequest) returns (GetPostsFromMenuBookResponse);
+    rpc DeleteFromMenuBook(DeleteFromMenuBookRequest) returns (DeleteFromMenuBookResponse);
+    rpc EditMenuBookPost(EditMenuBookPostRequest) returns (EditMenuBookPostResponse);
 }
 
 message MenuBookPost {
@@ -35,4 +37,28 @@ message GetPostsFromMenuBookRequest {
 
 message GetPostsFromMenuBookResponse {
     repeated MenuBookPost posts = 1;
+}
+
+message DeleteFromMenuBookRequest {
+    string token = 1;
+    string post_id = 2;
+}
+
+message DeleteFromMenuBookResponse {
+    string  post_id = 1;
+}
+
+message EditMenuBookPostRequest {
+    string token = 1;
+    string post_id = 2;
+    string title = 3; 
+    string ingredients = 4;
+    string preparation = 5;
+}
+
+message EditMenuBookPostResponse {
+    string  post_id = 1;
+    string title = 3; 
+    string ingredients = 4;
+    string preparation = 5;
 }

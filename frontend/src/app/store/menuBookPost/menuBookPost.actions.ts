@@ -1,11 +1,17 @@
 import { createAction, props } from '@ngrx/store';
-import { GetPostsFromMenuBookRequest, GetPostsFromMenuBookResponse } from 'src/app/pb/menu_book_post_pb';
+import {
+  DeleteFromMenuBookRequest,
+  DeleteFromMenuBookResponse,
+  EditMenuBookPostRequest,
+  EditMenuBookPostResponse,
+  GetPostsFromMenuBookRequest,
+  GetPostsFromMenuBookResponse,
+} from 'src/app/pb/menu_book_post_pb';
 import {
   AddPostImagesRequest,
   AddPostImagesResponse,
   GetImageStreamRequest,
   GetImageStreamResponse,
-
 } from 'src/app/pb/post_pb';
 
 const moduleName = 'MenuBookPosts';
@@ -58,5 +64,37 @@ export const getImageStreamSuccess = createAction(
 
 export const getImageStreamFailure = createAction(
   `[${moduleName}] Get image stream failure`,
+  props<{ message: string }>()
+);
+
+//---------------DELETE FROM MENU BOOK---------------------
+export const deleteFromMenuBook = createAction(
+  `[${moduleName}] Delete from menu book`,
+  props<DeleteFromMenuBookRequest.AsObject>()
+);
+
+export const deleteFromMenuBookSuccess = createAction(
+  `[${moduleName}] Delete from menu book success`,
+  props<DeleteFromMenuBookResponse.AsObject>()
+);
+
+export const deleteFromMenuBookFailure = createAction(
+  `[${moduleName}] Delete from menu book failure`,
+  props<{ message: string }>()
+);
+
+//---------------EDIT MENU BOOK POST---------------------
+export const editMenuBookPost = createAction(
+  `[${moduleName}] Edit menu book post`,
+  props<EditMenuBookPostRequest.AsObject>()
+);
+
+export const editMenuBookPostSuccess = createAction(
+  `[${moduleName}] Edit menu book post success`,
+  props<EditMenuBookPostResponse.AsObject>()
+);
+
+export const editMenuBookPostFailure = createAction(
+  `[${moduleName}] Edit menu book post failure`,
   props<{ message: string }>()
 );

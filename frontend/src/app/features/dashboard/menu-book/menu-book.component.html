@@ -24,8 +24,17 @@
       <div class="post-content-wrapper">
         <ng-container *ngIf="viewData?.selectedPostId">
           <app-post-content
+            *ngIf="!isEditMode"
             [post]="viewData?.selectedPostData"
             [images]="viewData?.images"
+            (toggleEdit)="onToggleEdit()"
+            (delete)="onDeleteFromMenuBook($event)"
+          />
+          <app-post-edit-content
+            *ngIf="isEditMode"
+            [post]="viewData?.selectedPostData"
+            (toggleEdit)="onToggleEdit()"
+            (editData)="onEditFromMenuBook($event)"
           />
         </ng-container>
       </div>

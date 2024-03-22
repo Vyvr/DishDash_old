@@ -1,0 +1,41 @@
+<div class="post-content-wrapper" *ngIf="post">
+  <div class="action-buttons-wrapper">
+    <div class="edit-buttons-wrapper">
+      <button class="toggle-edit-button" (click)="toggleEditMode()">
+        Cancel
+      </button>
+      <button class="submit-edit-button" (click)="editFromMenuBook()">
+        Submit
+      </button>
+    </div>
+  </div>
+  <div class="post-content-header">
+    <dd-input [title]="'Title'" [(inputValue)]="title" />
+    <div class="post-content-creation-date">
+      {{ "Created: " + creationDate }}
+    </div>
+    <div class="post-content-owner">
+      {{ "by: " + post.ownerName + " " + post.ownerSurname }}
+    </div>
+  </div>
+  <div class="post-content-portion-quantity">
+    Portion for {{ post.portionQuantity }}
+    {{ post.portionQuantity != 1 ? "persons" : "person" }}
+  </div>
+  <div class="post-content-ingredients">
+    <dd-input
+      [title]="'Ingredients'"
+      [type]="'textarea'"
+      [resizable]="true"
+      [(inputValue)]="ingredients"
+    />
+  </div>
+  <div class="post-content-preparation">
+    <dd-input
+      [title]="'Preparation'"
+      [type]="'textarea'"
+      [resizable]="true"
+      [(inputValue)]="preparation"
+    />
+  </div>
+</div>

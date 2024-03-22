@@ -8,10 +8,19 @@
     placeholder="{{ title }}"
   />
   <textarea
-    *ngIf="type === 'textarea'"
+    *ngIf="type === 'textarea' && resizable === false"
     class="dd-custom-textarea"
     [(ngModel)]="valueFromInput"
     (ngModelChange)="onInputChange()"
+    placeholder="{{ title }}"
+  ></textarea>
+  <textarea
+    #resizableTextarea
+    *ngIf="type === 'textarea' && resizable === true"
+    class="dd-custom-resizable-textarea"
+    [(ngModel)]="valueFromInput"
+    (ngModelChange)="onInputChange()"
+    (ngModelChange)="resizeTextarea()"
     placeholder="{{ title }}"
   ></textarea>
 </div>

@@ -4,9 +4,12 @@ import { AppState } from '..';
 
 import * as actions from './menuBookPost.actions';
 import * as selectors from './menuBookPost.selectors';
-import { GetPostsFromMenuBookRequest } from 'src/app/pb/menu_book_post_pb';
+import {
+  DeleteFromMenuBookRequest,
+  EditMenuBookPostRequest,
+  GetPostsFromMenuBookRequest,
+} from 'src/app/pb/menu_book_post_pb';
 import { GetImageStreamRequest } from 'src/app/pb/post_pb';
-
 
 @Injectable()
 export class MenuBookPostFacade {
@@ -21,7 +24,16 @@ export class MenuBookPostFacade {
   // addImages(payload: AddPostImagesRequest.AsObject): void {
   //   this.store.dispatch(actions.addImages(payload));
   // }
+
   getImageStream(payload: GetImageStreamRequest.AsObject): void {
     this.store.dispatch(actions.getImageStream(payload));
+  }
+
+  deleteFromMenuBook(payload: DeleteFromMenuBookRequest.AsObject): void {
+    this.store.dispatch(actions.deleteFromMenuBook(payload));
+  }
+
+  editMenuBookPost(payload: EditMenuBookPostRequest.AsObject): void {
+    this.store.dispatch(actions.editMenuBookPost(payload));
   }
 }

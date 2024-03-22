@@ -12,3 +12,9 @@
   resize: vertical;
   overflow: auto;
 }
+
+.dd-custom-resizable-textarea {
+  resize: vertical;
+  overflow: hidden;
+  height: auto;
+}

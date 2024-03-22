@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import {
+  DeleteFromMenuBookRequest,
+  DeleteFromMenuBookResponse,
+  EditMenuBookPostRequest,
+  EditMenuBookPostResponse,
   GetPostsFromMenuBookRequest,
   GetPostsFromMenuBookResponse,
 } from 'src/app/pb/menu_book_post_pb';
@@ -36,6 +40,44 @@ export class MenuBookPostApiService {
     >(
       request,
       this.MenuBookPostServiceClient.getPostsFromMenuBook.bind(
+        this.MenuBookPostServiceClient
+      )
+    );
+  }
+
+  deleteFromMenuBook(
+    payload: DeleteFromMenuBookRequest.AsObject
+  ): Observable<DeleteFromMenuBookResponse.AsObject> {
+    const request = new DeleteFromMenuBookRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      DeleteFromMenuBookRequest,
+      DeleteFromMenuBookResponse,
+      DeleteFromMenuBookResponse.AsObject
+    >(
+      request,
+      this.MenuBookPostServiceClient.deleteFromMenuBook.bind(
+        this.MenuBookPostServiceClient
+      )
+    );
+  }
+
+  editMenuBookPost(
+    payload: EditMenuBookPostRequest.AsObject
+  ): Observable<EditMenuBookPostResponse.AsObject> {
+    const request = new EditMenuBookPostRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      EditMenuBookPostRequest,
+      EditMenuBookPostResponse,
+      EditMenuBookPostResponse.AsObject
+    >(
+      request,
+      this.MenuBookPostServiceClient.editMenuBookPost.bind(
         this.MenuBookPostServiceClient
       )
     );

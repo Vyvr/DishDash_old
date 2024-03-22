@@ -1,4 +1,8 @@
 <div class="post-content-wrapper">
+  <div class="action-buttons-wrapper">
+    <button class="toggle-edit-button" (click)="toggleEditMode()">Edit</button>
+    <button class="delete-button" (click)="deleteFromMenuBook()">Delete</button>
+  </div>
   <div class="post-content-header">
     <div class="post-content-title">{{ post?.title }}</div>
     <div class="post-content-creation-date">
@@ -14,15 +18,13 @@
   </div>
   <div class="post-content-ingredients">
     <h2>Ingredients:</h2>
-    {{ post?.ingredients }}
+    <pre>{{ post?.ingredients }}</pre>
   </div>
   <div class="post-content-preparation">
     <h2>Preparation:</h2>
     <pre>{{ post?.preparation }}</pre>
   </div>
   <div class="post-content-pictures">
-    <app-dd-pictures-grid
-      [images]="images"
-    />
+    <app-dd-pictures-grid [images]="images" />
   </div>
 </div>

@@ -36,6 +36,7 @@ import { CommentsModalComponent } from './features/dashboard/posts/components/po
 import { CommentTileComponent } from './features/dashboard/posts/components/post/components/comments-modal/components/comment-tile/comment-tile.component';
 import { PostCardComponent } from './features/dashboard/menu-book/components/post-card/post-card.component';
 import { PostContentComponent } from './features/dashboard/menu-book/components/post-content/post-content.component';
+import { PostEditContentComponent } from './features/dashboard/menu-book/components/post-edit-content/post-edit-content.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -64,6 +65,7 @@ const devImports = [
     CommentTileComponent,
     PostCardComponent,
     PostContentComponent,
+    PostEditContentComponent,
   ],
   imports: [
     BrowserModule,

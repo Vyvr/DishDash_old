@@ -14,7 +14,7 @@ export class MenuBookPostEffects {
   constructor(
     private actions$: Actions,
     private store: Store<AppState>,
-    private menuBookPostApoService: MenuBookPostApiService,
+    private menuBookPostApiService: MenuBookPostApiService,
     private postApiService: PostApiService,
     private postFacade: MenuBookPostFacade
   ) {}
@@ -23,7 +23,7 @@ export class MenuBookPostEffects {
     this.actions$.pipe(
       ofType(actions.getPostsFromMenuBook),
       concatMap(({ type: _, ...payload }) =>
-        this.menuBookPostApoService.getPostsFromMenuBook(payload).pipe(
+        this.menuBookPostApiService.getPostsFromMenuBook(payload).pipe(
           map((response) => {
             return actions.getPostsFromMenuBookSuccess(response);
           }),
@@ -56,6 +56,34 @@ export class MenuBookPostEffects {
             return actions.getImageStreamSuccess(response);
           }),
           catchError((error) => of(actions.getImageStreamFailure(error)))
+        )
+      )
+    )
+  );
+
+  deleteFromMenuBookEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.deleteFromMenuBook),
+      concatMap(({ type: _, ...payload }) =>
+        this.menuBookPostApiService.deleteFromMenuBook(payload).pipe(
+          map((response) => {
+            return actions.deleteFromMenuBookSuccess(response);
+          }),
+          catchError((error) => of(actions.deleteFromMenuBookFailure(error)))
+        )
+      )
+    )
+  );
+
+  editMenuBookPostEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.editMenuBookPost),
+      concatMap(({ type: _, ...payload }) =>
+        this.menuBookPostApiService.editMenuBookPost(payload).pipe(
+          map((response) => {
+            return actions.editMenuBookPostSuccess(response);
+          }),
+          catchError((error) => of(actions.deleteFromMenuBookFailure(error)))
         )
       )
     )

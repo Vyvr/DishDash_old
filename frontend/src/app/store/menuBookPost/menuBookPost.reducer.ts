@@ -94,5 +94,77 @@ export const menubookPostReducer = createReducer(
   on(actions.getImageStreamFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
+  })),
+  //---------------DELETE FROM MENU BOOK---------------------
+  on(actions.deleteFromMenuBook, (state) => ({ ...state })),
+  on(actions.deleteFromMenuBookSuccess, (state, { type: _, postId }) => {
+    const defaultReturn = { ...state };
+
+    if (isNil(state.data)) {
+      return defaultReturn;
+    }
+
+    const postIndex = state.data.findIndex(
+      (post) => post.originalPostId === postId
+    );
+
+    if (isNil(postIndex)) {
+      return defaultReturn;
+    }
+
+    const updatedData = [
+      ...state.data.slice(0, postIndex),
+      ...state.data.slice(postIndex + 1),
+    ];
+
+    return {
+      ...state,
+      ...loadedState,
+      data: updatedData,
+    };
+  }),
+  on(actions.deleteFromMenuBookFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------EDIT MENU BOOK POST---------------------
+  on(actions.editMenuBookPost, (state) => ({ ...state })),
+  on(
+    actions.editMenuBookPostSuccess,
+    (state, { type: _, postId, title, ingredients, preparation }) => {
+      const defaultReturn = { ...state };
+
+      if (isNil(state.data)) {
+        return defaultReturn;
+      }
+
+      const postIndex = state.data.findIndex((post) => post.id === postId);
+
+      if (isNil(postIndex) || postIndex === -1) {
+        return defaultReturn;
+      }
+
+      const updatedPost = { ...state.data[postIndex] };
+
+      updatedPost.title = title;
+      updatedPost.ingredients = ingredients;
+      updatedPost.preparation = preparation;
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+  ),
+  on(actions.editMenuBookPostFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
   }))
 );

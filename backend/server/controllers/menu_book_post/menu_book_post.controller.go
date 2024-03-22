@@ -67,6 +67,49 @@ func (s *server) GetPostsFromMenuBook(ctx context.Context, in *menu_book_post.Ge
 	return &menu_book_post.GetPostsFromMenuBookResponse{Posts: grpcPosts}, nil
 }
 
+func (s *server) DeleteFromMenuBook(ctx context.Context, in *menu_book_post.DeleteFromMenuBookRequest) (*menu_book_post.DeleteFromMenuBookResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	if err := db.Where("original_post_id = ? AND holder_id = ?", in.PostId, userEntity.Id).Delete(&entities.PostInMenuBookEntity{}).Error; err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to delete post from menu book: %v", err)
+	}
+
+	return &menu_book_post.DeleteFromMenuBookResponse{PostId: in.PostId}, nil
+}
+
+func (s *server) EditMenuBookPost(ctx context.Context, in *menu_book_post.EditMenuBookPostRequest) (*menu_book_post.EditMenuBookPostResponse, error) {
+	db := database_service.GetDBInstance()
+
+	_, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostInMenuBookEntity
+	err = db.Where("id = ?", in.PostId).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	err = db.Model(&postEntity).Updates(entities.PostInMenuBookEntity{
+		Title:       in.Title,
+		Ingredients: in.Ingredients,
+		Preparation: in.Preparation,
+	}).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error updating the post")
+	}
+
+	return &menu_book_post.EditMenuBookPostResponse{PostId: in.PostId, Title: in.Title, Ingredients: in.Ingredients, Preparation: in.Preparation}, nil
+}
+
 func RegisterServer() {
 	menu_book_post.RegisterMenuBookPostServiceServer(registrar_service.GetServerInstance(), &server{})
 }

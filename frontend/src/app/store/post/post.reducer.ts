@@ -37,6 +37,7 @@ export const postReducer = createReducer(
   //---------------ADD TO MENU BOOK---------------------
   on(actions.addToMenuBook, (state) => ({ ...state })),
   on(actions.addToMenuBookSuccess, (state) => {
+    state.data
     return {
       ...state,
     };
