@@ -35,7 +35,6 @@ export const authReducer = createReducer(
   ),
 
   //---------------LOGOUT---------------------
-  //@TODO Reset wszystkich stanow podczas wylogowania
   on(actions.logout, (state) => ({ ...state, ...loadingState })),
   on(actions.logoutSuccess, (state) => ({
     ...state,

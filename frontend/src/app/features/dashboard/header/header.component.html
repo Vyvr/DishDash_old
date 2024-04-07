@@ -12,6 +12,10 @@
   </div>
 
   <div class="header-menu-wrapper">
+    <button class="icon-button" (click)="navigateToUserProfile()">
+      <svg-icon src="assets/user-profile-icon.svg" alt="User Profile" />
+    </button>
+
     <button class="icon-button" (click)="navigateToPosts()">
       <svg-icon src="assets/posts-icon.svg" alt="Posts"></svg-icon>
     </button>
@@ -49,5 +53,7 @@
       Delete from friends
     </button>
   </div>
-  <button *ngIf="!noMoreUsersToSearch" (click)="searchMoreUsers()" >Load more</button>
+  <button *ngIf="!noMoreUsersToSearch" (click)="searchMoreUsers()">
+    Load more
+  </button>
 </div>

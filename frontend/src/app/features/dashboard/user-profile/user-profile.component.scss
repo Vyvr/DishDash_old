@@ -1,0 +1,72 @@
+.user-profile-wrapper {
+  height: calc(100% - 50px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-profile-picture-wrapper {
+  display: flex;
+  justify-content: center;
+  height: 300px;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+}
+
+.user-profile-picture-container {
+  height: 300px;
+  width: 300px;
+  margin-top: 150px;
+
+  border: 1px solid #ccc;
+  border-radius: 50%;
+
+  .user-profile-picture {
+    height: 300px;
+    width: 300px;
+    border-radius: 50%;
+  }
+}
+
+.user-data-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 160px;
+  width: 100%;
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.user-profile-actions-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ccc;
+}
+
+.icon-button {
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.3s ease;
+  background-color: rgba(191, 191, 191, 0);
+  border-right: solid 1px #ccc;
+  border-left: solid 1px #ccc;
+  fill: #ccc;
+  height: 100%;
+}
+
+.user-profile-posts-list {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100% - 150px);
+}

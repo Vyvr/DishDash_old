@@ -11,6 +11,7 @@ service PostService {
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
     rpc AddToMenuBook(AddToMenuBookRequest) returns (AddToMenuBookResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
+    rpc GetUserPosts(GetPostsRequest)returns (GetPostsResponse);
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
 

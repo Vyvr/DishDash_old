@@ -29,11 +29,18 @@ import {
   MenuBookPostsState,
   menubookPostReducer,
 } from './menuBookPost';
+import {
+  UserPostsEffects,
+  UserPostsFacade,
+  UserPostsState,
+  userPostsReducer,
+} from './user-posts';
 
 export interface AppState {
   auth: AuthState;
   search: SearchState;
   post: PostsState;
+  userPosts: UserPostsState;
   menuBook: MenuBookPostsState;
   social: SocialState;
 }
@@ -42,6 +49,7 @@ export const reducers = {
   auth: authReducer,
   search: searchReducer,
   post: postReducer,
+  userPosts: userPostsReducer,
   menuBook: menubookPostReducer,
   social: socialReducer,
 };
@@ -50,6 +58,7 @@ export const effects = [
   AuthEffects,
   SearchEffects,
   PostEffects,
+  UserPostsEffects,
   MenuBookPostEffects,
   SocialEffects,
 ];
@@ -58,6 +67,7 @@ export const facades = [
   AuthFacade,
   SearchFacade,
   PostFacade,
+  UserPostsFacade,
   MenuBookPostFacade,
   SocialFacade,
 ];

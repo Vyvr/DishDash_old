@@ -37,6 +37,7 @@ import { CommentTileComponent } from './features/dashboard/posts/components/post
 import { PostCardComponent } from './features/dashboard/menu-book/components/post-card/post-card.component';
 import { PostContentComponent } from './features/dashboard/menu-book/components/post-content/post-content.component';
 import { PostEditContentComponent } from './features/dashboard/menu-book/components/post-edit-content/post-edit-content.component';
+import { UserProfileComponent } from './features/dashboard/user-profile/user-profile.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -66,6 +67,7 @@ const devImports = [
     PostCardComponent,
     PostContentComponent,
     PostEditContentComponent,
+    UserProfileComponent,
   ],
   imports: [
     BrowserModule,

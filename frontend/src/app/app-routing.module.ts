@@ -11,6 +11,8 @@ import { canEnterGuard } from './core/guards/can-enter.guard';
 import { canActivateDashboard } from './core/guards/can-activate-dashboard.guard';
 import { canActivatePosts } from './core/guards/can-activate-posts.guard';
 import { canActivateMenuBook } from './core/guards/can-activate-menu-book.guard';
+import { UserProfileComponent } from './features/dashboard/user-profile/user-profile.component';
+import { canActivateUserProfile } from './core/guards/can-activate-user-profile.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -24,6 +26,11 @@ const routes: Routes = [
         component: DashboardComponent,
         canActivate: [canActivateDashboard],
         children: [
+          {
+            path: 'user-profile',
+            canActivate: [canActivateUserProfile],
+            component: UserProfileComponent,
+          },
           {
             path: 'posts',
             canActivate: [canActivatePosts],

@@ -97,7 +97,22 @@ export class PostApiService {
     >(request, this.postServiceClient.getPosts.bind(this.postServiceClient));
   }
 
+  getUserPosts(
+    payload: GetPostsRequest.AsObject
+  ): Observable<GetPostsResponse.AsObject> {
+    const request = new GetPostsRequest();
 
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      GetPostsRequest,
+      GetPostsResponse,
+      GetPostsResponse.AsObject
+    >(
+      request,
+      this.postServiceClient.getUserPosts.bind(this.postServiceClient)
+    );
+  }
 
   getImageStream(
     payload: GetImageStreamRequest.AsObject

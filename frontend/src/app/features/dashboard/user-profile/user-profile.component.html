@@ -1,0 +1,49 @@
+<ng-container
+  *ngIf="{
+    authState: authState$ | async,
+    userPostsState: userPostsState$ | async
+  } as viewData"
+>
+  <div class="user-profile-wrapper">
+    <div class="user-profile-picture-wrapper">
+      <div class="user-profile-picture-container">
+        <img
+          class="user-profile-picture"
+          src="{{ defaultProfilePicturePath }}"
+        />
+      </div>
+    </div>
+
+    <div class="user-data-wrapper">
+      <div class="user-data">
+        {{ viewData?.authState?.data?.name }}
+        {{ viewData?.authState?.data?.surname }}
+      </div>
+    </div>
+
+    <div class="user-profile-actions-wrapper">
+      <button class="icon-button">
+        <img src="assets/analytics-icon.svg" />
+        Analytics
+      </button>
+      <button class="icon-button">
+        <img src="assets/user-settings-icon.svg" />
+        Settings
+      </button>
+    </div>
+
+    <div class="user-profile-posts-list">
+      <ng-container *ngFor="let post of viewData?.userPostsState?.data">
+        <app-post
+          [post]="post"
+          [isCommentsOpen]="post?.id === commentsOpenPostId"
+          (newComment)="onNewComment($event)"
+          (editComment)="onEditComment($event)"
+          (deleteComment)="onDeleteComment($event)"
+          (postCommentsOpen)="onPostCommentsOpen($event)"
+          (postCommentsClose)="onPostCommentsClose()"
+        ></app-post>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

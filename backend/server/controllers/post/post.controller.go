@@ -299,6 +299,95 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 	}, nil
 }
 
+func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*post.GetPostsResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	offset := int((in.Page - 1) * in.PageSize)
+
+	var postEntities []*entities.PostEntity
+	result := db.Where("owner_id = ?", userEntity.Id).Order("creation_date DESC").Limit(int(in.PageSize)).
+		Offset(offset).
+		Find(&postEntities)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var grpcPosts []*post.Post
+	for _, postEntity := range postEntities {
+		var picturesEntities []entities.PostPicturesEntity
+		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
+		db.Where("post_id = ?", postEntity.Id).Find(&picturesEntities)
+
+		// check if post is liked
+		/*@TODO do something with this fucking logger
+		* without this switches it's logging "not found"
+		* for every not liked post. It's annoying
+		 */
+		// Backup the original logger
+		originalLogger := db.Logger
+
+		// Set a temporary logger that ignores "record not found" errors
+		db.Logger = db.Logger.LogMode(logger.Silent)
+
+		var liked = false
+		err := db.Where("user_id = ? AND post_id = ?", userEntity.Id.String(), postEntity.Id.String()).First(&entities.PostLikesEntity{}).Error
+		if err != nil {
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				log.Printf("Unexpected error while checking post like status: %v", err)
+			}
+		} else {
+			liked = true
+		}
+
+		//check if post is in menu book
+		var isInMenuBook = false
+		err = db.Where("holder_id = ? AND original_post_id = ?", userEntity.Id.String(), postEntity.Id).First(&entities.PostInMenuBookEntity{}).Error
+		if err != nil {
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				log.Printf("Unexpected error while checking post like status: %v", err)
+			}
+		} else {
+			isInMenuBook = true
+		}
+		// Restore the original logger
+		db.Logger = originalLogger
+
+		picturePaths := make([]string, 0, len(picturesEntities))
+		for _, pictureEntity := range picturesEntities {
+			picturePaths = append(picturePaths, pictureEntity.PicturePath)
+		}
+
+		grpcPost := &post.Post{
+			Id:              postEntity.Id.String(),
+			OwnerId:         postEntity.OwnerId.String(),
+			OwnerName:       postEntity.OwnerName,
+			OwnerSurname:    postEntity.OwnerSurname,
+			Title:           postEntity.Title,
+			Ingredients:     postEntity.Ingredients,
+			PortionQuantity: postEntity.PortionQuantity,
+			Preparation:     postEntity.Preparation,
+			Pictures:        picturePaths,
+			LikesCount:      postEntity.LikesCount,
+			CommentsCount:   postEntity.CommentsCount,
+			Liked:           liked,
+			IsInMenuBook:    isInMenuBook,
+			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
+		}
+		grpcPosts = append(grpcPosts, grpcPost)
+	}
+
+	return &post.GetPostsResponse{
+		Posts: grpcPosts,
+	}, nil
+}
+
 func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.PostService_GetImageStreamServer) error {
 	_, err := auth_service.ValidateToken(req.Token)
 
@@ -429,11 +518,19 @@ func (s *server) GetComments(ctx context.Context, in *post.GetCommentsRequest) (
 			owned = true
 		}
 
+		var user entities.UserEntity
+		if err := db.Where("id = ?", commentEntity.UserId).First(&user).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, status.Error(codes.NotFound, "user not found")
+			}
+			return nil, status.Error(codes.Internal, "internal server error")
+		}
+
 		grpcComment := &post.Comment{
 			Id:           commentEntity.Id.String(),
 			UserId:       userEntity.Id.String(),
-			UserName:     userEntity.Name,
-			UserSurname:  userEntity.Surname,
+			UserName:     user.Name,
+			UserSurname:  user.Surname,
 			CommentText:  commentEntity.CommentText,
 			Owned:        owned,
 			CreationDate: &timestamp.Timestamp{Seconds: commentEntity.CreationDate.Unix()},

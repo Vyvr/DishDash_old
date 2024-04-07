@@ -40,9 +40,8 @@ export class HeaderComponent extends OnDestroyMixin {
     private router: Router,
     private authFacade: AuthFacade,
     private searchFacade: SearchFacade,
-    private socialFacade: SocialFacade
-  ) // private socketService: SocketApiService
-  {
+    private socialFacade: SocialFacade // private socketService: SocketApiService
+  ) {
     super();
   }
 
@@ -172,6 +171,10 @@ export class HeaderComponent extends OnDestroyMixin {
 
         this.socialFacade.deleteFromFriends(payload);
       });
+  }
+
+  navigateToUserProfile(): void {
+    this.router.navigate(['/dashboard/user-profile']);
   }
 
   navigateToPosts(): void {
