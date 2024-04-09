@@ -586,10 +586,11 @@ func (s *server) CommentPost(ctx context.Context, in *post.CommentPostRequest) (
 	}
 
 	comment := post.Comment{
+		Id:           commentEntity.Id.String(),
 		UserId:       userEntity.Id.String(),
 		UserName:     userEntity.Name,
 		UserSurname:  userEntity.Surname,
-		CommentText:  in.CommentText,
+		CommentText:  commentEntity.CommentText,
 		Owned:        true,
 		CreationDate: creationDate,
 	}

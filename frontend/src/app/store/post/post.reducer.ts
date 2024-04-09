@@ -277,7 +277,7 @@ export const postReducer = createReducer(
     if (!isNil(postIndex) && !isNil(state.data) && !isNil(comment)) {
       const updatedPost = {
         ...state.data[postIndex],
-        commentsList: [...state.data[postIndex].commentsList, comment],
+        commentsList: [comment, ...state.data[postIndex].commentsList],
         commentsCount: state.data[postIndex].commentsCount + 1,
       };
 
@@ -286,22 +286,6 @@ export const postReducer = createReducer(
         updatedPost,
         ...state.data.slice(postIndex + 1),
       ];
-
-      updatedData[postIndex].commentsList.sort(
-        (a: Comment.AsObject, b: Comment.AsObject) => {
-          if (isNil(a.creationDate) || isNil(b.creationDate)) {
-            return 0;
-          }
-          const timeA = a.creationDate
-            ? a.creationDate.seconds * 1000 + a.creationDate.nanos / 1000000
-            : Number.MAX_SAFE_INTEGER;
-          const timeB = b.creationDate
-            ? b.creationDate.seconds * 1000 + b.creationDate.nanos / 1000000
-            : Number.MAX_SAFE_INTEGER;
-
-          return timeB - timeA;
-        }
-      );
 
       return {
         ...state,
