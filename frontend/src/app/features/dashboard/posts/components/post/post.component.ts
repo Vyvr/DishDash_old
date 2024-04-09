@@ -12,6 +12,7 @@ import { base64ToBlob } from 'src/app/features/utils';
 export class PostComponent implements OnInit {
   @Input() post: InternalPost | null = null;
   @Input() isCommentsOpen = false;
+  @Input() isProfilePost = false;
 
   @Output() toggleLike = new EventEmitter<ToggleLikeEvent>();
   @Output() newComment = new EventEmitter<NewCommentEvent>();

@@ -35,6 +35,7 @@
     <button
       class="icon-add-button"
       [style.fill]="post?.isInMenuBook ? 'blue' : 'black'"
+      [style.visibility]="isProfilePost ? 'hidden' : 'visible'"
       (click)="onAddToMenuBook()"
     >
       <svg-icon src="assets/add-to-menu-icon.svg" alt="Add"></svg-icon>

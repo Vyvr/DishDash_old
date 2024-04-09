@@ -37,6 +37,7 @@
         <app-post
           [post]="post"
           [isCommentsOpen]="post?.id === commentsOpenPostId"
+          [isProfilePost]="true"
           (newComment)="onNewComment($event)"
           (editComment)="onEditComment($event)"
           (deleteComment)="onDeleteComment($event)"
