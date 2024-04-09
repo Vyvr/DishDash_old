@@ -38,6 +38,7 @@ import { PostCardComponent } from './features/dashboard/menu-book/components/pos
 import { PostContentComponent } from './features/dashboard/menu-book/components/post-content/post-content.component';
 import { PostEditContentComponent } from './features/dashboard/menu-book/components/post-edit-content/post-edit-content.component';
 import { UserProfileComponent } from './features/dashboard/user-profile/user-profile.component';
+import { DdRequestingSpinnerComponent } from './shared/components/dd-requesting-spinner/dd-requesting-spinner.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -68,6 +69,7 @@ const devImports = [
     PostContentComponent,
     PostEditContentComponent,
     UserProfileComponent,
+    DdRequestingSpinnerComponent,
   ],
   imports: [
     BrowserModule,

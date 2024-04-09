@@ -33,18 +33,29 @@
     </div>
 
     <div class="user-profile-posts-list">
-      <ng-container *ngFor="let post of viewData?.userPostsState?.data">
-        <app-post
-          [post]="post"
-          [isCommentsOpen]="post?.id === commentsOpenPostId"
-          [isProfilePost]="true"
-          (newComment)="onNewComment($event)"
-          (editComment)="onEditComment($event)"
-          (deleteComment)="onDeleteComment($event)"
-          (postCommentsOpen)="onPostCommentsOpen($event)"
-          (postCommentsClose)="onPostCommentsClose()"
-        ></app-post>
+      <ng-container *ngIf="viewData?.userPostsState?.loading; else content">
+        <div class="spinner-container">
+          <dd-requesting-spinner
+            [isLoading]="
+              viewData.userPostsState?.loading || viewData.authState?.loading
+            "
+          />
+        </div>
       </ng-container>
+      <ng-template #content>
+        <ng-container *ngFor="let post of viewData?.userPostsState?.data">
+          <app-post
+            [post]="post"
+            [isCommentsOpen]="post?.id === commentsOpenPostId"
+            [isProfilePost]="true"
+            (newComment)="onNewComment($event)"
+            (editComment)="onEditComment($event)"
+            (deleteComment)="onDeleteComment($event)"
+            (postCommentsOpen)="onPostCommentsOpen($event)"
+            (postCommentsClose)="onPostCommentsClose()"
+          ></app-post>
+        </ng-container>
+      </ng-template>
     </div>
   </div>
 </ng-container>

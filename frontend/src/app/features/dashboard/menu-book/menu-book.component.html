@@ -7,7 +7,7 @@
   } as viewData"
 >
   <ng-container *ngIf="viewData?.menuBookPostState?.loading; else content">
-    LOADING - TEMPLATE ADD A LOADER COMPONENT
+    <dd-requesting-spinner [isLoading]="viewData.menuBookPostState?.loading" />
   </ng-container>
 
   <ng-template #content>
