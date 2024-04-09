@@ -37,7 +37,6 @@ export const postReducer = createReducer(
   //---------------ADD TO MENU BOOK---------------------
   on(actions.addToMenuBook, (state) => ({ ...state })),
   on(actions.addToMenuBookSuccess, (state) => {
-    state.data
     return {
       ...state,
     };
@@ -259,6 +258,7 @@ export const postReducer = createReducer(
       const updatedPost = {
         ...state.data[postIndex],
         commentsList: [...state.data[postIndex].commentsList, comment],
+        commentsCount: state.data[postIndex].commentsCount + 1,
       };
 
       const updatedData = [
