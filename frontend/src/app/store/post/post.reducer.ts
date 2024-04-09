@@ -4,7 +4,6 @@ import { InternalPost, initialState } from './post.model';
 import * as actions from './post.actions';
 import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
-import { Comment } from 'src/app/pb/post_pb';
 
 export const postReducer = createReducer(
   initialState,
