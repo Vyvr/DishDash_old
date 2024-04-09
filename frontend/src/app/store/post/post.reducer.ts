@@ -36,10 +36,30 @@ export const postReducer = createReducer(
   }),
   //---------------ADD TO MENU BOOK---------------------
   on(actions.addToMenuBook, (state) => ({ ...state })),
-  on(actions.addToMenuBookSuccess, (state) => {
-    return {
-      ...state,
-    };
+  on(actions.addToMenuBookSuccess, (state, { postId }) => {
+    const defaultReturn = { ...state };
+    const postIndex = state.data?.findIndex((p) => p.id === postId);
+
+    if (!isNil(postIndex) && !isNil(state.data)) {
+      const updatedPost = {
+        ...state.data[postIndex],
+        isInMenuBook: true,
+      };
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+
+    return defaultReturn;
   }),
   on(actions.addToMenuBookFailure, (state, { message }) => {
     return {
