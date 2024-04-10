@@ -164,7 +164,7 @@ func (s *server) AddImages(ctx context.Context, in *post.AddPostImagesRequest) (
 			return nil, status.Errorf(codes.Aborted, "Invalid token")
 		}
 		pictureId := uuid.New()
-		dirPath := "images/" + in.Id + "/"
+		dirPath := "images/posts" + in.Id + "/"
 		filePath := dirPath + pictureId.String() + ".png"
 		postPictures = append(postPictures, filePath)
 
