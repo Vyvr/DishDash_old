@@ -1,10 +1,12 @@
 <div class="pictures-input-container">
   <div class="pictures-grid">
     <div *ngFor="let image of images; let i = index" class="picture">
-      <img [src]="image" alt="Uploaded Picture" />
+      <ng-container *ngIf="!image; else picture">
+        <dd-requesting-spinner [isLoading]="!image" />
+      </ng-container>
+      <ng-template #picture>
+        <img [src]="image" alt="Uploaded Picture" />
+      </ng-template>
     </div>
-    <!-- <div *ngFor="let loadingSquare of [].constructor(itemsCount)">
-      <div class="loading-square"></div>
-    </div> -->
   </div>
 </div>
