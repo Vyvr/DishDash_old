@@ -7,11 +7,15 @@ import (
 	"dish-dash/server/services/auth_service"
 	"dish-dash/server/services/database_service"
 	"dish-dash/server/services/registrar_service"
+	"encoding/base64"
 	"errors"
+	"io"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -119,6 +123,93 @@ func (s *server) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest)
 		Id:      userEntity.Id.String(),
 		Name:    userEntity.Name,
 		Surname: userEntity.Surname}, nil
+}
+
+func (s *server) GetUserPicture(req *auth.GetUserPictureRequest, stream auth.Auth_GetUserPictureServer) error {
+	_, err := auth_service.ValidateToken(req.Token)
+
+	if err != nil {
+		return status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	imagePath := req.PicturePath
+
+	file, err := os.Open(imagePath)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Can't open picture from path")
+	}
+	defer file.Close()
+
+	buffer := make([]byte, 5000000) // Adjust the buffer size to your needs
+	for {
+		n, err := file.Read(buffer)
+		if err == io.EOF {
+			break // EOF is expected when reading the last chunk of the file
+		}
+		if err != nil {
+			return status.Errorf(codes.Internal, "Error reading picture: %v", err)
+		}
+
+		if err := stream.Send(&auth.GetUserPictureResponse{ImageData: buffer[:n]}); err != nil {
+			return status.Errorf(codes.Internal, "Error sending chunk to client: %v", err)
+		}
+	}
+	// At the end of the stream, return nil to indicate the stream is complete without errors
+	return nil
+}
+
+func (s *server) AddUserPicture(ctx context.Context, in *auth.AddUserPictureRequest) (*auth.AddUserPictureResponse, error) {
+	db := database_service.GetDBInstance()
+
+	_, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var userEntity entities.UserEntity
+	err = db.Where("id = ?", in.UserId).First(&userEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No user found")
+	}
+
+	picture := in.Image
+
+	parts := strings.SplitN(picture, ",", 2)
+	if len(parts) != 2 {
+		return nil, status.Errorf(codes.Unknown, "Wrong picture format")
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(parts[1])
+	if err != nil {
+		return nil, status.Errorf(codes.Aborted, "Encoding error")
+	}
+
+	pictureId := uuid.New()
+	dirPath := "images/profile_pictures/" + in.UserId + "/"
+	filePath := dirPath + pictureId.String() + ".png"
+
+	err = os.MkdirAll(dirPath, 0755) // Adjust permissions as needed
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error in making file folder")
+	}
+
+	err = os.WriteFile(filePath, decoded, 0666)
+	if err != nil {
+		return nil, status.Errorf(codes.DataLoss, "Error with saving picture")
+
+	}
+
+	err = db.Model(&userEntity).Updates(entities.UserEntity{
+		PicturePath: filePath,
+	}).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error adding profile picture")
+	}
+
+	return &auth.AddUserPictureResponse{
+		Message: "Success",
+	}, nil
 }
 
 func (s *server) ValidateToken(ctx context.Context, in *auth.ValidateTokenRequest) (*auth.ValidateTokenResponse, error) {

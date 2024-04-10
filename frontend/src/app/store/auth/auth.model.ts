@@ -5,6 +5,8 @@ export interface AuthData {
   id: string;
   name: string;
   surname: string;
+  picturePath?: string;
+  pictureData?: string;
 }
 
 export interface AuthState extends LoadableState<AuthData> {

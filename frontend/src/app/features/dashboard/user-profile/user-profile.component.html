@@ -9,7 +9,9 @@
       <div class="user-profile-picture-container">
         <img
           class="user-profile-picture"
-          src="{{ defaultProfilePicturePath }}"
+          src="{{
+            profilePicture ? profilePicture : defaultProfilePicturePath
+          }}"
         />
       </div>
     </div>
@@ -26,7 +28,7 @@
         <img src="assets/analytics-icon.svg" />
         Analytics
       </button>
-      <button class="icon-button">
+      <button class="icon-button" (click)="addUserPicture()">
         <img src="assets/user-settings-icon.svg" />
         Settings
       </button>
@@ -58,4 +60,17 @@
       </ng-template>
     </div>
   </div>
+
+  <dd-modal
+    [isVisible]="true"
+    [withHeader]="true"
+    [headerText]="'Change profile picture'"
+  >
+    <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+    <div class="new-profile-picture-wrapper" *ngIf="profilePicture">
+      <img [src]="profilePicture" alt="Uploaded Picture" />
+    </div>
+
+    <button (click)="addUserPicture()">Submit</button>
+  </dd-modal>
 </ng-container>

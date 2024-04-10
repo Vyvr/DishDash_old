@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
 import {
   FormBuilder,
   FormGroup,
@@ -11,6 +13,7 @@ import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
+import { isNil } from 'lodash-es';
 
 @Component({
   selector: 'app-auth',
@@ -29,7 +32,11 @@ export class AuthComponent extends OnDestroyMixin {
   registrationErrors: Array<string> = [];
   isAuthenticated: boolean = false;
 
-  constructor(private fb: FormBuilder, private authFacade: AuthFacade) {
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private authFacade: AuthFacade
+  ) {
     super();
 
     this.registerForm = this.fb.group(
@@ -98,6 +105,19 @@ export class AuthComponent extends OnDestroyMixin {
 
     const payload: LoginRequest.AsObject = this.loginForm.value;
     this.authFacade.login(payload);
+
+    this.authState$
+      .pipe(untilComponentDestroyed(this))
+      .subscribe((authState) => {
+        if (isNil(authState.data) || authState.loading) {
+          return;
+        }
+
+        if (!isNil(authState.data.token)) {
+          this.router.navigate(['/dashboard/posts']);
+          return;
+        }
+      });
   }
 
   private _submitRegister(): void {

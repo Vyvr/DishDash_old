@@ -1,12 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-dd-modal',
+  selector: 'dd-modal',
   templateUrl: './dd-modal.component.html',
   styleUrls: ['./dd-modal.component.scss'],
 })
 
 //@TODO finish this crap
 export class DdModalComponent {
+  @Input()
   isVisible: boolean = false;
+
+  @Input()
+  withHeader: boolean = false;
+
+  @Input()
+  headerText: string = '';
+
+  closeModal(): void {
+    this.isVisible = false;
+  }
 }

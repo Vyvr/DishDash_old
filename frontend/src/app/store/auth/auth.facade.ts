@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { AppState } from '..';
-import { LoginRequest, RegisterRequest } from 'src/app/pb/auth_pb';
+import {
+  AddUserPictureRequest,
+  GetUserPictureRequest,
+  LoginRequest,
+  RegisterRequest,
+} from 'src/app/pb/auth_pb';
 
 import * as actions from './auth.actions';
 import * as selectors from './auth.selectors';
@@ -33,5 +38,15 @@ export class AuthFacade {
   //---------------REFRESH--------------------
   refreshToken(payload: { token: string }): void {
     this.store.dispatch(actions.refreshToken(payload));
+  }
+
+  //---------------GER USER PICTURE--------------------
+  getUserPicture(payload: GetUserPictureRequest.AsObject): void {
+    this.store.dispatch(actions.getUserPicture(payload));
+  }
+
+  //---------------ADD USER PICTURE--------------------
+  addUserPicture(payload: AddUserPictureRequest.AsObject): void {
+    this.store.dispatch(actions.addUserPicture(payload));
   }
 }

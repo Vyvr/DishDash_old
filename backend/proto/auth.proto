@@ -9,6 +9,9 @@ service Auth {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (LoginResponse);
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc GetUserPicture(GetUserPictureRequest) returns (stream GetUserPictureResponse);
+  rpc AddUserPicture(AddUserPictureRequest) returns (AddUserPictureResponse);
+
 }
 
 message RegisterRequest {
@@ -32,6 +35,26 @@ message LoginResponse {
   string id = 2;
   string name = 3;
   string surname = 4;
+}
+
+message GetUserPictureRequest {
+  string token = 1;
+  string userId = 2;
+  string picture_path = 3;
+}
+
+message GetUserPictureResponse {
+  bytes image_data = 1;
+}
+
+message AddUserPictureRequest {
+  string token = 1;
+  string user_id = 2;
+  string image = 3;
+}
+
+message AddUserPictureResponse {
+  string message = 1;
 }
 
 message RefreshTokenRequest {
