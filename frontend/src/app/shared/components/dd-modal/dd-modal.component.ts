@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'dd-modal',
@@ -17,7 +17,9 @@ export class DdModalComponent {
   @Input()
   headerText: string = '';
 
+  @Output() toggleModal = new EventEmitter<void>();
+
   closeModal(): void {
-    this.isVisible = false;
+    this.toggleModal.emit();
   }
 }

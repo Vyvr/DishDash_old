@@ -38,6 +38,8 @@ export class UserProfileComponent extends OnDestroyMixin implements OnInit {
   authState$ = this.authFacade.authState$;
   userPostsState$ = this.userPostsFacade.userPostsState$;
 
+  isSettingsModalVisible = false;
+
   commentsOpenPostId: string | null = null;
 
   constructor(
@@ -165,6 +167,10 @@ export class UserProfileComponent extends OnDestroyMixin implements OnInit {
           console.error(`error dd-pictues-input: ${error}`);
         },
       });
+  }
+
+  toggleSettingsModal(): void {
+    this.isSettingsModalVisible = !this.isSettingsModalVisible;
   }
 
   addUserPicture(): void {
