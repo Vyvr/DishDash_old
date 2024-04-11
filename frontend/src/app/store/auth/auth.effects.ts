@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as actions from './auth.actions';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, map, of, switchMap, tap } from 'rxjs';
 import { AuthApiService } from 'src/app/core/api/auth-api.service';
 
 @Injectable()
@@ -25,7 +25,6 @@ export class AuthEffects {
           map((response) => {
             return actions.loginSuccess(response);
           }),
-          tap(() => this.router.navigate(['/dashboard/posts'])),
           catchError((error) => of(actions.loginFailure(error)))
         )
       )
@@ -64,6 +63,34 @@ export class AuthEffects {
       switchMap(() => of(actions.logoutSuccess())),
       tap(() => this.router.navigate(['/auth'])),
       catchError((error) => of(actions.logoutFailure(error)))
+    )
+  );
+
+  getUserPictureEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.getUserPicture),
+      concatMap(({ type: _, ...payload }) =>
+        this.authApiService.getUserPicture(payload).pipe(
+          map((response) => {
+            return actions.getUserPictureSuccess(response);
+          }),
+          catchError((error) => of(actions.getUserPictureFailure(error)))
+        )
+      )
+    )
+  );
+
+  addUserPictureEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.addUserPicture),
+      concatMap(({ type: _, ...payload }) =>
+        this.authApiService.addUserPicture(payload).pipe(
+          map((response) => {
+            return actions.addUserPictureSuccess(response);
+          }),
+          catchError((error) => of(actions.addUserPictureFailure(error)))
+        )
+      )
     )
   );
 }

@@ -9,4 +9,5 @@ type UserEntity struct {
 	Password    string `gorm:"not null"`
 	Description string
 	Token       string
+	PicturePath string
 }

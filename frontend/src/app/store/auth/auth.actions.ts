@@ -1,5 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import {
+  AddUserPictureRequest,
+  AddUserPictureResponse,
+  GetUserPictureRequest,
+  GetUserPictureResponse,
   LoginRequest,
   LoginResponse,
   RefreshTokenRequest,
@@ -54,6 +58,8 @@ export const registerFailure = createAction(
   props<{ message: string }>()
 );
 
+//---------------REFRESH TOKEN---------------------
+
 export const refreshToken = createAction(
   `[${moduleName}] Refresh token`,
   props<RefreshTokenRequest.AsObject>()
@@ -66,5 +72,39 @@ export const refreshTokenSuccess = createAction(
 
 export const refreshTokenFailure = createAction(
   `[${moduleName}] Refresh token failure`,
+  props<{ message: string }>()
+);
+
+//---------------GET USER PICTURE---------------------
+
+export const getUserPicture = createAction(
+  `[${moduleName}] Get user picture`,
+  props<GetUserPictureRequest.AsObject>()
+);
+
+export const getUserPictureSuccess = createAction(
+  `[${moduleName}] Get user picture success`,
+  props<GetUserPictureResponse.AsObject>()
+);
+
+export const getUserPictureFailure = createAction(
+  `[${moduleName}] Get user picture failure`,
+  props<{ message: string }>()
+);
+
+//---------------ADD USER PICTURE---------------------
+
+export const addUserPicture = createAction(
+  `[${moduleName}] Add user picture`,
+  props<AddUserPictureRequest.AsObject>()
+);
+
+export const addUserPictureSuccess = createAction(
+  `[${moduleName}] Add user picture success`,
+  props<AddUserPictureResponse.AsObject>()
+);
+
+export const addUserPictureFailure = createAction(
+  `[${moduleName}] Add user picture failure`,
   props<{ message: string }>()
 );
