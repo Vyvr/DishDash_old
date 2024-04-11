@@ -4,6 +4,7 @@ import { initialState } from './auth.model';
 import * as actions from './auth.actions';
 import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
+import { base64ToBlob } from 'src/app/features/utils';
 
 export const authReducer = createReducer(
   initialState,
@@ -15,15 +16,25 @@ export const authReducer = createReducer(
   on(
     actions.loginSuccess,
     actions.refreshTokenSuccess,
-    (state, { type: _, ...payload }) => ({
-      ...state,
-      ...loadedState,
-      data: {
-        ...state.data,
-        ...payload,
-      },
-      refreshSuccessful: true,
-    })
+    (state, { type: _, ...payload }) => {
+      if (!isNil(payload.pictureData)) {
+        const contentType = 'image/png';
+        const base64String: string = payload.pictureData.toString();
+        const imageBlob = base64ToBlob(base64String, contentType);
+        const imageUrl = URL.createObjectURL(imageBlob);
+        payload.pictureData = imageUrl;
+      }
+
+      return {
+        ...state,
+        ...loadedState,
+        data: {
+          ...state.data,
+          ...payload,
+        },
+        refreshSuccessful: true,
+      };
+    }
   ),
   on(
     actions.loginFailure,
@@ -77,7 +88,29 @@ export const authReducer = createReducer(
 
   //---------------ADD USER PICTURE---------------------
   on(actions.addUserPicture, (state) => ({ ...state, ...loadingState })),
-  on(actions.addUserPictureSuccess, (state) => ({ ...state, ...loadedState })),
+  on(actions.addUserPictureSuccess, (state, { userImage }) => {
+    const defaultReturn = { ...state };
+
+    if (isNil(state.data)) {
+      return defaultReturn;
+    }
+
+    const splittedImage = userImage.split(',', 2);
+
+    const contentType = 'image/png';
+    const base64String: string = splittedImage[1].toString();
+    const imageBlob = base64ToBlob(base64String, contentType);
+    const imageUrl = URL.createObjectURL(imageBlob);
+
+    return {
+      ...state,
+      ...loadedState,
+      data: {
+        ...state.data,
+        pictureData: imageUrl,
+      },
+    };
+  }),
   on(actions.addUserPictureFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),

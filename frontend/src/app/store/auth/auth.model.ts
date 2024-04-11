@@ -6,7 +6,8 @@ export interface AuthData {
   name: string;
   surname: string;
   picturePath?: string;
-  pictureData?: string;
+  pictureData?: string | Uint8Array | Blob;
+  pictureString?: string;
 }
 
 export interface AuthState extends LoadableState<AuthData> {

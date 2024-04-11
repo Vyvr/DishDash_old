@@ -10,6 +10,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
@@ -108,7 +109,21 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
-	return &auth.LoginResponse{Token: token, Id: user.Id.String(), Name: user.Name, Surname: user.Surname}, nil
+	// Get user profile picture
+	picturePath := user.PicturePath
+
+	file, err := os.Open(picturePath)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Can't open picture from path")
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Can't read picture content")
+	}
+
+	return &auth.LoginResponse{Token: token, Id: user.Id.String(), Name: user.Name, Surname: user.Surname, PictureData: bytes, PicturePath: user.PicturePath}, nil
 }
 
 func (s *server) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest) (*auth.LoginResponse, error) {
@@ -189,6 +204,11 @@ func (s *server) AddUserPicture(ctx context.Context, in *auth.AddUserPictureRequ
 	dirPath := "images/profile_pictures/" + in.UserId + "/"
 	filePath := dirPath + pictureId.String() + ".png"
 
+	err = os.RemoveAll(dirPath)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error removing existing folder")
+	}
+
 	err = os.MkdirAll(dirPath, 0755) // Adjust permissions as needed
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error in making file folder")
@@ -208,7 +228,7 @@ func (s *server) AddUserPicture(ctx context.Context, in *auth.AddUserPictureRequ
 	}
 
 	return &auth.AddUserPictureResponse{
-		Message: "Success",
+		UserImage: in.Image,
 	}, nil
 }
 

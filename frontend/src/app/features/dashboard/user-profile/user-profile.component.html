@@ -10,7 +10,7 @@
         <img
           class="user-profile-picture"
           src="{{
-            profilePicture ? profilePicture : defaultProfilePicturePath
+            viewData.authState?.data?.pictureData ?? defaultProfilePicturePath
           }}"
         />
       </div>

@@ -35,6 +35,8 @@ message LoginResponse {
   string id = 2;
   string name = 3;
   string surname = 4;
+  bytes picture_data = 5;
+  string picture_path = 6;
 }
 
 message GetUserPictureRequest {
@@ -54,7 +56,7 @@ message AddUserPictureRequest {
 }
 
 message AddUserPictureResponse {
-  string message = 1;
+  string user_image = 1;
 }
 
 message RefreshTokenRequest {
