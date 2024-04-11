@@ -18,11 +18,20 @@ export const authReducer = createReducer(
     actions.refreshTokenSuccess,
     (state, { type: _, ...payload }) => {
       if (!isNil(payload.pictureData)) {
+        console.log({pictureData: payload.pictureData})
+
         const contentType = 'image/png';
         const base64String: string = payload.pictureData.toString();
         const imageBlob = base64ToBlob(base64String, contentType);
         const imageUrl = URL.createObjectURL(imageBlob);
         payload.pictureData = imageUrl;
+
+        console.log({
+          imageUrl,
+          imageBlob,
+          base64String,
+          pictureData: payload.pictureData,
+        });
       }
 
       return {
