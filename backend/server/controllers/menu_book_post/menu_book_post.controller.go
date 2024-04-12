@@ -58,7 +58,7 @@ func (s *server) GetPostsFromMenuBook(ctx context.Context, in *menu_book_post.Ge
 			Ingredients:     postEntity.Ingredients,
 			PortionQuantity: postEntity.PortionQuantity,
 			Preparation:     postEntity.Preparation,
-			Pictures:        picturePaths,
+			PicturePath:     picturePaths,
 			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
 		}
 		grpcPosts = append(grpcPosts, grpcPost)

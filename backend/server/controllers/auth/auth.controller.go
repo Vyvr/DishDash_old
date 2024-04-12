@@ -10,7 +10,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
@@ -109,27 +108,12 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
-	// Get user profile picture
-	picturePath := user.PicturePath
-
-	file, err := os.Open(picturePath)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Can't open picture from path")
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Can't read picture content")
-	}
-
 	return &auth.LoginResponse{
 		Token:       token,
 		Id:          user.Id.String(),
 		Name:        user.Name,
 		Surname:     user.Surname,
-		PictureData: bytes,
-		PicturePath: user.PicturePath}, nil
+		PicturePath: &user.PicturePath}, nil
 }
 
 func (s *server) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest) (*auth.LoginResponse, error) {
@@ -139,27 +123,12 @@ func (s *server) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest)
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
-	// Get user profile picture
-	picturePath := userEntity.PicturePath
-
-	file, err := os.Open(picturePath)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Can't open picture from path")
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Can't read picture content")
-	}
-
 	return &auth.LoginResponse{
 		Token:       token,
 		Id:          userEntity.Id.String(),
 		Name:        userEntity.Name,
 		Surname:     userEntity.Surname,
-		PictureData: bytes,
-		PicturePath: userEntity.PicturePath}, nil
+		PicturePath: &userEntity.PicturePath}, nil
 }
 
 func (s *server) GetUserPicture(req *auth.GetUserPictureRequest, stream auth.Auth_GetUserPictureServer) error {

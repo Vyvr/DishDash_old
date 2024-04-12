@@ -11,19 +11,14 @@ import {
   filter,
   map,
   take,
-  withLatestFrom,
 } from 'rxjs';
-import { GetImageStreamRequest } from 'src/app/pb/post_pb';
 import { AuthFacade } from 'src/app/store/auth';
-import {
-  InternalMenuBookPost,
-  MenuBookPostFacade,
-} from 'src/app/store/menuBookPost';
-import { base64ToBlob } from '../../utils';
+import { MenuBookPostFacade } from 'src/app/store/menuBookPost';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
 import {
   DeleteFromMenuBookRequest,
   EditMenuBookPostRequest,
+  MenuBookPost,
 } from 'src/app/pb/menu_book_post_pb';
 import { EditedData } from './menu-book.model';
 
@@ -39,10 +34,8 @@ export class MenuBookComponent extends OnDestroyMixin {
   isEditMode: boolean = false;
 
   selectedPostId$: BehaviorSubject<string> = new BehaviorSubject('');
-  selectedPostData$: Observable<InternalMenuBookPost | undefined> =
+  selectedPostData$: Observable<MenuBookPost.AsObject | undefined> =
     this._selectPostData$();
-
-  images$: Observable<string[]> = this.getPostImages$();
 
   constructor(
     private authFacade: AuthFacade,
@@ -53,29 +46,6 @@ export class MenuBookComponent extends OnDestroyMixin {
 
   onPostSelected(postId: string): void {
     this.selectedPostId$.next(postId);
-
-    this.selectedPostData$
-      .pipe(
-        untilComponentDestroyed(this),
-        take(1),
-        withLatestFrom(this.authFacade.authState$)
-      )
-      .subscribe(([selectedPostData, authState]) => {
-        selectedPostData?.pictures.forEach(({ path }) => {
-          const payload = bindTokenToPayload<GetImageStreamRequest.AsObject>(
-            {
-              picturePath: path,
-            },
-            authState
-          );
-
-          if (isNil(payload)) {
-            return;
-          }
-
-          this.menuBookPostFacade.getImageStream(payload);
-        });
-      });
     this.isEditMode = false;
   }
 
@@ -132,14 +102,14 @@ export class MenuBookComponent extends OnDestroyMixin {
 
         this.menuBookPostFacade.editMenuBookPost(payload);
       });
-      this.isEditMode = false;
+    this.isEditMode = false;
   }
 
   onToggleEdit(): void {
     this.isEditMode = !this.isEditMode;
   }
 
-  private _selectPostData$(): Observable<InternalMenuBookPost | undefined> {
+  private _selectPostData$(): Observable<MenuBookPost.AsObject | undefined> {
     return combineLatest([
       this.menuBookPostFacade.menuBookPostState$,
       this.selectedPostId$,
@@ -151,28 +121,6 @@ export class MenuBookComponent extends OnDestroyMixin {
         );
 
         return selectedPostData;
-      })
-    );
-  }
-
-  private getPostImages$(): Observable<string[]> {
-    return this.selectedPostData$.pipe(
-      untilComponentDestroyed(this),
-      map((selectedPostData) => {
-        return (
-          selectedPostData?.pictures.map((picture) => {
-            if (isNil(picture.data)) {
-              return '';
-            }
-
-            const contentType = 'image/png';
-            const base64String: string = picture.data?.toString();
-            const imageBlob = base64ToBlob(base64String, contentType);
-            const imageUrl = URL.createObjectURL(imageBlob);
-
-            return imageUrl;
-          }) ?? []
-        );
       })
     );
   }

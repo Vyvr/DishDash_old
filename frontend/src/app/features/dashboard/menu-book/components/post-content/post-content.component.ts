@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { isNil } from 'lodash-es';
-import { InternalMenuBookPost } from 'src/app/store/menuBookPost/menuBookPost.model';
+import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
 
 @Component({
   selector: 'app-post-content',
@@ -8,7 +8,7 @@ import { InternalMenuBookPost } from 'src/app/store/menuBookPost/menuBookPost.mo
   styleUrls: ['./post-content.component.scss'],
 })
 export class PostContentComponent implements OnInit {
-  @Input() post?: InternalMenuBookPost | null = null;
+  @Input() post?: MenuBookPost.AsObject | null = null;
   @Input() images?: string[] | null = [];
 
   creationDate: Date | string | null = null;

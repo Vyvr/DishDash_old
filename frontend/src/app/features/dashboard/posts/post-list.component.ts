@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CreatePostModalComponent } from '../create-post-modal/create-post-modal.component';
 import { AuthFacade } from 'src/app/store/auth';
 import {
@@ -6,7 +6,7 @@ import {
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
-import { combineLatest, filter, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { PostFacade } from 'src/app/store/post/post.facade';
 import {
   AddToMenuBookRequest,
@@ -14,7 +14,6 @@ import {
   DeleteCommentRequest,
   EditCommentRequest,
   GetCommentsRequest,
-  GetImageStreamRequest,
   GetPostsRequest,
   ToggleLikeRequest,
 } from 'src/app/pb/post_pb';
@@ -31,7 +30,7 @@ import {
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.scss'],
 })
-export class PostListComponent extends OnDestroyMixin implements OnInit {
+export class PostListComponent extends OnDestroyMixin {
   @ViewChild(CreatePostModalComponent) modal: CreatePostModalComponent | null =
     null;
 
@@ -43,10 +42,6 @@ export class PostListComponent extends OnDestroyMixin implements OnInit {
 
   constructor(private authFacade: AuthFacade, private postFacade: PostFacade) {
     super();
-  }
-
-  ngOnInit(): void {
-    this._loadPictures();
   }
 
   openCreatePostModal(): void {
@@ -228,34 +223,34 @@ export class PostListComponent extends OnDestroyMixin implements OnInit {
       });
   }
 
-  private _loadPictures(): void {
-    combineLatest([this.authState$, this.postState$])
-      .pipe(
-        untilComponentDestroyed(this),
-        filter(
-          ([authState, postState]) => !authState?.loading && !postState?.loading
-        ),
-        take(1)
-      )
-      .subscribe(([{ data: authData }, { data: postData }]) => {
-        if (isNil(postData) || isNil(authData)) {
-          return;
-        }
+  // private _loadPictures(): void {
+  //   combineLatest([this.authState$, this.postState$])
+  //     .pipe(
+  //       untilComponentDestroyed(this),
+  //       filter(
+  //         ([authState, postState]) => !authState?.loading && !postState?.loading
+  //       ),
+  //       take(1)
+  //     )
+  //     .subscribe(([{ data: authData }, { data: postData }]) => {
+  //       if (isNil(postData) || isNil(authData)) {
+  //         return;
+  //       }
 
-        postData.forEach((post) => {
-          post.pictures.forEach(({ path, data }) => {
-            if (!isNil(data)) {
-              return;
-            }
+  //       postData.forEach((post) => {
+  //         post.pictures.forEach(({ path, data }) => {
+  //           if (!isNil(data)) {
+  //             return;
+  //           }
 
-            const payload: GetImageStreamRequest.AsObject = {
-              token: authData.token,
-              picturePath: path,
-            };
+  //           const payload: GetImageStreamRequest.AsObject = {
+  //             token: authData.token,
+  //             picturePath: path,
+  //           };
 
-            this.postFacade.getImageStream(payload);
-          });
-        });
-      });
-  }
+  //           this.postFacade.getImageStream(payload);
+  //         });
+  //       });
+  //     });
+  // }
 }
