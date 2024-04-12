@@ -7,6 +7,11 @@ protoc --proto_path=proto proto/*.proto --js_out=import_style=commonjs:../fronte
 ## run backend:
 air -c .air.gnu.toml
 
+## run hosting pictures server
+you need python 3
+cd backend
+python3 -m http.server 8000
+
 ## run frontend:
 ng serve
 
