@@ -5,6 +5,7 @@ import * as actions from './auth.actions';
 import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
 import { base64ToBlob } from 'src/app/features/utils';
+import { environment } from 'src/app/environments/environment';
 
 export const authReducer = createReducer(
   initialState,
@@ -17,21 +18,10 @@ export const authReducer = createReducer(
     actions.loginSuccess,
     actions.refreshTokenSuccess,
     (state, { type: _, ...payload }) => {
-      if (!isNil(payload.pictureData)) {
-        console.log({pictureData: payload.pictureData})
-
-        const contentType = 'image/png';
-        const base64String: string = payload.pictureData.toString();
-        const imageBlob = base64ToBlob(base64String, contentType);
-        const imageUrl = URL.createObjectURL(imageBlob);
-        payload.pictureData = imageUrl;
-
-        console.log({
-          imageUrl,
-          imageBlob,
-          base64String,
-          pictureData: payload.pictureData,
-        });
+      if (!isNil(payload.picturePath) && payload.picturePath.length !== 0) {
+        payload.picturePath = environment.picturesServer + payload.picturePath;
+      } else {
+        payload.picturePath = undefined;
       }
 
       return {
