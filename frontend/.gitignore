@@ -44,7 +44,8 @@ Thumbs.db
 
 #environment
 # Ignore all .env files
-*.env.local
+*environment.*.ts
 
 # But don't ignore .env.local
-!.env.example
+!environment.example.ts
+!environment.type.ts
