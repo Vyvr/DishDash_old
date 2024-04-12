@@ -3,7 +3,6 @@
     menuBookPostState: menuBookPostState$ | async,
     selectedPostData: selectedPostData$ | async,
     selectedPostId: selectedPostId$ | async,
-    images: images$ | async
   } as viewData"
 >
   <ng-container *ngIf="viewData?.menuBookPostState?.loading; else content">
@@ -26,7 +25,7 @@
           <app-post-content
             *ngIf="!isEditMode"
             [post]="viewData?.selectedPostData"
-            [images]="viewData?.images"
+            [images]="viewData?.selectedPostData?.picturePathList"
             (toggleEdit)="onToggleEdit()"
             (delete)="onDeleteFromMenuBook($event)"
           />

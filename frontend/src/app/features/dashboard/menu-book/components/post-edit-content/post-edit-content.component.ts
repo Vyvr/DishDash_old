@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { isNil } from 'lodash-es';
-import { InternalMenuBookPost } from 'src/app/store/menuBookPost';
 import { EditedData } from '../../menu-book.model';
+import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
 
 @Component({
   selector: 'app-post-edit-content',
@@ -9,7 +9,7 @@ import { EditedData } from '../../menu-book.model';
   styleUrls: ['./post-edit-content.component.scss'],
 })
 export class PostEditContentComponent implements OnInit {
-  @Input() post?: InternalMenuBookPost | null = null;
+  @Input() post?: MenuBookPost.AsObject | null = null;
 
   @Output() toggleEdit = new EventEmitter<void>();
   @Output() editData = new EventEmitter<EditedData>();

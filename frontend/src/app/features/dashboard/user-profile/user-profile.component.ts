@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthFacade } from 'src/app/store/auth';
 import { UserPostsFacade } from 'src/app/store/user-posts';
 import {
@@ -16,7 +16,6 @@ import {
   CommentPostRequest,
   EditCommentRequest,
   DeleteCommentRequest,
-  GetImageStreamRequest,
   GetCommentsRequest,
 } from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
@@ -29,7 +28,7 @@ import { AddUserPictureRequest } from 'src/app/pb/auth_pb';
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
 })
-export class UserProfileComponent extends OnDestroyMixin implements OnInit {
+export class UserProfileComponent extends OnDestroyMixin {
   defaultProfilePicturePath: string =
     '../../../../assets/default-user-picture.webp';
 
@@ -47,10 +46,6 @@ export class UserProfileComponent extends OnDestroyMixin implements OnInit {
     private userPostsFacade: UserPostsFacade
   ) {
     super();
-  }
-
-  ngOnInit(): void {
-    this._loadPictures();
   }
 
   onNewComment({ postId, commentText }: NewCommentEvent): void {
@@ -194,37 +189,6 @@ export class UserProfileComponent extends OnDestroyMixin implements OnInit {
         }
 
         this.authFacade.addUserPicture(payload);
-      });
-  }
-
-  private _loadPictures(): void {
-    combineLatest([this.authState$, this.userPostsState$])
-      .pipe(
-        untilComponentDestroyed(this),
-        filter(
-          ([authState, postState]) => !authState?.loading && !postState?.loading
-        ),
-        take(1)
-      )
-      .subscribe(([{ data: authData }, { data: postData }]) => {
-        if (isNil(postData) || isNil(authData)) {
-          return;
-        }
-
-        postData.forEach((post) => {
-          post.pictures.forEach(({ path, data }) => {
-            if (!isNil(data)) {
-              return;
-            }
-
-            const payload: GetImageStreamRequest.AsObject = {
-              token: authData.token,
-              picturePath: path,
-            };
-
-            this.userPostsFacade.getImageStream(payload);
-          });
-        });
       });
   }
 }

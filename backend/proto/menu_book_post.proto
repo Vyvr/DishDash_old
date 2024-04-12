@@ -23,9 +23,8 @@ message MenuBookPost {
     string ingredients = 7;
     int64 portion_quantity = 8;
     string preparation = 9;
-    repeated string pictures = 10;
-    repeated bytes pictures_data = 11;
-    google.protobuf.Timestamp creation_date = 12;
+    repeated string picture_path = 10;
+    google.protobuf.Timestamp creation_date = 11;
 }
 
 message GetPostsFromMenuBookRequest {

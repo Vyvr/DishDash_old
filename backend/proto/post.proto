@@ -33,14 +33,13 @@ message Post {
     string ingredients = 6;
     int64 portion_quantity = 7;
     string preparation = 8;
-    repeated string pictures = 9;
-    repeated bytes pictures_data = 10;
-    int64 likes_count = 11;
-    int64 comments_count = 12;  
-    repeated Comment comments = 13;
-    bool liked = 14;
-    bool is_in_menu_book = 15;
-    google.protobuf.Timestamp creation_date = 16;
+    repeated string picture_path = 9;
+    int64 likes_count = 10;
+    int64 comments_count = 11;  
+    repeated Comment comments = 12;
+    bool liked = 13;
+    bool is_in_menu_book = 14;
+    google.protobuf.Timestamp creation_date = 15;
 }
 
 message Comment {

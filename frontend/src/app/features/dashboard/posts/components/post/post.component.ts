@@ -1,8 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { isEmpty, isNil } from 'lodash-es';
-import { InternalPost } from 'src/app/store/post';
-import { DeleteCommentEvent, EditCommentEvent, NewCommentEvent, PartialDeleteCommentEvent, PartialEditCommentEvent, ToggleLikeEvent } from './post.model';
-import { base64ToBlob } from 'src/app/features/utils';
+import { isNil } from 'lodash-es';
+import {
+  DeleteCommentEvent,
+  EditCommentEvent,
+  NewCommentEvent,
+  PartialDeleteCommentEvent,
+  PartialEditCommentEvent,
+  ToggleLikeEvent,
+} from './post.model';
+import { Post } from 'src/app/pb/post_pb';
 
 @Component({
   selector: 'app-post',
@@ -10,7 +16,7 @@ import { base64ToBlob } from 'src/app/features/utils';
   styleUrls: ['./post.component.scss'],
 })
 export class PostComponent implements OnInit {
-  @Input() post: InternalPost | null = null;
+  @Input() post: Post.AsObject | null = null;
   @Input() isCommentsOpen = false;
   @Input() isProfilePost = false;
 
@@ -35,12 +41,6 @@ export class PostComponent implements OnInit {
         this.post?.creationDate?.seconds * 1000
       ).toDateString();
 
-      if (this.post.pictures) {
-        this.itemsLoadingSquareCount = this.post.pictures.length;
-      }
-
-      this._loadPictures();
-
       return;
     }
   }
@@ -56,7 +56,7 @@ export class PostComponent implements OnInit {
   }
 
   onAddToMenuBook(): void {
-    if(isNil(this.post) || isNil(this.post.id) || this.post.isInMenuBook) {
+    if (isNil(this.post) || isNil(this.post.id) || this.post.isInMenuBook) {
       return;
     }
 
@@ -71,7 +71,7 @@ export class PostComponent implements OnInit {
     this.newComment.emit({ postId: this.post.id, commentText });
   }
 
-  onEditComment({commentId, commentText}: PartialEditCommentEvent): void {
+  onEditComment({ commentId, commentText }: PartialEditCommentEvent): void {
     if (isNil(this.post)) {
       return;
     }
@@ -79,7 +79,7 @@ export class PostComponent implements OnInit {
     this.editComment.emit({ postId: this.post.id, commentId, commentText });
   }
 
-  onDeleteComment({commentId}: PartialDeleteCommentEvent): void {
+  onDeleteComment({ commentId }: PartialDeleteCommentEvent): void {
     if (isNil(this.post)) {
       return;
     }
@@ -93,24 +93,5 @@ export class PostComponent implements OnInit {
 
   onCloseCommentsModal(): void {
     this.postCommentsClose.emit();
-  }
-
-  private _loadPictures(): void {
-    if (isNil(this.post) || isEmpty(this.post.pictures)) {
-      return;
-    }
-    const contentType = 'image/png'; // MIME type of the blob you're creating
-
-    this.post.pictures.forEach((picture) => {
-      if (isNil(picture.data)) {
-        return;
-      }
-      const base64String: string = picture.data?.toString();
-      const imageBlob = base64ToBlob(base64String, contentType);
-
-      const imageUrl = URL.createObjectURL(imageBlob);
-      this.itemsLoadingSquareCount -= 1;
-      this.urlImages.push(imageUrl);
-    });
   }
 }

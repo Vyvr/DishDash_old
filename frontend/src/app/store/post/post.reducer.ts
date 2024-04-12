@@ -1,9 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
-import { InternalPost, initialState } from './post.model';
+import { initialState } from './post.model';
 
 import * as actions from './post.actions';
 import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
+import { Post } from 'src/app/pb/post_pb';
+import { environment } from 'src/app/environments/environment';
 
 export const postReducer = createReducer(
   initialState,
@@ -17,10 +19,10 @@ export const postReducer = createReducer(
         ...(state.data ?? []),
         {
           ...post,
-          pictures: [],
           likesCount: 0,
           commentsCount: 0,
           commentsList: [],
+          picturePathList: [],
           liked: false,
           isInMenuBook: false,
         },
@@ -86,16 +88,20 @@ export const postReducer = createReducer(
       (post) => !existingPostsMap.has(post.id)
     );
 
-    // Transform new posts to match the InternalPost structure
-    const transformedNewPosts = newUniquePosts.map<InternalPost>(
-      ({ picturesList, picturesDataList: _, ...post }) => ({
+    const updatedPathsPosts: Post.AsObject[] = newUniquePosts.map((post) => {
+      const updatedPaths = post.picturePathList.map(
+        (path) => environment.picturesServer + path
+      );
+      const updatedPost: Post.AsObject = {
         ...post,
-        pictures: picturesList.map((path) => ({ path })),
-      })
-    );
+        picturePathList: updatedPaths,
+      };
+
+      return updatedPost;
+    });
 
     // Combine the existing posts with the new, unique, transformed posts
-    const combinedPosts = [...(state.data ?? []), ...transformedNewPosts];
+    const combinedPosts = [...(state.data ?? []), ...updatedPathsPosts];
 
     return {
       ...state,
@@ -104,45 +110,6 @@ export const postReducer = createReducer(
     };
   }),
   on(actions.getFriendsPostsFailure, (state, { message }) => ({
-    ...state,
-    ...errorState(message),
-  })),
-  //---------------GET IMAGE STREAM---------------------
-  on(actions.getImageStream, (state) => ({ ...state })),
-  on(
-    actions.getImageStreamSuccess,
-    (state, { type: _, imageData, postId, picturePath }) => {
-      const defaultReturn = { ...state };
-
-      if (isNil(state.data)) {
-        return defaultReturn;
-      }
-
-      const post = state.data.find((post) => post.id === postId);
-
-      if (isNil(post)) {
-        return defaultReturn;
-      }
-
-      const updatedPost = {
-        ...post,
-        pictures: post.pictures.map(({ path, data }) => ({
-          path,
-          data: path === picturePath ? imageData : data,
-        })),
-      };
-
-      return {
-        ...state,
-        data: [
-          ...new Map(
-            [...(state.data ?? []), updatedPost].map((post) => [post.id, post])
-          ).values(),
-        ],
-      };
-    }
-  ),
-  on(actions.getImageStreamFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),
