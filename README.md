@@ -9,7 +9,9 @@ air -c .air.gnu.toml
 
 ## run hosting pictures server
 you need python 3
+
 cd backend
+
 python3 -m http.server 8000
 
 ## run frontend:
