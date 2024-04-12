@@ -41,3 +41,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+#environment
+# Ignore all .env files
+*.env.local
+
+# But don't ignore .env.local
+!.env.example
