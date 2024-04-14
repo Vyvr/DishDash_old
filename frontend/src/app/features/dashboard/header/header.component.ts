@@ -17,6 +17,8 @@ import {
 import { AuthFacade } from 'src/app/store/auth/auth.facade';
 import { SearchFacade } from 'src/app/store/search';
 import { SocialFacade } from 'src/app/store/social';
+import { Plugins } from './header.enums';
+import { IconButtons } from './header.model';
 
 @Component({
   selector: 'dashboard-header',
@@ -28,10 +30,13 @@ export class HeaderComponent extends OnDestroyMixin {
   private searchState$ = this.searchFacade.searchState$;
   private socialState$ = this.socialFacade.socialState$;
 
+  plugins = Plugins;
+  iconButtons = IconButtons;
+
   queryString: string = '';
   searchedUsers: UserBasicInfo.AsObject[] = [];
   friendsList: UserBasicInfo.AsObject[] = [];
-  selectedPlugin: string = 'posts'
+  selectedPlugin: string = 'posts';
 
   currentPage = 1;
   pageSize = 2;
@@ -75,8 +80,6 @@ export class HeaderComponent extends OnDestroyMixin {
 
         this.friendsList = socialState.data.friends;
       });
-
-      this.selectPlugin(this.selectedPlugin);
   }
 
   searchForUsers(): void {
@@ -176,38 +179,9 @@ export class HeaderComponent extends OnDestroyMixin {
       });
   }
 
-  navigateToUserProfile(): void {
-    this.router.navigate(['/dashboard/user-profile']);
-    this.selectPlugin('user-profile');
-  }
-
-  navigateToPosts(): void {
-    this.router.navigate(['/dashboard/posts']);
-    this.selectPlugin('posts');
-  }
-
-  navigateToMenuBook(): void {
-    this.router.navigate(['/dashboard/menu-book']);
-    this.selectPlugin('menu-book');
-  }
-
-  navigateToFarmers(): void {
-    this.router.navigate(['/dashboard/farmers']);
-    this.selectPlugin('farmers');
-  }
-
-  navigateToMarket(): void {
-    this.router.navigate(['/dashboard/market']);
-    this.selectPlugin('market');
-  }
-
-  navigateToSettings(): void {
-    this.router.navigate(['/dashboard/settings']);
-    this.selectPlugin('settings');
-  }
-
-  selectPlugin(pluginName: string): void {
-    this.selectedPlugin = pluginName;
+  navigateToSomething(plugin: string): void {
+    this.router.navigate([plugin]);
+    this.selectedPlugin = plugin;
   }
 
   logout(): void {

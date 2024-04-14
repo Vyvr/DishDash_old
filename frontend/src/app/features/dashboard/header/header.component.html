@@ -33,53 +33,18 @@
   </div>
 
   <div class="header-menu-wrapper">
-    <button
-      [ngClass]="{
-        'icon-button': selectedPlugin !== 'user-profile',
-        'selected-icon-button': selectedPlugin === 'user-profile'
-      }"
-      (click)="navigateToUserProfile()"
-    >
-      <svg-icon src="assets/user-profile-icon.svg" alt="User Profile" />
-    </button>
-
-    <button
-      [ngClass]="{
-        'icon-button': selectedPlugin !== 'posts',
-        'selected-icon-button': selectedPlugin === 'posts'
-      }"
-      (click)="navigateToPosts()"
-    >
-      <svg-icon src="assets/posts-icon.svg" alt="Posts"></svg-icon>
-    </button>
-
-    <button
-      [ngClass]="{
-        'icon-button': selectedPlugin !== 'menu-book',
-        'selected-icon-button': selectedPlugin === 'menu-book'
-      }"
-      (click)="navigateToMenuBook()"
-    >
-      <svg-icon src="assets/menu-book-icon.svg" alt="Menu book"></svg-icon>
-    </button>
-    <!-- 
-    <button class="icon-button" (click)="navigateToMarket()">
-      <svg-icon src="assets/shop-icon.svg" alt="Market"></svg-icon>
-    </button> -->
-
-    <!-- <button class="icon-button" (click)="navigateToFarmers()">
-      <svg-icon src="assets/farm-tractor-icon.svg" alt="Farmers" />
-    </button> -->
-
-    <button
-      [ngClass]="{
-        'icon-button': selectedPlugin !== 'usettings',
-        'selected-icon-button': selectedPlugin === 'settings'
-      }"
-      (click)="navigateToSettings()"
-    >
-      <svg-icon src="assets/user-settings-icon.svg" alt="Settings" />
-    </button>
+    <ng-container *ngFor="let iconButton of iconButtons">
+      <button
+        [class]="
+          (iconButton.plugin | routePipe : selectedPlugin)
+            ? 'selected-icon-button'
+            : 'icon-button'
+        "
+        (click)="navigateToSomething(iconButton.plugin)"
+      >
+        <svg-icon [src]="iconButton.svg" [attr.alt]="iconButton.alt" />
+      </button>
+    </ng-container>
 
     <button class="logout-button" (click)="logout()">
       <svg-icon class="logout-icon" src="assets/logout-icon.svg" alt="Logout" />
