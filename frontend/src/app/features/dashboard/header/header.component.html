@@ -6,35 +6,78 @@
   </div>
 
   <div class="search-bar-wrapper">
-    <input
+    <!-- <input
       class="search-bar"
       [(ngModel)]="queryString"
       (ngModelChange)="searchForUsers()"
-    />
+    /> -->
+
+    <div class="custom-input">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="svg_icon bi-search"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+        ></path>
+      </svg>
+      <input
+        class="input"
+        type="text"
+        placeholder="Find your friends"
+        [(ngModel)]="queryString"
+        (ngModelChange)="searchForUsers()"
+      />
+    </div>
   </div>
 
   <div class="header-menu-wrapper">
-    <button class="icon-button" (click)="navigateToUserProfile()">
+    <button
+      [ngClass]="{
+        'icon-button': selectedPlugin !== 'user-profile',
+        'selected-icon-button': selectedPlugin === 'user-profile'
+      }"
+      (click)="navigateToUserProfile()"
+    >
       <svg-icon src="assets/user-profile-icon.svg" alt="User Profile" />
     </button>
 
-    <button class="icon-button" (click)="navigateToPosts()">
+    <button
+      [ngClass]="{
+        'icon-button': selectedPlugin !== 'posts',
+        'selected-icon-button': selectedPlugin === 'posts'
+      }"
+      (click)="navigateToPosts()"
+    >
       <svg-icon src="assets/posts-icon.svg" alt="Posts"></svg-icon>
     </button>
 
-    <button class="icon-button" (click)="navigateToMenuBook()">
+    <button
+      [ngClass]="{
+        'icon-button': selectedPlugin !== 'menu-book',
+        'selected-icon-button': selectedPlugin === 'menu-book'
+      }"
+      (click)="navigateToMenuBook()"
+    >
       <svg-icon src="assets/menu-book-icon.svg" alt="Menu book"></svg-icon>
     </button>
-
+    <!-- 
     <button class="icon-button" (click)="navigateToMarket()">
       <svg-icon src="assets/shop-icon.svg" alt="Market"></svg-icon>
-    </button>
+    </button> -->
 
-    <button class="icon-button" (click)="navigateToFarmers()">
+    <!-- <button class="icon-button" (click)="navigateToFarmers()">
       <svg-icon src="assets/farm-tractor-icon.svg" alt="Farmers" />
-    </button>
+    </button> -->
 
-    <button class="icon-button" (click)="navigateToSettings()">
+    <button
+      [ngClass]="{
+        'icon-button': selectedPlugin !== 'usettings',
+        'selected-icon-button': selectedPlugin === 'settings'
+      }"
+      (click)="navigateToSettings()"
+    >
       <svg-icon src="assets/user-settings-icon.svg" alt="Settings" />
     </button>
 

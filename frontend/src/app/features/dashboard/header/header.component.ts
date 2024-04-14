@@ -31,6 +31,7 @@ export class HeaderComponent extends OnDestroyMixin {
   queryString: string = '';
   searchedUsers: UserBasicInfo.AsObject[] = [];
   friendsList: UserBasicInfo.AsObject[] = [];
+  selectedPlugin: string = 'posts'
 
   currentPage = 1;
   pageSize = 2;
@@ -74,6 +75,8 @@ export class HeaderComponent extends OnDestroyMixin {
 
         this.friendsList = socialState.data.friends;
       });
+
+      this.selectPlugin(this.selectedPlugin);
   }
 
   searchForUsers(): void {
@@ -175,26 +178,36 @@ export class HeaderComponent extends OnDestroyMixin {
 
   navigateToUserProfile(): void {
     this.router.navigate(['/dashboard/user-profile']);
+    this.selectPlugin('user-profile');
   }
 
   navigateToPosts(): void {
     this.router.navigate(['/dashboard/posts']);
+    this.selectPlugin('posts');
   }
 
   navigateToMenuBook(): void {
     this.router.navigate(['/dashboard/menu-book']);
+    this.selectPlugin('menu-book');
   }
 
   navigateToFarmers(): void {
     this.router.navigate(['/dashboard/farmers']);
+    this.selectPlugin('farmers');
   }
 
   navigateToMarket(): void {
     this.router.navigate(['/dashboard/market']);
+    this.selectPlugin('market');
   }
 
   navigateToSettings(): void {
     this.router.navigate(['/dashboard/settings']);
+    this.selectPlugin('settings');
+  }
+
+  selectPlugin(pluginName: string): void {
+    this.selectedPlugin = pluginName;
   }
 
   logout(): void {
