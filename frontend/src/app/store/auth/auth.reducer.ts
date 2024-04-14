@@ -4,7 +4,6 @@ import { initialState } from './auth.model';
 import * as actions from './auth.actions';
 import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
-import { base64ToBlob } from 'src/app/features/utils';
 import { environment } from 'src/app/environments/environment';
 
 export const authReducer = createReducer(
@@ -94,19 +93,14 @@ export const authReducer = createReducer(
       return defaultReturn;
     }
 
-    const splittedImage = userImage.split(',', 2);
-
-    const contentType = 'image/png';
-    const base64String: string = splittedImage[1].toString();
-    const imageBlob = base64ToBlob(base64String, contentType);
-    const imageUrl = URL.createObjectURL(imageBlob);
+    const path = environment.picturesServer + userImage;
 
     return {
       ...state,
       ...loadedState,
       data: {
         ...state.data,
-        pictureData: imageUrl,
+        picturePath: path,
       },
     };
   }),

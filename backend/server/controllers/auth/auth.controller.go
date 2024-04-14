@@ -219,7 +219,7 @@ func (s *server) AddUserPicture(ctx context.Context, in *auth.AddUserPictureRequ
 	}
 
 	return &auth.AddUserPictureResponse{
-		UserImage: in.Image,
+		UserImage: filePath,
 	}, nil
 }
 
