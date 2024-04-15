@@ -37,6 +37,9 @@ export class PostListComponent extends OnDestroyMixin {
   authState$ = this.authFacade.authState$;
   postState$ = this.postFacade.postState$;
 
+  defaultProfilePicturePath: string =
+    '../../../../assets/default-user-picture.webp';
+
   postTitle: string = '';
   commentsOpenPostId: string | null = null;
 

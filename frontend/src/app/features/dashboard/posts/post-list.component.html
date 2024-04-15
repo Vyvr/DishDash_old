@@ -16,7 +16,16 @@
       <div class="posts-inside-wrapper">
         <div class="create-post-wrapper">
           <div class="create-post-content-wrapper">
-            <div class="user-picture-wrapper"></div>
+            <div class="user-profile-picture-wrapper">
+              <div class="user-profile-picture-container">
+                <img
+                  class="user-profile-picture"
+                  src="{{
+                    viewData.authState?.data?.picturePath ?? defaultProfilePicturePath
+                  }}"
+                />
+              </div>
+            </div>
             <div class="inputs-wrapper">
               <input class="create-title-input" [(ngModel)]="postTitle" />
               <button class="create-button" (click)="openCreatePostModal()">

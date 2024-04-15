@@ -32,6 +32,8 @@ export class PostComponent implements OnInit {
   urlImages: string[] = [];
   itemsLoadingSquareCount: number = 0;
 
+  constructor() {}
+
   ngOnInit(): void {
     if (
       !isNil(this.post?.creationDate?.seconds) &&
@@ -44,8 +46,6 @@ export class PostComponent implements OnInit {
       return;
     }
   }
-
-  constructor() {}
 
   onToggleLike(postId: string | undefined): void {
     if (isNil(postId) || isNil(this.post)) {
