@@ -3,12 +3,12 @@
   // box-sizing: border-box;
   // height: 100%;
   // padding: 10px 0px;
-    display: grid;
-    grid-template-columns: 1fr 4fr 1fr;
-    grid-template-rows: 1fr;
-    grid-column-gap: 5px;
-    grid-row-gap: 0px;
-    height: calc(100% - 50px);
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-rows: 1fr;
+  grid-column-gap: 5px;
+  grid-row-gap: 0px;
+  height: calc(100% - 50px);
 }
 
 .posts-inside-wrapper {
@@ -53,16 +53,81 @@
   }
 }
 
-
 .inputs-wrapper {
   display: flex;
   justify-content: center;
   flex-direction: column;
   height: 100%;
+  width: 400px;
+
+  .custom-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 355px;
+  }
+
+  .input {
+    font-size: 18px;
+    padding: 5px 10px;
+    width: 100%;
+    padding-left: 35px;
+    outline: none;
+    background: #2eaa6b;
+    color: #000000;
+    border: 2px solid #20764a;
+    border-radius: 5px;
+    box-shadow: 3px 3px 2px 0px #e2e2e2;
+    transition: 0.3s ease;
+  }
+
+  .input:focus {
+    background: #f2f2f2;
+    border: 2px solid #3bd888;
+    border-radius: 10px;
+  }
+
+  .custom-input:focus-within .svg-icon {
+    fill: rgb(
+      41,
+      150,
+      94
+    ); /* Change this color to whatever you want when the input is focused */
+  }
+
+  .input::placeholder {
+    color: #dddddd;
+  }
+
+  .svg-icon {
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    fill: #dddddd;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.create-button {
+  margin-top: 10px;
+  border: none;
+  width: 355px;
+  height: 30px;
+  color: #ffff;
+  cursor: pointer;
+  border-radius: 3px;
+  background-color: rgb(41, 150, 94);
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.03);
+    background-color: #3bd888;
+  }
 }
 
 .create-title-input {
-  width: 400px;
+  width: 355px;
   height: 20px;
   margin-bottom: 5px;
   background: url(../../../../assets/add-post-icon.svg) no-repeat scroll 7px 0px;

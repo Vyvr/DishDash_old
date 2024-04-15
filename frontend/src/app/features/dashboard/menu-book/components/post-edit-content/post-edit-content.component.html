@@ -19,7 +19,11 @@
     </div>
   </div>
   <div class="post-content-portion-quantity">
-    Portion for {{ post.portionQuantity }}
+    Portion for
+    <dd-input
+      [type]="'number'"
+      [(inputValue)]="portionQuantity"
+    />
     {{ post.portionQuantity != 1 ? "persons" : "person" }}
   </div>
   <div class="post-content-ingredients">

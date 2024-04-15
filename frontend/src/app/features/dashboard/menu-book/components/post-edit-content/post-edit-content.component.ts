@@ -19,6 +19,7 @@ export class PostEditContentComponent implements OnInit {
   title: string = '';
   ingredients: string = '';
   preparation: string = '';
+  portionQuantity: string = '';
 
   ngOnInit(): void {
     if (isNil(this.post)) {
@@ -35,6 +36,7 @@ export class PostEditContentComponent implements OnInit {
       this.title = this.post.title;
       this.ingredients = this.post.ingredients;
       this.preparation = this.post.preparation;
+      this.portionQuantity = this.post.portionQuantity.toString();
 
       return;
     }
@@ -54,6 +56,7 @@ export class PostEditContentComponent implements OnInit {
       title: this.title,
       ingredients: this.ingredients,
       preparation: this.preparation,
+      portionQuantity: Number(this.portionQuantity),
     });
   }
 }

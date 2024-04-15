@@ -24,7 +24,8 @@
 
 .post-content {
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow-y: auto;
+  white-space: pre-wrap;
   padding: 0px 10px 10px 10px;
   background-color: #fff;
   scrollbar-color: #bfbfbf22;

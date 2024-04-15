@@ -53,6 +53,7 @@ message EditMenuBookPostRequest {
     string title = 3; 
     string ingredients = 4;
     string preparation = 5;
+    int64 portion_quantity = 6;
 }
 
 message EditMenuBookPostResponse {
@@ -60,4 +61,5 @@ message EditMenuBookPostResponse {
     string title = 3; 
     string ingredients = 4;
     string preparation = 5;
+    int64 portion_quantity = 6;
 }

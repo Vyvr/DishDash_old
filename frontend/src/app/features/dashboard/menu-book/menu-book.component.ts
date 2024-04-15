@@ -92,6 +92,7 @@ export class MenuBookComponent extends OnDestroyMixin {
             title: editedData.title,
             ingredients: editedData.ingredients,
             preparation: editedData.preparation,
+            portionQuantity: editedData.portionQuantity,
           },
           authState
         );

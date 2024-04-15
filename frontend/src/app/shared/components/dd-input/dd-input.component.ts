@@ -20,7 +20,7 @@ export class DdInputComponent implements OnInit, AfterViewInit {
   valueFromInput: string = '';
 
   @Input() title: string = '';
-  @Input() type: 'input' | 'textarea' = 'input';
+  @Input() type: 'input' | 'textarea' | 'number' = 'input';
   @Input() resizable: boolean = false;
   @Input()
   get inputValue(): string {

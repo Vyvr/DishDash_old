@@ -94,7 +94,10 @@ export const menubookPostReducer = createReducer(
   on(actions.editMenuBookPost, (state) => ({ ...state })),
   on(
     actions.editMenuBookPostSuccess,
-    (state, { type: _, postId, title, ingredients, preparation }) => {
+    (
+      state,
+      { type: _, postId, title, ingredients, preparation, portionQuantity }
+    ) => {
       const defaultReturn = { ...state };
 
       if (isNil(state.data)) {
@@ -108,10 +111,10 @@ export const menubookPostReducer = createReducer(
       }
 
       const updatedPost = { ...state.data[postIndex] };
-
       updatedPost.title = title;
       updatedPost.ingredients = ingredients;
       updatedPost.preparation = preparation;
+      updatedPost.portionQuantity = portionQuantity;
 
       const updatedData = [
         ...state.data.slice(0, postIndex),

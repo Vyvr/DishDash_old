@@ -5,23 +5,37 @@
       <h2>{{ "Post your recipe!" }}</h2>
     </div>
     <div class="modal-body">
-      <dd-input [title]="'Title'" [(inputValue)]="postTitle" />
-      <dd-input
-        [title]="'Ingredients'"
-        [type]="'textarea'"
-        [(inputValue)]="postIngredients"
-      />
+      <div class="input-wrapper">
+        <dd-input [title]="'Title'" [(inputValue)]="postTitle" />
+      </div>
+      <div class="input-wrapper">
+        <dd-input
+          [title]="'Ingredients'"
+          [type]="'textarea'"
+          [(inputValue)]="postIngredients"
+        />
+      </div>
       <div class="portion-quantity-wrapper">
         Portion for
-        <input class="portion-input" [(ngModel)]="portionQuantity" type="number" min="1" max="100" /> people
+        <input
+          class="portion-input"
+          [(ngModel)]="portionQuantity"
+          type="number"
+          min="1"
+          max="100"
+        />
+        people
       </div>
-      <dd-input
-        [title]="'Preparation'"
-        [type]="'textarea'"
-        [(inputValue)]="postPreparation"
-      />
-      <dd-pictures-input 
-      (imagesChange)="onImagesChange($event)" />
+      <div class="input-wrapper">
+        <dd-input
+          [title]="'Preparation'"
+          [type]="'textarea'"
+          [(inputValue)]="postPreparation"
+        />
+      </div>
+      <div class="input-wrapper">
+        <dd-pictures-input (imagesChange)="onImagesChange($event)" />
+      </div>
     </div>
     <div class="modal-footer">
       <button class="submit-modal-button" (click)="submitPost()">Sumbit</button>

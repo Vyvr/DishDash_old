@@ -7,6 +7,14 @@
     (ngModelChange)="onInputChange()"
     placeholder="{{ title }}"
   />
+  <input
+  *ngIf="type === 'number'"
+  class="dd-custom-number-input"
+  type="number"
+  [(ngModel)]="valueFromInput"
+  (ngModelChange)="onInputChange()"
+  placeholder="{{ title }}"
+/>
   <textarea
     *ngIf="type === 'textarea' && resizable === false"
     class="dd-custom-textarea"

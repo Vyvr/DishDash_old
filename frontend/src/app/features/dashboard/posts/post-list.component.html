@@ -21,13 +21,27 @@
                 <img
                   class="user-profile-picture"
                   src="{{
-                    viewData.authState?.data?.picturePath ?? defaultProfilePicturePath
+                    viewData.authState?.data?.picturePath ??
+                      defaultProfilePicturePath
                   }}"
                 />
               </div>
             </div>
             <div class="inputs-wrapper">
-              <input class="create-title-input" [(ngModel)]="postTitle" />
+              <!-- <input class="create-title-input" [(ngModel)]="postTitle" /> -->
+              <div class="custom-input">
+                <svg-icon
+                  class="svg-icon"
+                  src="../../../../assets/add-post-icon.svg"
+                />
+                <input
+                  class="input"
+                  type="text"
+                  placeholder="Enter post title"
+                  [(ngModel)]="postTitle"
+                />
+              </div>
+
               <button class="create-button" (click)="openCreatePostModal()">
                 Create post
               </button>

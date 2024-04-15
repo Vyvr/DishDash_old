@@ -1,5 +1,7 @@
 .post-content-wrapper {
   display: flex;
+  height: 800px;
+  overflow-y: auto;
   flex-direction: column;
   padding: 20px 10px 10px 10px;
   font-size: 18px;
@@ -24,13 +26,17 @@
 }
 
 .post-content-portion-quantity {
+  display: flex;
+  align-items: center;
   margin-top: 10px;
 }
 
 .post-content-ingredients {
+  margin-top: 10px;
 }
 
-.post-content-preparation pre {
+.post-content-preparation {
+  margin-top: 10px;
   font-family: Arial, Helvetica, sans-serif;
 }
 

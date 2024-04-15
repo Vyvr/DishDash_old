@@ -3,4 +3,5 @@ export interface EditedData {
     title: string; 
     ingredients: string;
     preparation: string;
+    portionQuantity: number;
 }

@@ -99,15 +99,22 @@ func (s *server) EditMenuBookPost(ctx context.Context, in *menu_book_post.EditMe
 	}
 
 	err = db.Model(&postEntity).Updates(entities.PostInMenuBookEntity{
-		Title:       in.Title,
-		Ingredients: in.Ingredients,
-		Preparation: in.Preparation,
+		Title:           in.Title,
+		Ingredients:     in.Ingredients,
+		Preparation:     in.Preparation,
+		PortionQuantity: in.PortionQuantity,
 	}).Error
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error updating the post")
 	}
 
-	return &menu_book_post.EditMenuBookPostResponse{PostId: in.PostId, Title: in.Title, Ingredients: in.Ingredients, Preparation: in.Preparation}, nil
+	return &menu_book_post.EditMenuBookPostResponse{
+		PostId:          in.PostId,
+		Title:           in.Title,
+		Ingredients:     in.Ingredients,
+		Preparation:     in.Preparation,
+		PortionQuantity: in.PortionQuantity,
+	}, nil
 }
 
 func RegisterServer() {
