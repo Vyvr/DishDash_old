@@ -146,6 +146,40 @@ func (s *server) Delete(ctx context.Context, in *post.DeletePostRequest) (*post.
 	}, nil
 }
 
+func (s *server) Edit(ctx context.Context, in *post.EditPostRequest) (*post.EditPostResponse, error) {
+	db := database_service.GetDBInstance()
+
+	_, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	var postEntity entities.PostEntity
+	err = db.Where("id = ?", in.PostId).First(&postEntity).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post found")
+	}
+
+	err = db.Model(&postEntity).Updates(entities.PostEntity{
+		Title:           in.Title,
+		Ingredients:     in.Ingredients,
+		Preparation:     in.Preparation,
+		PortionQuantity: in.PortionQuantity,
+	}).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error updating the post")
+	}
+
+	return &post.EditPostResponse{
+		PostId:          in.PostId,
+		Title:           in.Title,
+		Ingredients:     in.Ingredients,
+		Preparation:     in.Preparation,
+		PortionQuantity: in.PortionQuantity,
+	}, nil
+}
+
 func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookRequest) (*post.AddToMenuBookResponse, error) {
 	db := database_service.GetDBInstance()
 

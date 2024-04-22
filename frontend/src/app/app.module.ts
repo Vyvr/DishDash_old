@@ -40,7 +40,8 @@ import { PostEditContentComponent } from './features/dashboard/menu-book/compone
 import { UserProfileComponent } from './features/dashboard/user-profile/user-profile.component';
 import { DdRequestingSpinnerComponent } from './shared/components/dd-requesting-spinner/dd-requesting-spinner.component';
 import { RoutePipe } from './features/dashboard/header/route.pipe';
-import { DdButtonComponent } from './shared/components/dd-button/dd-button/dd-button.component';
+import { DdButtonComponent } from './shared/components/dd-button/dd-button.component';
+import { DdModalFooterComponent } from './shared/components/dd-modal-footer/dd-modal-footer.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -74,6 +75,7 @@ const devImports = [
     DdRequestingSpinnerComponent,
     RoutePipe,
     DdButtonComponent,
+    DdModalFooterComponent,
   ],
   imports: [
     BrowserModule,

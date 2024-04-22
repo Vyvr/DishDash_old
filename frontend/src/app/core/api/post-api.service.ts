@@ -15,6 +15,8 @@ import {
   DeletePostRequest,
   DeletePostResponse,
   EditCommentRequest,
+  EditPostRequest,
+  EditPostResponse,
   GetCommentsRequest,
   GetCommentsResponse,
   GetImageStreamRequest,
@@ -66,6 +68,20 @@ export class PostApiService {
       DeletePostResponse,
       DeletePostResponse.AsObject
     >(request, this.postServiceClient.delete.bind(this.postServiceClient));
+  }
+
+  editPost(
+    payload: EditPostRequest.AsObject
+  ): Observable<EditPostResponse.AsObject> {
+    const request = new EditPostRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      EditPostRequest,
+      EditPostResponse,
+      EditPostResponse.AsObject
+    >(request, this.postServiceClient.edit.bind(this.postServiceClient));
   }
 
   addToMenuBook(

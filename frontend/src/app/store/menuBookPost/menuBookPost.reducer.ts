@@ -6,7 +6,6 @@ import { errorState, loadedState, loadingState } from '../utils';
 import { isNil } from 'lodash-es';
 import { environment } from 'src/app/environments/environment';
 import { MenuBookPost } from 'src/app/pb/menu_book_post_pb';
-// import { isNil } from 'lodash-es';
 
 export const menubookPostReducer = createReducer(
   initialState,

@@ -13,7 +13,7 @@ import {
 } from '../../post.model';
 
 @Component({
-  selector: 'app-comments-modal',
+  selector: 'comments-modal',
   templateUrl: './comments-modal.component.html',
   styleUrls: ['./comments-modal.component.scss'],
 })

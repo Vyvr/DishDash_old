@@ -45,6 +45,20 @@ export class UserPostsEffects {
     )
   );
 
+  editMenuBookPostEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.editPost),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.editPost(payload).pipe(
+          map((response) => {
+            return actions.editPostSuccess(response);
+          }),
+          catchError((error) => of(actions.editPostFailure(error)))
+        )
+      )
+    )
+  );
+
   getImageStreamEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.getImageStream),

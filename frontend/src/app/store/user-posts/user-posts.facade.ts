@@ -12,6 +12,7 @@ import {
   EditCommentRequest,
   DeleteCommentRequest,
   DeletePostRequest,
+  EditPostRequest,
 } from 'src/app/pb/post_pb';
 
 @Injectable()
@@ -26,6 +27,10 @@ export class UserPostsFacade {
 
   deleteUserPost(payload: DeletePostRequest.AsObject): void {
     this.store.dispatch(actions.deleteUserPost(payload));
+  }
+
+  editUserPost(payload: EditPostRequest.AsObject): void {
+    this.store.dispatch(actions.editPost(payload));
   }
 
   getImageStream(payload: GetImageStreamRequest.AsObject): void {

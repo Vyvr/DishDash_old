@@ -10,6 +10,7 @@ service PostService {
     //@TODO Add delete and edit post methods
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
     rpc Delete(DeletePostRequest) returns (DeletePostResponse);
+    rpc Edit(EditPostRequest) returns (EditPostResponse);
     rpc AddToMenuBook(AddToMenuBookRequest) returns (AddToMenuBookResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
     rpc GetUserPosts(GetPostsRequest)returns (GetPostsResponse);
@@ -107,6 +108,23 @@ message DeletePostRequest {
 
 message DeletePostResponse {
     string post_id = 1;
+}
+
+message EditPostRequest {
+    string token = 1;
+    string post_id = 2;
+    string title = 3; 
+    string ingredients = 4;
+    string preparation = 5;
+    int64 portion_quantity = 6;
+}
+
+message EditPostResponse {
+    string post_id = 1;
+    string title = 3; 
+    string ingredients = 4;
+    string preparation = 5;
+    int64 portion_quantity = 6;
 }
 
 message AddToMenuBookRequest {

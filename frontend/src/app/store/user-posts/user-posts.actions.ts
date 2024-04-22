@@ -13,6 +13,8 @@ import {
   CommentOperationMessageResponse,
   DeletePostRequest,
   DeletePostResponse,
+  EditPostRequest,
+  EditPostResponse,
 } from 'src/app/pb/post_pb';
 
 const moduleName = 'UserPosts';
@@ -47,6 +49,22 @@ export const deleteUserPostSuccess = createAction(
 
 export const deleteUserPostFailure = createAction(
   `[${moduleName}] Delete user post failure`,
+  props<{ message: string }>()
+);
+
+//---------------EDIT POST---------------------
+export const editPost = createAction(
+  `[${moduleName}] Edit post`,
+  props<EditPostRequest.AsObject>()
+);
+
+export const editPostSuccess = createAction(
+  `[${moduleName}] Edit post success`,
+  props<EditPostResponse.AsObject>()
+);
+
+export const editPostFailure = createAction(
+  `[${moduleName}] Edit post failure`,
   props<{ message: string }>()
 );
 

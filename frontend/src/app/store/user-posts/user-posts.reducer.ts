@@ -11,6 +11,7 @@ import { environment } from 'src/app/environments/environment';
 
 export const userPostsReducer = createReducer(
   initialState,
+  //@TODO for future implementation
   //---------------CREATE---------------------
   //   on(actions.createPost, (state) => ({ ...state, ...loadingState })),
   //   on(actions.createPostSuccess, (state, { type: _, ...post }) => {
@@ -122,6 +123,49 @@ export const userPostsReducer = createReducer(
     };
   }),
   on(actions.deleteUserPostFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------EDIT MENU BOOK POST---------------------
+  on(actions.editPost, (state) => ({ ...state })),
+  on(
+    actions.editPostSuccess,
+    (
+      state,
+      { type: _, postId, title, ingredients, preparation, portionQuantity }
+    ) => {
+      const defaultReturn = { ...state };
+
+      if (isNil(state.data)) {
+        return defaultReturn;
+      }
+
+      const postIndex = state.data.findIndex((post) => post.id === postId);
+
+      if (isNil(postIndex) || postIndex === -1) {
+        return defaultReturn;
+      }
+
+      const updatedPost = { ...state.data[postIndex] };
+      updatedPost.title = title;
+      updatedPost.ingredients = ingredients;
+      updatedPost.preparation = preparation;
+      updatedPost.portionQuantity = portionQuantity;
+
+      const updatedData = [
+        ...state.data.slice(0, postIndex),
+        updatedPost,
+        ...state.data.slice(postIndex + 1),
+      ];
+
+      return {
+        ...state,
+        ...loadedState,
+        data: updatedData,
+      };
+    }
+  ),
+  on(actions.editCommentFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),
