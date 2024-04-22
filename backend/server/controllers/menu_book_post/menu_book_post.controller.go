@@ -2,16 +2,19 @@ package menu_book_post
 
 import (
 	"context"
+	"fmt"
 
 	"dish-dash/pb/menu_book_post"
 	"dish-dash/server/entities"
 	"dish-dash/server/services/auth_service"
 	"dish-dash/server/services/database_service"
+	"dish-dash/server/services/file_service"
 	"dish-dash/server/services/registrar_service"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gorm.io/gorm"
 )
 
 type server struct {
@@ -41,7 +44,7 @@ func (s *server) GetPostsFromMenuBook(ctx context.Context, in *menu_book_post.Ge
 	var grpcPosts []*menu_book_post.MenuBookPost
 	for _, postEntity := range menuBookPostEntities {
 		var picturesEntities []entities.PostPicturesEntity
-		db.Where("post_id = ?", postEntity.OriginalPostId).Find(&picturesEntities)
+		db.Where("menu_book_post_id = ?", postEntity.Id).Find(&picturesEntities)
 
 		picturePaths := make([]string, 0, len(picturesEntities))
 		for _, pictureEntity := range picturesEntities {
@@ -76,7 +79,26 @@ func (s *server) DeleteFromMenuBook(ctx context.Context, in *menu_book_post.Dele
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
-	if err := db.Where("original_post_id = ? AND holder_id = ?", in.PostId, userEntity.Id).Delete(&entities.PostInMenuBookEntity{}).Error; err != nil {
+	var pictureEntity entities.PostPicturesEntity
+	if err := db.Where("menu_book_post_id = ?", in.PostId).First(&pictureEntity).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			fmt.Printf("No pictures found. Skipping deletion")
+		} else {
+			return nil, status.Errorf(codes.Internal, "Error in getting pictures for delete")
+		}
+	} else {
+		if err := db.Where("menu_book_post_id = ?", in.PostId).Delete(&entities.PostPicturesEntity{}).Error; err != nil {
+			return nil, status.Errorf(codes.Internal, "Error in deleting pictures")
+		}
+		fmt.Printf(pictureEntity.PicturePath)
+		err := file_service.DeleteImageFolder(pictureEntity.PicturePath)
+
+		if err != nil {
+			return nil, status.Errorf(codes.NotFound, "image not found")
+		}
+	}
+
+	if err := db.Where("id = ? AND holder_id = ?", in.PostId, userEntity.Id).Delete(&entities.PostInMenuBookEntity{}).Error; err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to delete post from menu book: %v", err)
 	}
 

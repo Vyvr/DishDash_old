@@ -11,21 +11,22 @@ export const postReducer = createReducer(
   initialState,
   //---------------CREATE---------------------
   on(actions.createPost, (state) => ({ ...state, ...loadingState })),
-  on(actions.createPostSuccess, (state, { type: _, ...post }) => {
+  // on(actions.createPostSuccess, (state, { type: _, ...post }) => {
+  on(actions.createPostSuccess, (state) => {
     return {
       ...state,
       ...loadedState,
       data: [
         ...(state.data ?? []),
-        {
-          ...post,
-          likesCount: 0,
-          commentsCount: 0,
-          commentsList: [],
-          picturePathList: [],
-          liked: false,
-          isInMenuBook: false,
-        },
+        // {
+        //   ...post,
+        //   likesCount: 0,
+        //   commentsCount: 0,
+        //   commentsList: [],
+        //   picturePathList: [],
+        //   liked: false,
+        //   isInMenuBook: false,
+        // },
       ],
     };
   }),

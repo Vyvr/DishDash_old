@@ -64,3 +64,22 @@
 .icon-like-button {
   border-bottom-left-radius: 10px;
 }
+
+.action-buttons-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  align-items: center;
+  height: 40px;
+  width: 100%;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-top: 1px solid #ccc;
+}

@@ -31,6 +31,20 @@ export class UserPostsEffects {
     )
   );
 
+  deleteUserPostEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.deleteUserPost),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.deletePost(payload).pipe(
+          map((response) => {
+            return actions.deleteUserPostSuccess(response);
+          }),
+          catchError((error) => of(actions.deleteUserPostFailure(error)))
+        )
+      )
+    )
+  );
+
   getImageStreamEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.getImageStream),

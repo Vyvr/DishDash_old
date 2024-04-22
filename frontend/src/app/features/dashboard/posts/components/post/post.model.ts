@@ -19,6 +19,5 @@ export interface DeleteCommentEvent {
   commentId: string;
 }
 
-export type PartialEditCommentEvent = Omit<EditCommentEvent, 'postId'>
-export type PartialDeleteCommentEvent = Omit<DeleteCommentEvent, 'postId'>
-
+export type PartialEditCommentEvent = Omit<EditCommentEvent, 'postId'>;
+export type PartialDeleteCommentEvent = Omit<DeleteCommentEvent, 'postId'>;

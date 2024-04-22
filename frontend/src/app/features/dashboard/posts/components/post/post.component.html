@@ -4,6 +4,18 @@
     <p>{{ creationDate }}</p>
   </div>
   <div class="post-content">
+    <div *ngIf="isProfilePost" class="action-buttons-wrapper">
+      <dd-button [ddClass]="'default'" class="footer-action-button"
+        >Edit</dd-button
+      >
+      <dd-button
+        [ddClass]="'danger'"
+        class="footer-action-button"
+        (click)="toggleDeletePostModal()"
+        >Delete</dd-button
+      >
+    </div>
+
     <h1>{{ post?.title }}</h1>
     <p>
       Portion for {{ post?.portionQuantity }}
@@ -48,3 +60,20 @@
   (editComment)="onEditComment($event)"
   (deleteComment)="onDeleteComment($event)"
 ></app-comments-modal>
+
+<dd-modal
+  [isVisible]="isDeletePostModalOpen"
+  [withHeader]="true"
+  [headerText]="'Are you sure?'"
+  (toggleModal)="toggleDeletePostModal()"
+>
+  <dd-input
+    [title]="'Provide title of the post'"
+    [(inputValue)]="deletePostTitle"
+  />
+  <div class="modal-footer">
+    <dd-button [ddClass]="'danger mg-top'" (click)="onDeletePost()"
+      >Delete</dd-button
+    >
+  </div>
+</dd-modal>

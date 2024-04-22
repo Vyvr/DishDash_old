@@ -17,6 +17,7 @@ import {
   EditCommentRequest,
   DeleteCommentRequest,
   GetCommentsRequest,
+  DeletePostRequest,
 } from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
 import { getBase64String$ } from 'src/app/features/utils';
@@ -161,6 +162,23 @@ export class UserProfileComponent extends OnDestroyMixin {
         error: (error) => {
           console.error(`error dd-pictues-input: ${error}`);
         },
+      });
+  }
+
+  onDeletePost(postId: string): void {
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<DeletePostRequest.AsObject>(
+          { postId },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.userPostsFacade.deleteUserPost(payload);
       });
   }
 

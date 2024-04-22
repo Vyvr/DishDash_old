@@ -91,7 +91,7 @@ export const userPostsReducer = createReducer(
     });
 
     // Combine the existing posts with the new, unique, transformed posts
-    const combinedPosts = [...(state.data ?? []), ...updatedPathsPosts];
+    const combinedPosts = [...updatedPathsPosts, ...(state.data ?? [])];
 
     return {
       ...state,
@@ -100,6 +100,28 @@ export const userPostsReducer = createReducer(
     };
   }),
   on(actions.getUserPostsFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------DELETE USER POST---------------------
+  on(actions.deleteUserPost, (state) => ({ ...state, ...loadingState })),
+  on(actions.deleteUserPostSuccess, (state, { postId }) => {
+    console.log('reducer postId: ', postId);
+    const defaultReturn = { ...state, ...loadedState };
+
+    if (isNil(state.data)) {
+      return defaultReturn;
+    }
+
+    const existingPostsMap = state.data?.filter((post) => post.id !== postId);
+
+    return {
+      ...state,
+      ...loadedState,
+      data: existingPostsMap,
+    };
+  }),
+  on(actions.deleteUserPostFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),
@@ -145,6 +167,7 @@ export const userPostsReducer = createReducer(
       const updatedPost = {
         ...state.data[postIndex],
         commentsList: [...state.data[postIndex].commentsList, comment],
+        commentsCount: state.data[postIndex].commentsCount + 1,
       };
 
       const updatedData = [

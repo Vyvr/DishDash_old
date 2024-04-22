@@ -25,7 +25,7 @@ type PostEntity struct {
 
 type PostInMenuBookEntity struct {
 	BaseEntity
-	OriginalPostId  uuid.UUID `gorm:"type:uuid;not null"`
+	OriginalPostId  uuid.UUID `gorm:"type:uuid;index"`
 	OwnerId         uuid.UUID `gorm:"type:uuid;not null"`
 	HolderId        uuid.UUID `gorm:"type:uuid;not null"`
 	OwnerName       string    `gorm:"type:text"`
@@ -36,19 +36,21 @@ type PostInMenuBookEntity struct {
 	Preparation     string    `gorm:"type:text"`
 	CreationDate    time.Time `gorm:"type:timestamp;default:current_timestamp"`
 
-	OriginalPost PostEntity `gorm:"foreignKey:OriginalPostId"`
-	Owner        UserEntity `gorm:"foreignKey:OwnerId"`
-	Holder       UserEntity `gorm:"foreignKey:HolderId"`
+	OriginalPost *PostEntity `gorm:"foreignKey:OriginalPostId;OnDelete:SET NULL"`
+	Owner        UserEntity  `gorm:"foreignKey:OwnerId"`
+	Holder       UserEntity  `gorm:"foreignKey:HolderId"`
 }
 
 type PostPicturesEntity struct {
 	BaseEntity
-	OwnerId     uuid.UUID `gorm:"type:uuid;not null"`
-	PostId      uuid.UUID `gorm:"type:uuid;not null"`
-	PicturePath string    `gorm:"type:text;not null"`
+	OwnerId        uuid.UUID `gorm:"type:uuid;not null"`
+	PostId         uuid.UUID `gorm:"type:uuid;default:null"`
+	MenuBookPostId uuid.UUID `gorm:"type:uuid;default:null"`
+	PicturePath    string    `gorm:"type:text;not null"`
 
-	Post  PostEntity `gorm:"foreignKey:PostId;constraint:OnDelete:CASCADE"`
-	Owner UserEntity `gorm:"foreignKey:OwnerId;constraint:OnDelete:CASCADE"`
+	Post         *PostEntity           `gorm:"foreignKey:PostId;constraint:OnDelete:CASCADE"`
+	MenuBookPost *PostInMenuBookEntity `gorm:"foreignKey:MenuBookPostId;constraint:OnDelete:CASCADE"`
+	Owner        UserEntity            `gorm:"foreignKey:OwnerId;constraint:OnDelete:CASCADE"`
 }
 
 type PostLikesEntity struct {

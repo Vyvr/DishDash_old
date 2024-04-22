@@ -11,6 +11,7 @@ import {
   CommentPostRequest,
   EditCommentRequest,
   DeleteCommentRequest,
+  DeletePostRequest,
 } from 'src/app/pb/post_pb';
 
 @Injectable()
@@ -21,6 +22,10 @@ export class UserPostsFacade {
 
   getPosts(payload: GetPostsRequest.AsObject): void {
     this.store.dispatch(actions.getUserPosts(payload));
+  }
+
+  deleteUserPost(payload: DeletePostRequest.AsObject): void {
+    this.store.dispatch(actions.deleteUserPost(payload));
   }
 
   getImageStream(payload: GetImageStreamRequest.AsObject): void {

@@ -5,6 +5,7 @@ import (
 	"dish-dash/pb/post"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"dish-dash/server/entities"
 	"dish-dash/server/services/auth_service"
 	"dish-dash/server/services/database_service"
+	"dish-dash/server/services/file_service"
 	"dish-dash/server/services/registrar_service"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -79,6 +81,71 @@ func (s *server) Create(ctx context.Context, in *post.CreatePostRequest) (*post.
 	}, nil
 }
 
+func (s *server) Delete(ctx context.Context, in *post.DeletePostRequest) (*post.DeletePostResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	// Get post to delete
+	var postEntity entities.PostEntity
+	if err := db.Where("id = ?", in.PostId).First(&postEntity).Error; err != nil {
+		return nil, status.Errorf(codes.NotFound, "Post not found")
+	}
+
+	// Get owner of the post
+	if postEntity.OwnerId != userEntity.Id {
+		return nil, status.Errorf(codes.Unauthenticated, "User is not an owner of the post")
+	}
+
+	// Delete comments
+	if err := db.Where("post_id = ? AND user_id = ?", postEntity.Id, userEntity.Id).Delete(&entities.PostCommentsEntity{}).Error; err != nil {
+		return nil, status.Errorf(codes.Internal, "Error in deleting comments")
+	}
+
+	// Delete likes
+	if err := db.Where("post_id = ?", postEntity.Id).Delete(&entities.PostLikesEntity{}).Error; err != nil {
+		return nil, status.Errorf(codes.Internal, "Error in deleting likes")
+	}
+
+	// Delete pictures
+	var pictureEntity entities.PostPicturesEntity
+	if err := db.Where("post_id = ?", postEntity.Id).First(&pictureEntity).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			fmt.Printf("No pictures found. Skipping deletion")
+		} else {
+			return nil, status.Errorf(codes.Internal, "Error in getting pictures for delete")
+		}
+	} else {
+		if err := db.Where("post_id = ? AND owner_id = ?", postEntity.Id, userEntity.Id).Delete(&entities.PostPicturesEntity{}).Error; err != nil {
+			return nil, status.Errorf(codes.Internal, "Error in deleting pictures")
+		}
+		err := file_service.DeleteImageFolder(pictureEntity.PicturePath)
+
+		if err != nil {
+			return nil, status.Errorf(codes.NotFound, "image not found")
+		}
+	}
+
+	// Update PostInMenuBook original_post_id to null
+	err = db.Model(&entities.PostInMenuBookEntity{}).Where("original_post_id = ?", in.PostId).Update("original_post_id", nil).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to null original_post_id: %v", err)
+	}
+
+	// Delete post
+	if err := db.Where("id = ? AND owner_id = ?", postEntity.Id, userEntity.Id).Delete(&postEntity).Error; err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to delete post: %v", err)
+	}
+
+	return &post.DeletePostResponse{
+		PostId: in.PostId,
+	}, nil
+}
+
 func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookRequest) (*post.AddToMenuBookResponse, error) {
 	db := database_service.GetDBInstance()
 
@@ -94,7 +161,18 @@ func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookReques
 		return nil, status.Errorf(codes.Unavailable, "No post found")
 	}
 
+	var pictures []entities.PostPicturesEntity
+	err = db.Where("post_id = ?", in.PostId).Find(&pictures).Error
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "No post pictures found")
+	}
+
+	postId := uuid.New()
+
 	postInMenuBook := &entities.PostInMenuBookEntity{
+		BaseEntity: entities.BaseEntity{
+			Id: postId,
+		},
 		OriginalPostId:  postEntity.Id,
 		OwnerId:         postEntity.OwnerId,
 		HolderId:        userEntity.Id,
@@ -129,6 +207,31 @@ func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookReques
 	result := db.Create(postInMenuBook)
 	if err := result.Error; err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	dirPath := "images/menu_book/" + postId.String() + "/"
+
+	for _, picture := range pictures {
+		pictureId := uuid.New()
+		filePath := dirPath + pictureId.String() + ".png"
+
+		newPicture := &entities.PostPicturesEntity{
+			OwnerId:        picture.OwnerId,
+			MenuBookPostId: postId,
+			PicturePath:    filePath,
+		}
+
+		err = os.MkdirAll(dirPath, 0755)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "Invalid token")
+		}
+
+		file_service.CopyFile(picture.PicturePath, filePath)
+
+		result := db.Create(newPicture)
+		if err := result.Error; err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
 	}
 
 	return &post.AddToMenuBookResponse{PostId: in.PostId}, nil

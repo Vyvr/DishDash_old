@@ -68,7 +68,7 @@ export const menubookPostReducer = createReducer(
     }
 
     const postIndex = state.data.findIndex(
-      (post) => post.originalPostId === postId
+      (post) => post.id === postId
     );
 
     if (isNil(postIndex)) {

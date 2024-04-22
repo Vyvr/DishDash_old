@@ -37,6 +37,6 @@ export class PostContentComponent implements OnInit {
       return;
     }
 
-    this.delete.emit(this.post.originalPostId);
+    this.delete.emit(this.post.id);
   }
 }

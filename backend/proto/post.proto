@@ -9,6 +9,7 @@ import "google/protobuf/timestamp.proto";
 service PostService {
     //@TODO Add delete and edit post methods
     rpc Create(CreatePostRequest) returns (CreatePostResponse);
+    rpc Delete(DeletePostRequest) returns (DeletePostResponse);
     rpc AddToMenuBook(AddToMenuBookRequest) returns (AddToMenuBookResponse);
     rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
     rpc GetUserPosts(GetPostsRequest)returns (GetPostsResponse);
@@ -97,6 +98,15 @@ message CreatePostResponse {
     string ingredients = 6;
     int64 portion_quantity = 7;
     string preparation = 8;
+}
+
+message DeletePostRequest {
+    string token = 1;
+    string post_id = 2;
+}
+
+message DeletePostResponse {
+    string post_id = 1;
 }
 
 message AddToMenuBookRequest {

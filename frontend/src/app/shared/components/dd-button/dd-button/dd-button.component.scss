@@ -1,0 +1,53 @@
+.default,
+.primary,
+.danger {
+  padding: 10px 20px;
+  height: 40px;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  margin: auto;
+}
+
+.default {
+  background-color: white;
+  color: black;
+  border: 1px solid #ddd;
+  margin-right: 10px;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+.primary {
+  background-color: green;
+
+  &:hover {
+    background-color: darkgreen;
+  }
+}
+
+.danger {
+  background-color: red;
+
+  &:hover {
+    background-color: darkred;
+  }
+}
+
+.mg-top {
+  margin-top: 2rem;
+}
+.mg-bottom {
+  margin-bottom: 2rem;
+}
+.mg-left {
+  margin-left: 2rem;
+}
+.mg-right {
+  margin-right: 2rem;
+}

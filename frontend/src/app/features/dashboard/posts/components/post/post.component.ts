@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { isNil } from 'lodash-es';
+import { isEqual, isNil } from 'lodash-es';
 import {
   DeleteCommentEvent,
   EditCommentEvent,
@@ -18,6 +18,7 @@ import { Post } from 'src/app/pb/post_pb';
 export class PostComponent implements OnInit {
   @Input() post: Post.AsObject | null = null;
   @Input() isCommentsOpen = false;
+  @Input() isDeletePostModalOpen = false;
   @Input() isProfilePost = false;
 
   @Output() toggleLike = new EventEmitter<ToggleLikeEvent>();
@@ -27,10 +28,12 @@ export class PostComponent implements OnInit {
   @Output() addToMenuBook = new EventEmitter<string>();
   @Output() postCommentsOpen = new EventEmitter<string>();
   @Output() postCommentsClose = new EventEmitter<void>();
+  @Output() deletePost = new EventEmitter<string>();
 
   creationDate: Date | string | null = null;
   urlImages: string[] = [];
   itemsLoadingSquareCount: number = 0;
+  deletePostTitle: string = '';
 
   constructor() {}
 
@@ -93,5 +96,17 @@ export class PostComponent implements OnInit {
 
   onCloseCommentsModal(): void {
     this.postCommentsClose.emit();
+  }
+
+  onDeletePost(): void {
+    if (isNil(this.post) || !isEqual(this.post.title, this.deletePostTitle)) {
+      return;
+    }
+
+    this.deletePost.emit(this.post.id);
+  }
+
+  toggleDeletePostModal(): void {
+    this.isDeletePostModalOpen = !this.isDeletePostModalOpen;
   }
 }
