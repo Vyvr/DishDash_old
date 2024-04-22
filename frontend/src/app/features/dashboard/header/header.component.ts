@@ -52,6 +52,9 @@ export class HeaderComponent extends OnDestroyMixin {
   }
 
   ngOnInit(): void {
+    const savedPlugin = sessionStorage.getItem('selectedPlugin');
+    this.selectedPlugin = savedPlugin ? savedPlugin : 'posts';
+
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((authState) => {
@@ -182,6 +185,7 @@ export class HeaderComponent extends OnDestroyMixin {
   navigateToSomething(plugin: string): void {
     this.router.navigate([plugin]);
     this.selectedPlugin = plugin;
+    sessionStorage.setItem('selectedPlugin', plugin);
   }
 
   logout(): void {
