@@ -20,11 +20,14 @@ import {
   GetCommentsRequest,
   DeletePostRequest,
   EditPostRequest,
+  GetAllPostLikesAnaliticsDataRequest,
 } from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
 import { getBase64String$ } from 'src/app/features/utils';
 import imageCompression from 'browser-image-compression';
 import { AddUserPictureRequest } from 'src/app/pb/auth_pb';
+import { ChartBuilder } from './analytics/analytics.model';
+import { AnalyticsFacade } from 'src/app/store/analytics';
 
 @Component({
   selector: 'app-user-profile',
@@ -39,14 +42,19 @@ export class UserProfileComponent extends OnDestroyMixin {
 
   authState$ = this.authFacade.authState$;
   userPostsState$ = this.userPostsFacade.userPostsState$;
+  analyticsState$ = this.analyticsFacade.analyticsState$;
 
   isSettingsModalVisible = false;
+  isAnalyticsModalVisible = false;
 
   commentsOpenPostId: string | null = null;
 
+  chartBuilder: ChartBuilder;
+
   constructor(
     private authFacade: AuthFacade,
-    private userPostsFacade: UserPostsFacade
+    private userPostsFacade: UserPostsFacade,
+    private analyticsFacade: AnalyticsFacade
   ) {
     super();
   }
@@ -209,6 +217,20 @@ export class UserProfileComponent extends OnDestroyMixin {
 
   toggleSettingsModal(): void {
     this.isSettingsModalVisible = !this.isSettingsModalVisible;
+
+  }
+  toggleAnalyticsModal(): void {
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        const payload: GetAllPostLikesAnaliticsDataRequest.AsObject = {
+          token: authState.data.token,
+        };
+
+        this.analyticsFacade.GetAllPostLikesAnaliticsLikesData(payload);
+      });
+
+    this.isAnalyticsModalVisible = !this.isAnalyticsModalVisible;
   }
 
   addUserPicture(): void {

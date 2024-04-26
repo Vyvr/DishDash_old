@@ -15,6 +15,7 @@ import { effects, facades, reducers, metaReducers } from './store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { HeaderComponent } from './features/dashboard/header/header.component';
 import { PostListComponent } from './features/dashboard/posts/post-list.component';
@@ -83,6 +84,7 @@ const devImports = [
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
+    NgApexchartsModule,
     AngularSvgIconModule.forRoot(),
     EffectsModule.forRoot(effects),
     StoreModule.forRoot(reducers, {

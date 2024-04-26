@@ -1,7 +1,8 @@
 <ng-container
   *ngIf="{
     authState: authState$ | async,
-    userPostsState: userPostsState$ | async
+    userPostsState: userPostsState$ | async,
+    analyticsState: analyticsState$ | async
   } as viewData"
 >
   <div class="user-profile-wrapper">
@@ -24,11 +25,11 @@
     </div>
 
     <div class="user-profile-actions-wrapper">
-      <button class="icon-button">
+      <button class="actions-icon-button" (click)="toggleAnalyticsModal()">
         <img src="assets/analytics-icon.svg" />
         Analytics
       </button>
-      <button class="icon-button" (click)="toggleSettingsModal()">
+      <button class="actions-icon-button" (click)="toggleSettingsModal()">
         <img src="assets/user-settings-icon.svg" />
         Settings
       </button>
@@ -75,5 +76,44 @@
     </div>
 
     <button (click)="addUserPicture()">Submit</button>
+  </dd-modal>
+
+  <dd-modal
+    [isVisible]="isAnalyticsModalVisible"
+    [withHeader]="true"
+    [headerText]="'Analytics'"
+    (toggleModal)="toggleAnalyticsModal()"
+  >
+    <ng-container
+      *ngIf="
+        viewData?.analyticsState?.loading ||
+          !viewData?.analyticsState?.data?.likesList;
+        else chart
+      "
+    >
+      <div class="spinner-container">
+        <dd-requesting-spinner
+          [isLoading]="viewData?.analyticsState?.loading"
+        />
+      </div>
+    </ng-container>
+
+    <ng-template #chart>
+      <div *ngIf="viewData?.analyticsState?.data?.likesList">
+        <apx-chart
+          [series]="[
+            {
+              name: 'likes',
+              data: viewData?.analyticsState?.data?.likesList
+            }
+          ]"
+          [chart]="chartBuilder.chart"
+          [xaxis]="chartBuilder.xaxis"
+          [dataLabels]="chartBuilder.dataLabels"
+          [tooltip]="chartBuilder.tooltip"
+        >
+        </apx-chart>
+      </div>
+    </ng-template>
   </dd-modal>
 </ng-container>

@@ -47,7 +47,7 @@
   border: 1px solid #ccc;
 }
 
-.icon-button {
+.actions-icon-button {
   border: none;
   padding: 10px;
   cursor: pointer;
@@ -61,6 +61,12 @@
   border-left: solid 1px #ccc;
   fill: #ccc;
   height: 100%;
+
+  transition: 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #d0d0d0a7;
+  }
 }
 
 .user-profile-posts-list {
@@ -82,7 +88,7 @@
   height: 100%;
   align-items: center;
   justify-content: center;
-margin-top: 10px;
+  margin-top: 10px;
 
   img {
     width: 400px;

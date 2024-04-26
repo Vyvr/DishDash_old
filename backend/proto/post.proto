@@ -17,6 +17,9 @@ service PostService {
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
 
+    rpc GetAllPostLikesAnaliticsLikesData(GetAllPostLikesAnaliticsDataRequest) returns (GetAllPostLikesAnaliticsDataResponse);
+    rpc GetAllPostCommentsAnaliticsLikesData(GetAllPostCommentsAnaliticsDataRequest) returns (GetAllPostCommentsAnaliticsDataResponse);
+
     rpc LikePost(ToggleLikeRequest) returns (ToggleLikeResponse);
     rpc UnlikePost(ToggleLikeRequest) returns (ToggleLikeResponse);
 
@@ -58,6 +61,11 @@ message Picture {
     string path = 1;
 }
 
+message Analytics {
+    repeated int64 likes = 1;
+    repeated int64 comments = 2;
+}
+
 message GetPostsRequest {
     string token = 1;
     int64 page = 2;
@@ -78,6 +86,22 @@ message GetImageStreamResponse {
     bytes image_data = 1;
     string picture_path = 2;
     string post_id = 3;
+}
+
+message GetAllPostLikesAnaliticsDataRequest {
+    string token = 1;
+}
+
+message GetAllPostLikesAnaliticsDataResponse {
+    repeated int64 data = 1;
+}
+
+message GetAllPostCommentsAnaliticsDataRequest {
+    string token = 1;
+}
+
+message GetAllPostCommentsAnaliticsDataResponse {
+    repeated int64 data = 1;
 }
 
 message CreatePostRequest {

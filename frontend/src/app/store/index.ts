@@ -35,6 +35,12 @@ import {
   UserPostsState,
   userPostsReducer,
 } from './user-posts';
+import {
+  AnalyticsEffects,
+  AnalyticsFacade,
+  AnalyticsState,
+  analyticsReducer,
+} from './analytics';
 
 export interface AppState {
   auth: AuthState;
@@ -43,6 +49,7 @@ export interface AppState {
   userPosts: UserPostsState;
   menuBook: MenuBookPostsState;
   social: SocialState;
+  analytics: AnalyticsState;
 }
 
 export const reducers = {
@@ -52,6 +59,7 @@ export const reducers = {
   userPosts: userPostsReducer,
   menuBook: menubookPostReducer,
   social: socialReducer,
+  analytics: analyticsReducer,
 };
 
 export const effects = [
@@ -61,6 +69,7 @@ export const effects = [
   UserPostsEffects,
   MenuBookPostEffects,
   SocialEffects,
+  AnalyticsEffects,
 ];
 
 export const facades = [
@@ -70,6 +79,7 @@ export const facades = [
   UserPostsFacade,
   MenuBookPostFacade,
   SocialFacade,
+  AnalyticsFacade,
 ];
 
 export function localStorageSyncReducer(

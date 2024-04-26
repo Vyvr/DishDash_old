@@ -17,6 +17,8 @@ import {
   EditCommentRequest,
   EditPostRequest,
   EditPostResponse,
+  GetAllPostLikesAnaliticsDataRequest,
+  GetAllPostLikesAnaliticsDataResponse,
   GetCommentsRequest,
   GetCommentsResponse,
   GetImageStreamRequest,
@@ -178,6 +180,20 @@ export class PostApiService {
         });
       }
     );
+  }
+
+  GetAllPostLikesAnaliticsLikesData(
+    payload: GetAllPostLikesAnaliticsDataRequest.AsObject
+  ): Observable<GetAllPostLikesAnaliticsDataResponse.AsObject> {
+    const request = new GetAllPostLikesAnaliticsDataRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      GetAllPostLikesAnaliticsDataRequest,
+      GetAllPostLikesAnaliticsDataResponse,
+      GetAllPostLikesAnaliticsDataResponse.AsObject
+    >(request, this.postServiceClient.getAllPostLikesAnaliticsLikesData.bind(this.postServiceClient));
   }
 
   likePost(

@@ -11,8 +11,10 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"dish-dash/server/entities"
+	"dish-dash/server/services/analytics_service"
 	"dish-dash/server/services/auth_service"
 	"dish-dash/server/services/database_service"
 	"dish-dash/server/services/file_service"
@@ -558,6 +560,48 @@ func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.Pos
 	}
 	// At the end of the stream, return nil to indicate the stream is complete without errors
 	return nil
+}
+
+func (s *server) GetAllPostLikesAnaliticsLikesData(ctx context.Context, in *post.GetAllPostLikesAnaliticsDataRequest) (*post.GetAllPostLikesAnaliticsDataResponse, error) {
+	db := database_service.GetDBInstance()
+
+	userEntity, err := auth_service.ValidateToken(in.Token)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	now := time.Now()
+	currentYear := now.Year()
+
+	startOfYear := time.Date(currentYear, time.January, 1, 0, 0, 0, 0, now.Location())
+	endOfYear := time.Date(currentYear, time.December, 31, 23, 59, 59, 999999999, now.Location())
+
+	var likesEntities []entities.PostLikesEntity
+	err = db.Joins("JOIN post_entities ON post_entities.id = post_likes_entities.post_id").
+		Where("post_entities.owner_id = ? AND post_likes_entities.creation_date BETWEEN ? AND ?", userEntity.Id, startOfYear, endOfYear).
+		Find(&likesEntities).Error
+
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error in getting likes")
+	}
+
+	var yearMap = analytics_service.GetYearMap()
+
+	for _, like := range likesEntities {
+		month := like.CreationDate.Month()
+		yearMap[int(month)]++
+	}
+
+	var likesCount []int64
+
+	for month := 1; month <= 12; month++ {
+		likesCount = append(likesCount, int64(yearMap[month]))
+	}
+
+	return &post.GetAllPostLikesAnaliticsDataResponse{
+		Data: likesCount,
+	}, nil
 }
 
 // @TODO pomyslec nad zastosowaniem transakcji, to samo do komentarzy
