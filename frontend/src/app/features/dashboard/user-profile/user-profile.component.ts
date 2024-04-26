@@ -57,6 +57,7 @@ export class UserProfileComponent extends OnDestroyMixin {
     private analyticsFacade: AnalyticsFacade
   ) {
     super();
+    this.chartBuilder = new ChartBuilder();
   }
 
   onNewComment({ postId, commentText }: NewCommentEvent): void {
