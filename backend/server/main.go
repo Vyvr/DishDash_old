@@ -22,6 +22,8 @@ func main() {
 		log.Fatalln("failed to create database driver instance:", err)
 	}
 
+	// database_service.FillDatabase()
+
 	controllers.Register()
 
 	// go socket_service.InitSocketServer()
