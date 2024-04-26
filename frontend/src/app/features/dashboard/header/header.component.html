@@ -20,6 +20,8 @@
         class="input"
         type="text"
         placeholder="Find your friends"
+        (focus)="onFocus()" 
+        (blur)="onBlur()"
         [(ngModel)]="queryString"
         (ngModelChange)="searchForUsers()"
       />

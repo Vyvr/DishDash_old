@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   OnDestroyMixin,
@@ -41,6 +41,8 @@ export class HeaderComponent extends OnDestroyMixin {
   currentPage = 1;
   pageSize = 2;
   noMoreUsersToSearch = false;
+
+  isInputFocused = false;
 
   constructor(
     private router: Router,
@@ -191,6 +193,26 @@ export class HeaderComponent extends OnDestroyMixin {
   logout(): void {
     sessionStorage.removeItem('selectedPlugin');
     this.authFacade.logout();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const isInputOrChild = target.closest('search-bar-wrapper');
+    const isSearchUsersList = target.closest('.searched-users-list');
+
+    if (!isInputOrChild && !isSearchUsersList && this.queryString.length !== 0) {
+      this.queryString = '';
+      this.searchForUsers();
+    }
+  }
+
+  onFocus(): void {
+    this.isInputFocused = true;
+  }
+
+  onBlur(): void {
+    this.isInputFocused = false;
   }
 
   private searchForUsersAndAppend(): void {
