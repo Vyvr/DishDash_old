@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { AuthFacade } from 'src/app/store/auth';
 import { UserPostsFacade } from 'src/app/store/user-posts';
 import {
@@ -21,6 +21,7 @@ import {
   DeletePostRequest,
   EditPostRequest,
   GetAllPostLikesAnaliticsDataRequest,
+  GetPostsRequest,
 } from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
 import { getBase64String$ } from 'src/app/features/utils';
@@ -50,6 +51,8 @@ export class UserProfileComponent extends OnDestroyMixin {
   commentsOpenPostId: string | null = null;
 
   chartBuilder: ChartBuilder;
+
+  private _postsPage: number = 1;
 
   constructor(
     private authFacade: AuthFacade,
@@ -218,7 +221,6 @@ export class UserProfileComponent extends OnDestroyMixin {
 
   toggleSettingsModal(): void {
     this.isSettingsModalVisible = !this.isSettingsModalVisible;
-
   }
   toggleAnalyticsModal(): void {
     this.authState$
@@ -255,6 +257,41 @@ export class UserProfileComponent extends OnDestroyMixin {
         }
 
         this.authFacade.addUserPicture(payload);
+      });
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  onScroll(): void {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollPosition >= documentHeight) {
+      this._loadPosts();
+      this._postsPage++;
+    }
+  }
+
+  private _loadPosts(): void {
+    this.authState$
+      .pipe(
+        untilComponentDestroyed(this),
+        filter(({ data, loading }) => !isNil(data) && !loading),
+        take(1)
+      )
+      .subscribe((authState) => {
+        const payload = bindTokenToPayload<GetPostsRequest.AsObject>(
+          {
+            page: this._postsPage,
+            pageSize: 10,
+          },
+          authState
+        );
+
+        if (isNil(payload)) {
+          return;
+        }
+
+        this.userPostsFacade.getPosts(payload);
       });
   }
 }

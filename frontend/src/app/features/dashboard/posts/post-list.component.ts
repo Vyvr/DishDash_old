@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { CreatePostModalComponent } from '../create-post-modal/create-post-modal.component';
 import { AuthFacade } from 'src/app/store/auth';
 import {
@@ -42,6 +42,8 @@ export class PostListComponent extends OnDestroyMixin {
 
   postTitle: string = '';
   commentsOpenPostId: string | null = null;
+
+  private _postsPage: number = 1;
 
   constructor(private authFacade: AuthFacade, private postFacade: PostFacade) {
     super();
@@ -201,6 +203,17 @@ export class PostListComponent extends OnDestroyMixin {
       });
   }
 
+  @HostListener('window:scroll', ['$event'])
+  onScroll(): void {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollPosition >= documentHeight) {
+      this._loadPosts();
+      this._postsPage++;
+    }
+  }
+
   // implemented in guard but i'll leave it here for now
   private _loadPosts(): void {
     this.authState$
@@ -212,7 +225,7 @@ export class PostListComponent extends OnDestroyMixin {
       .subscribe((authState) => {
         const payload = bindTokenToPayload<GetPostsRequest.AsObject>(
           {
-            page: 0,
+            page: this._postsPage,
             pageSize: 10,
           },
           authState
@@ -225,35 +238,4 @@ export class PostListComponent extends OnDestroyMixin {
         this.postFacade.getPosts(payload);
       });
   }
-
-  // private _loadPictures(): void {
-  //   combineLatest([this.authState$, this.postState$])
-  //     .pipe(
-  //       untilComponentDestroyed(this),
-  //       filter(
-  //         ([authState, postState]) => !authState?.loading && !postState?.loading
-  //       ),
-  //       take(1)
-  //     )
-  //     .subscribe(([{ data: authData }, { data: postData }]) => {
-  //       if (isNil(postData) || isNil(authData)) {
-  //         return;
-  //       }
-
-  //       postData.forEach((post) => {
-  //         post.pictures.forEach(({ path, data }) => {
-  //           if (!isNil(data)) {
-  //             return;
-  //           }
-
-  //           const payload: GetImageStreamRequest.AsObject = {
-  //             token: authData.token,
-  //             picturePath: path,
-  //           };
-
-  //           this.postFacade.getImageStream(payload);
-  //         });
-  //       });
-  //     });
-  // }
 }
