@@ -189,6 +189,7 @@ export class HeaderComponent extends OnDestroyMixin {
   }
 
   logout(): void {
+    sessionStorage.removeItem('selectedPlugin');
     this.authFacade.logout();
   }
 
