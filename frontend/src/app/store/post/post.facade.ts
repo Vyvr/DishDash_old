@@ -20,6 +20,7 @@ import {
 @Injectable()
 export class PostFacade {
   postState$ = this.store.select(selectors.selectPostsState);
+  stopLoading$ = this.store.select(selectors.selectStopLoading);
 
   constructor(private store: Store<AppState>) {}
 

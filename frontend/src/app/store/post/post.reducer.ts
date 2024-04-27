@@ -79,7 +79,14 @@ export const postReducer = createReducer(
   //---------------GET FRIENDS POSTS---------------------
   on(actions.getFriendsPosts, (state) => ({ ...state, ...loadingState })),
   on(actions.getFriendsPostsSuccess, (state, { postsList }) => {
-    // Create a map from the existing posts for quick lookup
+    if (postsList.length === 1 && postsList[0].id === '') {
+      return {
+        ...state,
+        ...loadedState,
+        stopLoading: true,
+      };
+    }
+
     const existingPostsMap = new Map(
       state.data?.map((post) => [post.id, post]) ?? []
     );

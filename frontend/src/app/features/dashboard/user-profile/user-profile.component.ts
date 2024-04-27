@@ -262,13 +262,21 @@ export class UserProfileComponent extends OnDestroyMixin {
 
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const documentHeight = document.documentElement.scrollHeight;
+    const stopLoading$ = this.userPostsFacade.stopLoading$;
 
-    if (scrollPosition >= documentHeight) {
-      this._loadPosts();
-      this._postsPage++;
-    }
+    stopLoading$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((stopLoading) => {
+        if (stopLoading) return;
+
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const documentHeight = document.documentElement.scrollHeight;
+
+        if (scrollPosition >= documentHeight) {
+          this._loadPosts();
+          this._postsPage++;
+        }
+      });
   }
 
   private _loadPosts(): void {

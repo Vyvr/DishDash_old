@@ -18,6 +18,7 @@ import {
 @Injectable()
 export class UserPostsFacade {
   userPostsState$ = this.store.select(selectors.selectUserPostsState);
+  stopLoading$ = this.store.select(selectors.selectStopLoading);
 
   constructor(private store: Store<AppState>) {}
 

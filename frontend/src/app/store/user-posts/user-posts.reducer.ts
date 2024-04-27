@@ -48,7 +48,14 @@ export const userPostsReducer = createReducer(
   //---------------GET USER POSTS---------------------
   on(actions.getUserPosts, (state) => ({ ...state, ...loadingState })),
   on(actions.getUserPostsSuccess, (state, { postsList }) => {
-    // Create a map from the existing posts for quick lookup
+    if (postsList.length === 1 && postsList[0].id === '') {
+      return {
+        ...state,
+        ...loadedState,
+        stopLoading: true,
+      };
+    }
+
     const existingPostsMap = new Map(
       state.data?.map((post) => [post.id, post]) ?? []
     );

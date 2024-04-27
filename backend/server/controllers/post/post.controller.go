@@ -370,6 +370,17 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 	}
 
 	var grpcPosts []*post.Post
+
+	if len(postEntities) == 0 {
+		lastPost := &post.Post{}
+
+		grpcPosts = append(grpcPosts, lastPost)
+
+		return &post.GetPostsResponse{
+			Posts: grpcPosts,
+		}, nil
+	}
+
 	for _, postEntity := range postEntities {
 		var picturesEntities []entities.PostPicturesEntity
 		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
@@ -459,6 +470,17 @@ func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*p
 	}
 
 	var grpcPosts []*post.Post
+
+	if len(postEntities) == 0 {
+		lastPost := &post.Post{}
+
+		grpcPosts = append(grpcPosts, lastPost)
+
+		return &post.GetPostsResponse{
+			Posts: grpcPosts,
+		}, nil
+	}
+
 	for _, postEntity := range postEntities {
 		var picturesEntities []entities.PostPicturesEntity
 		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
