@@ -5,6 +5,8 @@ export interface AuthData {
   id: string;
   name: string;
   surname: string;
+  email: string;
+  description: string;
   picturePath?: string;
 }
 

@@ -1,1 +1,87 @@
-<p>settings works!</p>
+<ng-container
+  *ngIf="{
+    authState: authState$ | async,
+  } as viewData"
+>
+  <div class="settings-wrapper">
+    <ng-container *ngIf="viewData?.authState?.loading; else content">
+      <div class="spinner-container">
+        <dd-requesting-spinner
+          [isLoading]="
+            viewData.authState?.loading || viewData.authState?.loading
+          "
+        />
+      </div>
+    </ng-container>
+
+    <ng-template #content>
+      <div class="settings-content">
+        <div class="settings-title"><h2>Settings</h2></div>
+        <div class="inputs-wrapper">
+          <div class="custom-input">
+            <input
+              class="input"
+              type="text"
+              placeholder="{{ viewData?.authState.data.name }}"
+              [(ngModel)]="name"
+            />
+          </div>
+
+          <div class="custom-input">
+            <input
+              class="input"
+              type="text"
+              placeholder="{{ viewData?.authState.data.surname }}"
+              [(ngModel)]="surname"
+            />
+          </div>
+          <div class="custom-input">
+            <input
+              class="input"
+              type="text"
+              placeholder="{{ viewData?.authState.data.email }}"
+              [(ngModel)]="email"
+            />
+          </div>
+          <div class="custom-input">
+            <input
+              class="input"
+              type="password"
+              placeholder="New password"
+              [(ngModel)]="password"
+            />
+          </div>
+          <div class="custom-input">
+            <input
+              class="input"
+              type="password"
+              placeholder="Confirm password"
+              [(ngModel)]="confirmedPassword"
+            />
+          </div>
+          <div class="custom-input">
+            <input
+              class="input"
+              type="text"
+              placeholder="{{
+                viewData?.authState?.data?.description
+                  ? viewData?.authState?.data?.description
+                  : 'Description'
+              }}"
+              [(ngModel)]="description"
+            />
+          </div>
+          <p *ngIf="invalidData" class="error-label">Invalid data</p>
+          <div class="button-wrapper">
+            <dd-button [ddClass]="'primary'" (click)="submitUpdate()">
+              Confirm
+            </dd-button>
+            <dd-button [ddClass]="'danger'" (click)="resetProvidedData()">
+              Reset
+            </dd-button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</ng-container>

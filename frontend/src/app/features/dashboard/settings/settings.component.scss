@@ -1,0 +1,85 @@
+.settings-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100% - 61px);
+}
+
+.settings-content {
+  background-color: #ffff;
+  width: 500px;
+  height: 80vh;
+  border-radius: 5px;
+}
+
+.settings-title {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  h2 {
+    width: 90%;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+  }
+}
+
+.custom-input {
+  display: flex;
+  margin-top: 20px;
+  align-items: center;
+  position: relative;
+  width: 355px;
+}
+
+.inputs-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+
+  .custom-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 355px;
+  }
+
+  .input {
+    font-size: 18px;
+    padding: 5px 10px;
+    width: 100%;
+    padding-left: 35px;
+    outline: none;
+    background: #e2e2e2;
+    color: #000000;
+    border: 2px solid #20764a;
+    border-radius: 5px;
+    box-shadow: 3px 3px 2px 0px #e2e2e2;
+    transition: 0.3s ease;
+  }
+
+  .input:focus {
+    background: #f2f2f2;
+    border: 2px solid #3bd888;
+    border-radius: 10px;
+  }
+
+  .custom-input:focus-within .svg-icon {
+    fill: rgb(41, 150, 94);
+  }
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+  margin-top: 50px;
+}
+
+.error-label {
+  color: red;
+}

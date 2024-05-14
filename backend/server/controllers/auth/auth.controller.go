@@ -87,7 +87,6 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 
 	in.Email = strings.ToLower(in.Email)
 
-	// Find user by email
 	var user entities.UserEntity
 	if err := db.Where("email = ?", in.Email).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -96,13 +95,10 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
 
-	// Compare the provided password with the hashed password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)); err != nil {
-		// Password does not match
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
-	// Generate a token (implementation depends on your token generation logic)
 	token, err := auth_service.GenerateJWTToken(user)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to generate token")
@@ -113,6 +109,8 @@ func (s *server) Login(ctx context.Context, in *auth.LoginRequest) (*auth.LoginR
 		Id:          user.Id.String(),
 		Name:        user.Name,
 		Surname:     user.Surname,
+		Email:       user.Email,
+		Description: user.Description,
 		PicturePath: &user.PicturePath}, nil
 }
 
@@ -128,6 +126,8 @@ func (s *server) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest)
 		Id:          userEntity.Id.String(),
 		Name:        userEntity.Name,
 		Surname:     userEntity.Surname,
+		Email:       userEntity.Email,
+		Description: userEntity.Description,
 		PicturePath: &userEntity.PicturePath}, nil
 }
 

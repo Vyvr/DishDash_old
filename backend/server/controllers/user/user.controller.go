@@ -42,7 +42,7 @@ func (s *server) Get(ctx context.Context, in *user.GetRequest) (*user.GetRespons
 	return response, nil
 }
 
-func (s *server) Update(ctx context.Context, in *user.UpdateRequest) (*user.UpdateResponse, error) {
+func (s *server) UpdateUserData(ctx context.Context, in *user.UpdateRequest) (*user.UpdateResponse, error) {
 	// Validate the token to authenticate the user
 	userEntity, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
@@ -81,7 +81,10 @@ func (s *server) Update(ctx context.Context, in *user.UpdateRequest) (*user.Upda
 
 	// Return a success message
 	return &user.UpdateResponse{
-		Message: "User updated successfully",
+		Name:        userEntity.Name,
+		Surname:     userEntity.Surname,
+		Email:       userEntity.Email,
+		Description: userEntity.Description,
 	}, nil
 }
 

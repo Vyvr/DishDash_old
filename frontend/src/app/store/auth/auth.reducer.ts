@@ -107,5 +107,34 @@ export const authReducer = createReducer(
   on(actions.addUserPictureFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
+  })),
+
+  //---------------UPDATE USER DATA---------------------
+  on(actions.updateUserData, (state) => ({ ...state, ...loadingState })),
+  on(
+    actions.updateUserDataSuccess,
+    (state, { name, surname, email, description }) => {
+      const defaultReturn = { ...state };
+
+      if (isNil(state.data)) {
+        return defaultReturn;
+      }
+
+      return {
+        ...state,
+        ...loadedState,
+        data: {
+          ...state.data,
+          name: name,
+          surname: surname,
+          email: email,
+          description: description,
+        },
+      };
+    }
+  ),
+  on(actions.updateUserDataFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
   }))
 );

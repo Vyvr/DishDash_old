@@ -11,6 +11,7 @@ import {
 
 import * as actions from './auth.actions';
 import * as selectors from './auth.selectors';
+import { UpdateRequest } from 'src/app/pb/user_pb';
 
 @Injectable()
 export class AuthFacade {
@@ -48,5 +49,10 @@ export class AuthFacade {
   //---------------ADD USER PICTURE--------------------
   addUserPicture(payload: AddUserPictureRequest.AsObject): void {
     this.store.dispatch(actions.addUserPicture(payload));
+  }
+
+  //---------------ADD USER PICTURE--------------------
+  updateUserData(payload: UpdateRequest.AsObject): void {
+    this.store.dispatch(actions.updateUserData(payload));
   }
 }

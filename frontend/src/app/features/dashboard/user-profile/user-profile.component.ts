@@ -257,6 +257,7 @@ export class UserProfileComponent extends OnDestroyMixin {
         }
 
         this.authFacade.addUserPicture(payload);
+        this.isSettingsModalVisible = !this.isSettingsModalVisible;
       });
   }
 

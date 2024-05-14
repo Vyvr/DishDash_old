@@ -30,12 +30,13 @@ func (s *server) GetPostsFromMenuBook(ctx context.Context, in *menu_book_post.Ge
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
-	offset := int((in.Page - 1) * in.PageSize)
+	// offset := int((in.Page - 1) * in.PageSize)
 
 	var menuBookPostEntities []*entities.PostInMenuBookEntity
-	result := db.Where("holder_id = ?", userEntity.Id).Order("creation_date DESC").Limit(int(in.PageSize)).
-		Offset(offset).
-		Find(&menuBookPostEntities)
+	result := db.Where("holder_id = ?", userEntity.Id).Order("creation_date DESC").Find(&menuBookPostEntities)
+	// result := db.Where("holder_id = ?", userEntity.Id).Order("creation_date DESC").Limit(int(in.PageSize)).
+	// 	Offset(offset).
+	// 	Find(&menuBookPostEntities)
 
 	if result.Error != nil {
 		return nil, result.Error

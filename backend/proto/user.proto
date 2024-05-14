@@ -8,7 +8,7 @@ service User {
     rpc Get(GetRequest) returns (GetResponse);
     rpc GetAll(GetAllRequest) returns (GetUsersResponse);
     rpc GetByQuery(GetByQueryRequest) returns (GetUsersResponse);
-    rpc Update(UpdateRequest) returns (UpdateResponse);
+    rpc UpdateUserData(UpdateRequest) returns (UpdateResponse);
     rpc Delete(DeleteRequest) returns (DeleteResponse);
     rpc AddToFriends(AddToFriendsRequest) returns (AddToFriendsResponse);
     rpc DeleteFromFriends(DeleteFromFriendsRequest) returns (DeleteFromFriendsResponse); 
@@ -53,7 +53,6 @@ message UserBasicInfo {
 }
 
 message UpdateRequest {
-    string id = 1;
     string token = 2;
     optional string name = 3;
     optional string surname = 4;
@@ -63,7 +62,10 @@ message UpdateRequest {
 }
 
 message UpdateResponse {
-    string message = 1;
+    string name = 1;
+    string surname = 2;
+    string email = 3;
+    string description = 4;
 }
 
 message DeleteRequest {

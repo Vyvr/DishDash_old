@@ -13,16 +13,25 @@ import {
 } from '../../pb/auth_pb';
 import { Observable, Subscriber } from 'rxjs';
 import { bindPayloadToRequest, handleRequest } from './utils';
+import { UserClient } from 'src/app/pb/UserServiceClientPb';
+import { UpdateRequest, UpdateResponse } from 'src/app/pb/user_pb';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthApiService {
   private authServiceClient: AuthClient;
+  private userServiceClient: UserClient;
 
   constructor() {
     // Initialize the client with the service URL
     this.authServiceClient = new AuthClient(
+      'http://localhost:8082',
+      null,
+      null
+    );
+
+    this.userServiceClient = new UserClient(
       'http://localhost:8082',
       null,
       null
@@ -89,33 +98,50 @@ export class AuthApiService {
   }
 
   getUserPicture(
-      payload: GetUserPictureRequest.AsObject
-    ): Observable<GetUserPictureResponse.AsObject> {
-      const request = new GetUserPictureRequest();
-  
-      bindPayloadToRequest(request, payload);
-  
-      return new Observable(
-        (observer: Subscriber<GetUserPictureResponse.AsObject>) => {
-          const call = this.authServiceClient.getUserPicture(request, {});
-  
-          call.on('data', (response) => {
-            const imageDataBase64 = response.getImageData_asB64();
-  
-            observer.next({
-              imageData: imageDataBase64,
-            });
+    payload: GetUserPictureRequest.AsObject
+  ): Observable<GetUserPictureResponse.AsObject> {
+    const request = new GetUserPictureRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return new Observable(
+      (observer: Subscriber<GetUserPictureResponse.AsObject>) => {
+        const call = this.authServiceClient.getUserPicture(request, {});
+
+        call.on('data', (response) => {
+          const imageDataBase64 = response.getImageData_asB64();
+
+          observer.next({
+            imageData: imageDataBase64,
           });
-  
-          call.on('error', (err) => {
-            console.error('Stream error:', err);
-            observer.error(err);
-          });
-  
-          call.on('end', () => {
-            observer.complete();
-          });
-        }
-      );
-    }
+        });
+
+        call.on('error', (err) => {
+          console.error('Stream error:', err);
+          observer.error(err);
+        });
+
+        call.on('end', () => {
+          observer.complete();
+        });
+      }
+    );
+  }
+
+  updateUserData(
+    payload: UpdateRequest.AsObject
+  ): Observable<UpdateResponse.AsObject> {
+    const request = new UpdateRequest();
+
+    bindPayloadToRequest(request, payload);
+
+    return handleRequest<
+      UpdateRequest,
+      UpdateResponse,
+      UpdateResponse.AsObject
+    >(
+      request,
+      this.userServiceClient.updateUserData.bind(this.userServiceClient)
+    );
+  }
 }

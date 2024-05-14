@@ -10,6 +10,7 @@ import {
   RegisterRequest,
   RegisterResponse,
 } from 'src/app/pb/auth_pb';
+import { UpdateRequest, UpdateResponse } from 'src/app/pb/user_pb';
 
 const moduleName = 'Auth';
 
@@ -106,5 +107,22 @@ export const addUserPictureSuccess = createAction(
 
 export const addUserPictureFailure = createAction(
   `[${moduleName}] Add user picture failure`,
+  props<{ message: string }>()
+);
+
+//---------------UPDATE USER DATA---------------------
+
+export const updateUserData = createAction(
+  `[${moduleName}] Update user data`,
+  props<UpdateRequest.AsObject>()
+);
+
+export const updateUserDataSuccess = createAction(
+  `[${moduleName}] Update user data success`,
+  props<UpdateResponse.AsObject>()
+);
+
+export const updateUserDataFailure = createAction(
+  `[${moduleName}] Update user data failure`,
   props<{ message: string }>()
 );

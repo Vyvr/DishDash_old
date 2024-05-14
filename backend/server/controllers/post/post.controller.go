@@ -566,21 +566,25 @@ func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.Pos
 
 	postId := strings.Split(imagePath, "/")[1]
 
-	buffer := make([]byte, 5000000) // Adjust the buffer size to your needs
+	buffer := make([]byte, 2000000) // Ustawianie wielkości bufora
 	for {
 		n, err := file.Read(buffer)
 		if err == io.EOF {
-			break // EOF is expected when reading the last chunk of the file
+			break // EOF oznaczający koniec pliku
 		}
 		if err != nil {
-			return status.Errorf(codes.Internal, "Error reading picture: %v", err)
+			return status.Errorf(codes.Internal, "Error while reading picture: %v", err)
 		}
 
-		if err := stream.Send(&post.GetImageStreamResponse{ImageData: buffer[:n], PostId: postId, PicturePath: req.PicturePath}); err != nil {
+		if err := stream.Send(&post.GetImageStreamResponse{
+			ImageData:   buffer[:n],
+			PostId:      postId,
+			PicturePath: req.PicturePath,
+		}); err != nil {
 			return status.Errorf(codes.Internal, "Error sending chunk to client: %v", err)
 		}
 	}
-	// At the end of the stream, return nil to indicate the stream is complete without errors
+	// Na koniec strumienia zwracana jest wartość nil zapewniająca zakończenie bez błędu
 	return nil
 }
 

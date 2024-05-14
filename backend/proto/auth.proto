@@ -35,7 +35,9 @@ message LoginResponse {
   string id = 2;
   string name = 3;
   string surname = 4;
-  optional string picture_path = 6;
+  string email = 5;
+  string description = 6;
+  optional string picture_path = 7;
 }
 
 message GetUserPictureRequest {

@@ -93,4 +93,18 @@ export class AuthEffects {
       )
     )
   );
+
+  updateUserDataEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.updateUserData),
+      concatMap(({ type: _, ...payload }) =>
+        this.authApiService.updateUserData(payload).pipe(
+          map((response) => {
+            return actions.updateUserDataSuccess(response);
+          }),
+          catchError((error) => of(actions.updateUserDataFailure(error)))
+        )
+      )
+    )
+  );
 }
