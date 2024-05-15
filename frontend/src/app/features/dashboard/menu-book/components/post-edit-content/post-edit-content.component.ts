@@ -47,7 +47,7 @@ export class PostEditContentComponent implements OnInit {
   }
 
   editFromMenuBook(): void {
-    if (isNil(this.post)) {
+    if (isNil(this.post) || this.title.length < 3 || !this.portionQuantity) {
       return;
     }
 

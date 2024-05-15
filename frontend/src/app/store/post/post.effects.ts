@@ -82,6 +82,20 @@ export class PostEffects {
     )
   );
 
+  getInitPostsEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.getInitPosts),
+      concatMap(({ type: _, ...payload }) =>
+        this.postApiService.getFriendsPosts(payload).pipe(
+          map((response) => {
+            return actions.getInitPostsSuccess(response);
+          }),
+          catchError((error) => of(actions.getInitPostsFailure(error)))
+        )
+      )
+    )
+  );
+
   getImageStreamEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.getImageStream),

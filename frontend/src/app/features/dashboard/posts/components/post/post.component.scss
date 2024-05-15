@@ -83,3 +83,12 @@
   margin-bottom: 20px;
   border-top: 1px solid #ccc;
 }
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .error-label {
+    color: red;
+  }
+}

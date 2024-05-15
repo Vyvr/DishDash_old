@@ -256,7 +256,7 @@ func (s *server) DeleteFromFriends(ctx context.Context, in *user.DeleteFromFrien
 }
 
 func (s *server) GetFriends(ctx context.Context, in *user.GetFriendsRequest) (*user.GetFriendsResponse, error) {
-	_, err := auth_service.ValidateToken(in.Token)
+	data, err := auth_service.ValidateToken(in.Token)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
@@ -270,13 +270,13 @@ func (s *server) GetFriends(ctx context.Context, in *user.GetFriendsRequest) (*u
 
 	var users []*user.UserBasicInfo
 
-	for _, userEntity := range friendsEntities {
+	for _, friendEntity := range friendsEntities {
 		var userId string
 
-		if in.Id == userEntity.UserA.Id.String() {
-			userId = userEntity.UserBID.String()
+		if data.Id == friendEntity.UserAID {
+			userId = friendEntity.UserBID.String()
 		} else {
-			userId = userEntity.UserBID.String()
+			userId = friendEntity.UserAID.String()
 		}
 
 		var userEntities entities.UserEntity

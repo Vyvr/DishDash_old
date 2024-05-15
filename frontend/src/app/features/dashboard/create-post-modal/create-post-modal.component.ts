@@ -12,6 +12,7 @@ export class CreatePostModalComponent {
   private data: ModalData | null = null;
 
   isVisible: boolean = false;
+  invalidCreatePostData: boolean = false;
 
   postTitle: string = '';
   postIngredients: string = '';
@@ -28,6 +29,7 @@ export class CreatePostModalComponent {
   }
 
   closeModal(): void {
+    this.invalidCreatePostData = false;
     this.isVisible = false;
   }
 
@@ -36,7 +38,13 @@ export class CreatePostModalComponent {
   }
 
   submitPost(): void {
-    if (!this.data) {
+    if (
+      (!this.data && this.postTitle.length < 3) ||
+      this.postIngredients.length < 3 ||
+      this.postPreparation.length < 3 ||
+      !this.portionQuantity
+    ) {
+      this.invalidCreatePostData = true;
       return;
     }
 
@@ -59,8 +67,5 @@ export class CreatePostModalComponent {
     this.portionQuantity = 1;
     this.postPreparation = '';
     this.postImagesBuckets = [];
-
   }
 }
-
-

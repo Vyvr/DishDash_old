@@ -101,6 +101,10 @@
     [(inputValue)]="editPostPortionQuantity"
   />
 
+  <div *ngIf="invalidCreatePostData" class="error-container">
+    <p class="error-label">Invalid data</p>
+  </div>
+
   <dd-modal-footer [ddClass]="'space-between'">
     <dd-button [ddClass]="'primary mg-top'" (click)="onEditSubmit()"
       >Submit</dd-button

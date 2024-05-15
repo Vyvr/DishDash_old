@@ -36,6 +36,9 @@
       <div class="input-wrapper">
         <dd-pictures-input (imagesChange)="onImagesChange($event)" />
       </div>
+      <div *ngIf="invalidCreatePostData" class="error-container">
+        <p class="error-label">Invalid data</p>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="submit-modal-button" (click)="submitPost()">Sumbit</button>

@@ -88,6 +88,23 @@ export const getFriendsPostsFailure = createAction(
   props<{ message: string }>()
 );
 
+//---------------GET INIT POSTS---------------------
+
+export const getInitPosts = createAction(
+  `[${moduleName}] Get init posts`,
+  props<GetPostsRequest.AsObject>()
+);
+
+export const getInitPostsSuccess = createAction(
+  `[${moduleName}] Get init posts success`,
+  props<GetPostsResponse.AsObject>()
+);
+
+export const getInitPostsFailure = createAction(
+  `[${moduleName}] Get init posts failure`,
+  props<{ message: string }>()
+);
+
 //---------------GET IMAGE STREAM---------------------
 
 export const getImageStream = createAction(

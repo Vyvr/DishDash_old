@@ -38,6 +38,8 @@ export class PostComponent implements OnInit {
   itemsLoadingSquareCount: number = 0;
   deletePostTitle: string = '';
 
+  invalidCreatePostData: boolean = false;
+
   editPostTitle: string = '';
   editPostIngredients: string = '';
   editPostPreparation: string = '';
@@ -122,8 +124,9 @@ export class PostComponent implements OnInit {
       this.editPostTitle === '' ||
       this.editPostIngredients === '' ||
       this.editPostPreparation === '' ||
-      this.editPostPortionQuantity === ''
+      !this.editPostPortionQuantity
     ) {
+      this.invalidCreatePostData = true;
       return;
     }
 
@@ -135,6 +138,7 @@ export class PostComponent implements OnInit {
       portionQuantity: parseInt(this.editPostPortionQuantity, 10),
     });
 
+    this.invalidCreatePostData = false;
     this.isEditPostModalOpen = !this.isEditPostModalOpen;
   }
 
@@ -153,5 +157,6 @@ export class PostComponent implements OnInit {
     this.editPostPortionQuantity = this.post.portionQuantity.toString();
 
     this.isEditPostModalOpen = !this.isEditPostModalOpen;
+    this.invalidCreatePostData = false;
   }
 }

@@ -40,6 +40,10 @@ export class PostFacade {
     this.store.dispatch(actions.getFriendsPosts(payload));
   }
 
+  getInitPosts(payload: GetPostsRequest.AsObject): void {
+    this.store.dispatch(actions.getInitPosts(payload));
+  }
+
   getImageStream(payload: GetImageStreamRequest.AsObject): void {
     this.store.dispatch(actions.getImageStream(payload));
   }

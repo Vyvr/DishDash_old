@@ -68,3 +68,12 @@
 .portion-quantity-wrapper {
   margin-top: 10px;
 }
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .error-label {
+    color: red;
+  }
+}

@@ -79,6 +79,7 @@ export const postReducer = createReducer(
   //---------------GET FRIENDS POSTS---------------------
   on(actions.getFriendsPosts, (state) => ({ ...state, ...loadingState })),
   on(actions.getFriendsPostsSuccess, (state, { postsList }) => {
+    console.log(postsList);
     if (postsList.length === 1 && postsList[0].id === '') {
       return {
         ...state,
@@ -118,6 +119,39 @@ export const postReducer = createReducer(
     };
   }),
   on(actions.getFriendsPostsFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  })),
+  //---------------GET INIT POSTS---------------------
+  on(actions.getInitPosts, (state) => ({ ...state, ...loadingState })),
+  on(actions.getInitPostsSuccess, (state, { postsList }) => {
+    if (postsList.length === 1 && postsList[0].id === '') {
+      return {
+        ...state,
+        ...loadedState,
+        stopLoading: true,
+      };
+    }
+
+    const updatedPathsPosts: Post.AsObject[] = postsList.map((post) => {
+      const updatedPaths = post.picturePathList.map(
+        (path) => environment.picturesServer + path
+      );
+      const updatedPost: Post.AsObject = {
+        ...post,
+        picturePathList: updatedPaths,
+      };
+
+      return updatedPost;
+    });
+
+    return {
+      ...state,
+      ...loadedState,
+      data: [...updatedPathsPosts],
+    };
+  }),
+  on(actions.getInitPostsFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
   })),

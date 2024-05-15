@@ -16,19 +16,19 @@ export const IconButtons = [
     plugin: Plugins.MENU_BOOK,
     alt: 'Menu book',
   },
-//   {
-//       svg: 'assets/shop-icon.svg',
-//       plugin: Plugins.MARKET,
-//       alt: 'Market',
-//     },
-//     {
-//         svg: 'assets/farm-tractor-icon.svg',
-//         plugin: Plugins.FARMERS,
-//         alt: 'Farmers',
-//     },
-    {
-      svg: 'assets/user-settings-icon.svg',
-      plugin: Plugins.SETTINGS,
-      alt: 'Settings',
-    },
+  // {
+  //     svg: 'assets/shop-icon.svg',
+  //     plugin: Plugins.MARKET,
+  //     alt: 'Market',
+  //   },
+  //     {
+  //         svg: 'assets/farm-tractor-icon.svg',
+  //         plugin: Plugins.FARMERS,
+  //         alt: 'Farmers',
+  //     },
+  {
+    svg: 'assets/user-settings-icon.svg',
+    plugin: Plugins.SETTINGS,
+    alt: 'Settings',
+  },
 ];

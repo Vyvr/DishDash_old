@@ -24,6 +24,8 @@ import {
   NewCommentEvent,
   ToggleLikeEvent,
 } from './components/post/post.model';
+import { SocialFacade } from 'src/app/store/social';
+import { DeleteFromFriendsRequest } from 'src/app/pb/user_pb';
 
 @Component({
   selector: 'app-posts',
@@ -36,6 +38,7 @@ export class PostListComponent extends OnDestroyMixin {
 
   authState$ = this.authFacade.authState$;
   postState$ = this.postFacade.postState$;
+  socialState$ = this.socialFacade.socialState$;
 
   defaultProfilePicturePath: string =
     '../../../../assets/default-user-picture.webp';
@@ -43,9 +46,13 @@ export class PostListComponent extends OnDestroyMixin {
   postTitle: string = '';
   commentsOpenPostId: string | null = null;
 
-  private _postsPage: number = 1;
+  private _postsPage: number = 2;
 
-  constructor(private authFacade: AuthFacade, private postFacade: PostFacade) {
+  constructor(
+    private authFacade: AuthFacade,
+    private postFacade: PostFacade,
+    private socialFacade: SocialFacade
+  ) {
     super();
   }
 
@@ -203,25 +210,44 @@ export class PostListComponent extends OnDestroyMixin {
       });
   }
 
+  deleteFriend(userId: string): void {
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        if (isNil(authState.data) || authState.loading) {
+          return;
+        }
+
+        const {
+          data: { token, id },
+        } = authState;
+
+        const payload: DeleteFromFriendsRequest.AsObject = {
+          token,
+          id,
+          friendId: userId,
+        };
+
+        this.socialFacade.deleteFromFriends(payload);
+      });
+  }
+
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
-    const stopLoading$ = this.postFacade.stopLoading$;
-
-    stopLoading$
+    // const stopLoading$ = this.postFacade.stopLoading$;
+    this.postState$
       .pipe(untilComponentDestroyed(this), take(1))
-      .subscribe((stopLoading) => {
-        if (stopLoading) return;
+      .subscribe((postState) => {
+        if (postState.stopLoading || postState.loading) return;
         const scrollPosition = window.innerHeight + window.scrollY;
         const documentHeight = document.documentElement.scrollHeight;
 
-        if (scrollPosition >= documentHeight) {
+        if (scrollPosition >= documentHeight && !postState.loading) {
           this._loadPosts();
-          this._postsPage++;
         }
       });
   }
 
-  // implemented in guard but i'll leave it here for now
   private _loadPosts(): void {
     this.authState$
       .pipe(
@@ -243,6 +269,7 @@ export class PostListComponent extends OnDestroyMixin {
         }
 
         this.postFacade.getPosts(payload);
+        this._postsPage++;
       });
   }
 }

@@ -24,7 +24,7 @@ export const canActivatePosts: CanActivateFn = (): Observable<
       }
 
       const payload = bindTokenToPayload<GetPostsRequest.AsObject>(
-        { page: 0, pageSize: 10 },
+        { page: 1, pageSize: 10 },
         authState
       );
 
@@ -32,9 +32,9 @@ export const canActivatePosts: CanActivateFn = (): Observable<
         return errorPageUrlTree;
       }
 
-      postsFacade.getPosts(payload);
+      postsFacade.getInitPosts(payload);
 
-      return true
+      return true;
     })
   );
 };
