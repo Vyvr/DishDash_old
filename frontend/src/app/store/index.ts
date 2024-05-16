@@ -41,6 +41,7 @@ import {
   AnalyticsState,
   analyticsReducer,
 } from './analytics';
+import { ChatEffects, ChatFacade, ChatState, chatReducer } from './chat';
 
 export interface AppState {
   auth: AuthState;
@@ -50,6 +51,7 @@ export interface AppState {
   menuBook: MenuBookPostsState;
   social: SocialState;
   analytics: AnalyticsState;
+  chat: ChatState;
 }
 
 export const reducers = {
@@ -60,6 +62,7 @@ export const reducers = {
   menuBook: menubookPostReducer,
   social: socialReducer,
   analytics: analyticsReducer,
+  chat: chatReducer,
 };
 
 export const effects = [
@@ -70,6 +73,7 @@ export const effects = [
   MenuBookPostEffects,
   SocialEffects,
   AnalyticsEffects,
+  ChatEffects,
 ];
 
 export const facades = [
@@ -80,6 +84,7 @@ export const facades = [
   MenuBookPostFacade,
   SocialFacade,
   AnalyticsFacade,
+  ChatFacade,
 ];
 
 export function localStorageSyncReducer(

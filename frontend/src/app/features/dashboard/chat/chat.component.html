@@ -1,0 +1,44 @@
+<ng-container
+  *ngIf="{
+    chatState: chatState$ | async,
+    socialState: socialState$ | async
+  } as viewData"
+>
+  <div class="chat-wrapper">
+    <div class="friends-list-wrapper">
+      <div class="friends-list">
+        <ng-container
+          *ngFor="let friend of viewData?.socialState?.data?.friends"
+        >
+          <div
+            [ngClass]="{
+              'selected-friend-contatiner': selectedFriendId === friend.id,
+              'friend-contatiner': selectedFriendId !== friend.id
+            }"
+            (click)="selectFriend(friend.id)"
+          >
+            <label>{{ friend.name }} {{ friend.surname }}</label>
+            <div class="friend-button-wrapper">
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="chat-component">
+      <div class="chat-container">
+        <div class="messages">
+          <ng-container *ngFor="let message of viewData?.chatState?.messages">
+            <div>{{ message.message }}</div>
+          </ng-container>
+        </div>
+      </div>
+      <input
+        [(ngModel)]="message"
+        (keyup.enter)="send()"
+        placeholder="Type a message"
+      />
+      <button (click)="send()">Send</button>
+    </div>
+  </div>
+</ng-container>
