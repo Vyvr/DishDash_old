@@ -40,7 +40,6 @@ def connect(sid, environ):
         chat_connections_data = []
         for chat in chat_connections:
             chat_data = {
-                'id': str(chat.id),
                 'user_a_id': str(chat.user_a_id),
                 'user_b_id': str(chat.user_b_id)
             }

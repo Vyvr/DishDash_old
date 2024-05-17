@@ -62,4 +62,7 @@ class MessagesEntity(Base):
             ['chat_connections_entities.user_a_id', 'chat_connections_entities.user_b_id']
         ),
     )
+    chat_connection = relationship('ChatConnectionsEntity', 
+                                primaryjoin="and_(MessagesEntity.chat_id_part_1 == ChatConnectionsEntity.user_a_id, MessagesEntity.chat_id_part_2 == ChatConnectionsEntity.user_b_id)",
+                                back_populates='messages')
 
