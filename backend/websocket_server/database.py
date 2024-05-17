@@ -84,12 +84,12 @@ def create_chat_connection(user_a_id: str, user_b_id: str, db: Session):
         return None
 
 
-def create_message(chat_id: str, message_text: str, db: Session):
+def create_message(chat_id_part_1: str, chat_id_part_2: str, message_text: str, db: Session):
     try:
         new_message = MessagesEntity(
             id=uuid.uuid4(),
-            chat_id_part_1=chat_id,
-            chat_id_part_2=chat_id,
+            chat_id_part_1=chat_id_part_1,
+            chat_id_part_2=chat_id_part_2,
             message=message_text,
             timestamp=datetime.now(timezone.utc)
         )

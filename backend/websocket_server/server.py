@@ -102,7 +102,6 @@ def chat_message(sid, data):
                 senderId, receiverId, db)
             if new_chat_connection:
                 chat_connection = {
-                    'id': str(new_chat_connection.id),
                     'user_a_id': str(new_chat_connection.user_a_id),
                     'user_b_id': str(new_chat_connection.user_b_id)
                 }
@@ -112,7 +111,7 @@ def chat_message(sid, data):
                 print("Failed to create chat connection")
                 return
 
-        new_message = create_message(chat_connection['id'], message_text, db)
+        new_message = create_message(chat_connection['user_a_id'], chat_connection['user_b_id'], message_text, db)
         if new_message:
             print(f"Message created with ID: {new_message.id}")
         else:
