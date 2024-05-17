@@ -138,6 +138,7 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
           sender: authState?.data?.id,
           receiver: this.selectedFriend.id,
         };
+
         if (isNil(payload.sender) || isNil(payload.receiver)) {
           return;
         }
