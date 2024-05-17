@@ -10,14 +10,14 @@
     <div class="friends-list-wrapper">
       <div class="friends-list">
         <ng-container
-          *ngFor="let friend of viewData?.friendsWithPendingMessages?.data?.friends"
+          *ngFor="let friend of viewData?.friendsWithPendingMessages"
         >
           <div
             [ngClass]="{
               'selected-friend-contatiner': selectedFriend.id === friend.id,
               'friend-contatiner': selectedFriend.id !== friend.id
             }"
-            (click)="selectFriend(friend.id, friend.name, friend.surname)"
+            (click)="selectFriend(friend)"
           >
             <label>{{ friend.name }} {{ friend.surname }}</label>
             <span
