@@ -1,7 +1,8 @@
 <ng-container
   *ngIf="{
     chatState: chatState$ | async,
-    socialState: socialState$ | async
+    socialState: socialState$ | async,
+    authState: authState$ | async
   } as viewData"
 >
   <div class="chat-wrapper">
@@ -12,14 +13,13 @@
         >
           <div
             [ngClass]="{
-              'selected-friend-contatiner': selectedFriendId === friend.id,
-              'friend-contatiner': selectedFriendId !== friend.id
+              'selected-friend-contatiner': selectedFriend.id === friend.id,
+              'friend-contatiner': selectedFriend.id !== friend.id
             }"
-            (click)="selectFriend(friend.id)"
+            (click)="selectFriend(friend.id, friend.name, friend.surname)"
           >
             <label>{{ friend.name }} {{ friend.surname }}</label>
-            <div class="friend-button-wrapper">
-            </div>
+            <div class="friend-button-wrapper"></div>
           </div>
         </ng-container>
       </div>
@@ -29,16 +29,29 @@
       <div class="chat-container">
         <div class="messages">
           <ng-container *ngFor="let message of viewData?.chatState?.messages">
-            <div>{{ message.message }}</div>
+            <div
+              [ngClass]="{
+                'message-right': message.sender === viewData.authState.data.id,
+                'message-left': message.sender !== viewData.authState.data.id
+              }"
+            >
+              <div class="message-sender">
+                {{ message.senderName + " " + message.senderSurname }}
+              </div>
+              <div>{{ message.message }}</div>
+            </div>
           </ng-container>
         </div>
       </div>
-      <input
-        [(ngModel)]="message"
-        (keyup.enter)="send()"
-        placeholder="Type a message"
-      />
-      <button (click)="send()">Send</button>
+      <div class="input-component">
+        <input
+          class="chat-input"
+          [(ngModel)]="message"
+          (keyup.enter)="send()"
+          placeholder="Type a message"
+        />
+        <dd-button [ddClass]="'primary mg-right'" (click)="send()">Send</dd-button>
+      </div>
     </div>
   </div>
 </ng-container>

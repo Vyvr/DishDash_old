@@ -22,6 +22,8 @@ export class ChatEffects {
           map((message: ChatMessage) =>
             actions.sendMessageSuccess({
               sender: message.sender,
+              senderName: message.senderName,
+              senderSurname: message.senderSurname,
               receiver: message.receiver,
               message: message.message,
             })
@@ -39,6 +41,8 @@ export class ChatEffects {
       map((message: ChatMessage) =>
         actions.reciveMessageSuccess({
           sender: message.sender,
+          senderName: message.senderName,
+          senderSurname: message.senderSurname,
           receiver: message.receiver,
           message: message.message,
         })

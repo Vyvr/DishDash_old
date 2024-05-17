@@ -6,6 +6,8 @@ export interface ChatMessage {
   [x: string]: any;
   sender: string;
   receiver: string;
+  senderName: string;
+  senderSurname: string;
   message: string;
 }
 

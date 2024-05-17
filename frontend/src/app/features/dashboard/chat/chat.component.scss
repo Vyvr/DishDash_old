@@ -7,7 +7,9 @@
 
 .friends-list-wrapper {
   height: 100%;
-  width: 100%;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  border-right: 1px solid #ccc;
 }
 
 .friends-list {
@@ -65,15 +67,14 @@
 }
 
 .chat-container {
-  height: calc(100% - 80px);
+  height: calc(100% - 45px);
   overflow: hidden;
 }
 .messages {
   height: 100%;
   overflow-y: scroll;
   box-sizing: border-box;
-  border: 1px solid #ccc;
-  padding: 10px;
+  padding: 35px 40px;
 }
 
 input {
@@ -86,4 +87,35 @@ button {
 .chat-component {
   height: 100%;
   overflow: hidden;
+}
+
+.message-sender {
+  font-size: 12px;
+  color: #9a9a9a;
+}
+
+.message-left,
+.message-right {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.message-left {
+  align-items: flex-start;
+}
+
+.message-right {
+  align-items: flex-end;
+}
+
+.input-component {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 18px;
+  .chat-input {
+    margin-left: 2rem;
+  }
 }

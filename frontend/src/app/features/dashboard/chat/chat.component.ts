@@ -8,12 +8,15 @@ import {
 import { isNil } from 'lodash-es';
 import { take } from 'rxjs';
 import { WebSocketService } from 'src/app/core/api/socket-api.service';
+import { AppState } from 'src/app/store';
 import { AuthFacade } from 'src/app/store/auth';
 import { ChatFacade } from 'src/app/store/chat';
 import { SocialFacade } from 'src/app/store/social';
 
-interface AppState {
-  chat: { messages: string[] };
+interface SelectedFriend {
+  id: string;
+  name: string;
+  surname: string;
 }
 
 @Component({
@@ -28,7 +31,11 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
   chatState$ = this.chatFacade.chatState$;
   authState$ = this.authFacade.authState$;
 
-  selectedFriendId: string = '';
+  selectedFriend: SelectedFriend = {
+    id: '',
+    name: '',
+    surname: '',
+  };
 
   constructor(
     private store: Store<AppState>,
@@ -54,13 +61,14 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
       .subscribe((authState) => {
         const payload = {
           sender: authState?.data?.id,
-          receiver: this.selectedFriendId,
+          receiver: this.selectedFriend.id,
         };
         if (
           isNil(payload.sender) ||
           isNil(payload.receiver) ||
-          isNil(this.selectedFriendId) ||
-          this.selectedFriendId === ''
+          isNil(this.selectedFriend.id) ||
+          this.selectedFriend.id === '' ||
+          this.message === ''
         ) {
           return;
         }
@@ -68,28 +76,36 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
         this.chatFacade.sendMessage({
           message: this.message,
           sender: authState.data.id,
-          receiver: this.selectedFriendId,
+          senderName: authState.data.name,
+          senderSurname: authState.data.surname,
+          receiver: this.selectedFriend.id,
         });
 
         this.message = '';
       });
   }
 
-  selectFriend(friendId: string): void {
-    if (friendId === this.selectedFriendId) return;
+  selectFriend(
+    friendId: string,
+    friendName: string,
+    friendSurname: string
+  ): void {
+    if (friendId === this.selectedFriend?.id) return;
 
-    if (this.selectedFriendId !== '' || this.selectedFriendId !== null) {
+    if (this.selectedFriend?.id !== '') {
       // disconnect from receiver
     }
 
-    this.selectedFriendId = friendId;
+    this.selectedFriend.id = friendId;
+    this.selectedFriend.name = friendName;
+    this.selectedFriend.surname = friendSurname;
 
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((authState) => {
         const payload = {
           sender: authState?.data?.id,
-          receiver: this.selectedFriendId,
+          receiver: this.selectedFriend.id,
         };
         if (isNil(payload.sender) || isNil(payload.receiver)) {
           return;
