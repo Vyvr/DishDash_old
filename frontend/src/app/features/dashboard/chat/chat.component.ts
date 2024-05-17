@@ -1,23 +1,23 @@
 // chat.component.ts
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
 import {
   OnDestroyMixin,
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
-import { combineLatest, map, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, take } from 'rxjs';
 import { WebSocketService } from 'src/app/core/api/socket-api.service';
-import { AppState } from 'src/app/store';
 import { AuthFacade } from 'src/app/store/auth';
 import { ChatFacade, ChatMessage } from 'src/app/store/chat';
-import { SocialFacade } from 'src/app/store/social';
+import { FriendData, SocialFacade } from 'src/app/store/social';
 
 interface SelectedFriend {
   id: string;
   name: string;
   surname: string;
 }
+
+type FriendWithPendingMessages = FriendData & { hasPendingMessages: boolean };
 
 @Component({
   selector: 'app-chat',
@@ -30,25 +30,10 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
   socialState$ = this.socialFacade.socialState$;
   chatState$ = this.chatFacade.chatState$;
   authState$ = this.authFacade.authState$;
-  friendsWithPendingMessages$ = combineLatest([this.chatState$, this.socialState$]).pipe(
-    untilComponentDestroyed(this),
-    map(([chatState, socialState]) => {
-      const friendsWithnotifications = socialState?.data?.friends.map(
-        ({ id, ...rest }) => {
-          return {
-            id,
-            hasPendingMessages: this.hasPendingMessages(id, chatState.messages),
-            ...rest,
-          };
-        }
-      );
 
-      return {
-        ...socialState,
-        data: { ...socialState.data, friends: friendsWithnotifications },
-      };
-    })
-  );
+  friendsWithPendingMessages$ = new BehaviorSubject<
+    FriendWithPendingMessages[] | null
+  >(null);
 
   selectedFriend: SelectedFriend = {
     id: '',
@@ -57,7 +42,6 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
   };
 
   constructor(
-    private store: Store<AppState>,
     private chatFacade: ChatFacade,
     private socialFacade: SocialFacade,
     private authFacade: AuthFacade,
@@ -72,10 +56,27 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
       .subscribe((authState) => {
         if (isNil(authState) || isNil(authState.data)) return;
       });
-  }
 
-  hasPendingMessages(friendId: string, messages: ChatMessage[]): boolean {
-    return !!messages.find(({ senderId }) => senderId === friendId);
+    combineLatest([this.socialState$, this.chatState$])
+      .pipe(untilComponentDestroyed(this))
+      .subscribe(([socialState, chatState]) => {
+        if (isNil(socialState?.data?.friends) || isNil(chatState?.messages)) {
+          this.friendsWithPendingMessages$.next(null);
+          return;
+        }
+
+        const friendsWithPendingMessages = socialState.data.friends.map(
+          ({ id, ...rest }) => ({
+            id,
+            ...rest,
+            hasPendingMessages:
+              !(this.selectedFriend?.id === id) &&
+              this._hasPendingMessages(id, chatState.messages),
+          })
+        );
+
+        this.friendsWithPendingMessages$.next(friendsWithPendingMessages);
+      });
   }
 
   send(): void {
@@ -108,20 +109,27 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
       });
   }
 
-  selectFriend(
-    friendId: string,
-    friendName: string,
-    friendSurname: string
-  ): void {
-    if (friendId === this.selectedFriend?.id) return;
-
-    if (this.selectedFriend?.id !== '') {
-      // disconnect from receiver
+  selectFriend(friend: FriendData): void {
+    if (friend.id === this.selectedFriend?.id) {
+      return;
     }
 
-    this.selectedFriend.id = friendId;
-    this.selectedFriend.name = friendName;
-    this.selectedFriend.surname = friendSurname;
+    this.selectedFriend = friend;
+
+    const friendsWithPendingMessages =
+      this.friendsWithPendingMessages$.getValue();
+
+    if (!isNil(friendsWithPendingMessages)) {
+      this.friendsWithPendingMessages$.next(
+        friendsWithPendingMessages.map((friend) => {
+          if (friend.id === this.selectedFriend.id) {
+            friend.hasPendingMessages = false;
+          }
+
+          return friend;
+        })
+      );
+    }
 
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
@@ -136,5 +144,12 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
 
         this.webSocketService.selectFriend(payload.sender, payload.receiver);
       });
+  }
+
+  private _hasPendingMessages(
+    friendId: string,
+    messages: ChatMessage[]
+  ): boolean {
+    return !!messages.find(({ senderId }) => senderId === friendId);
   }
 }
