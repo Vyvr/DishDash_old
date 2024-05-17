@@ -6,11 +6,11 @@ import {
   untilComponentDestroyed,
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
-import { take } from 'rxjs';
+import { combineLatest, map, take } from 'rxjs';
 import { WebSocketService } from 'src/app/core/api/socket-api.service';
 import { AppState } from 'src/app/store';
 import { AuthFacade } from 'src/app/store/auth';
-import { ChatFacade } from 'src/app/store/chat';
+import { ChatFacade, ChatMessage } from 'src/app/store/chat';
 import { SocialFacade } from 'src/app/store/social';
 
 interface SelectedFriend {
@@ -30,6 +30,25 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
   socialState$ = this.socialFacade.socialState$;
   chatState$ = this.chatFacade.chatState$;
   authState$ = this.authFacade.authState$;
+  friendsWithPendingMessages$ = combineLatest([this.chatState$, this.socialState$]).pipe(
+    untilComponentDestroyed(this),
+    map(([chatState, socialState]) => {
+      const friendsWithnotifications = socialState?.data?.friends.map(
+        ({ id, ...rest }) => {
+          return {
+            id,
+            hasPendingMessages: this.hasPendingMessages(id, chatState.messages),
+            ...rest,
+          };
+        }
+      );
+
+      return {
+        ...socialState,
+        data: { ...socialState.data, friends: friendsWithnotifications },
+      };
+    })
+  );
 
   selectedFriend: SelectedFriend = {
     id: '',
@@ -55,6 +74,10 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
       });
   }
 
+  hasPendingMessages(friendId: string, messages: ChatMessage[]): boolean {
+    return !!messages.find(({ senderId }) => senderId === friendId);
+  }
+
   send(): void {
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
@@ -75,10 +98,10 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
 
         this.chatFacade.sendMessage({
           message: this.message,
-          sender: authState.data.id,
+          senderId: authState.data.id,
           senderName: authState.data.name,
           senderSurname: authState.data.surname,
-          receiver: this.selectedFriend.id,
+          receiverId: this.selectedFriend.id,
         });
 
         this.message = '';

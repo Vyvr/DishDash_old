@@ -21,10 +21,10 @@ export class ChatEffects {
         of(this.webSocketService.sendMessage(action)).pipe(
           map((message: ChatMessage) =>
             actions.sendMessageSuccess({
-              sender: message.sender,
+              senderId: message.senderId,
               senderName: message.senderName,
               senderSurname: message.senderSurname,
-              receiver: message.receiver,
+              receiverId: message.receiverId,
               message: message.message,
             })
           ),
@@ -40,10 +40,10 @@ export class ChatEffects {
     this.webSocketService.getMessages().pipe(
       map((message: ChatMessage) =>
         actions.reciveMessageSuccess({
-          sender: message.sender,
+          senderId: message.senderId,
           senderName: message.senderName,
           senderSurname: message.senderSurname,
-          receiver: message.receiver,
+          receiverId: message.receiverId,
           message: message.message,
         })
       ),

@@ -50,36 +50,36 @@ def connect(sid, environ):
 
 @sio.event
 def select_friend(sid, data):
-    sender = data['sender']
-    receiver = data['receiver']
+    senderId = data['senderId']
+    receiverId = data['receiverId']
     
-    if sender in connected_clients:
+    if senderId in connected_clients:
         for recv, senders in receiver_to_senders.items():
-            if sender in senders:
-                senders.remove(sender)
+            if senderId in senders:
+                senders.remove(senderId)
                 break
         
-        if receiver not in receiver_to_senders:
-            receiver_to_senders[receiver] = []
-        receiver_to_senders[receiver].append(sender)
+        if receiverId not in receiver_to_senders:
+            receiver_to_senders[receiverId] = []
+        receiver_to_senders[receiverId].append(senderId)
         
-        print(f'Connecting sender {sender} with receiver {receiver}')
-        sio.emit('friend_selected', {'sender': sender, 'receiver': receiver}, room=connected_clients[sender])
+        print(f'Connecting senderId {senderId} with receiverId {receiverId}')
+        sio.emit('friend_selected', {'senderId': senderId, 'receiverId': receiverId}, room=connected_clients[senderId])
 
 @sio.event
 def chat_message(sid, data):
-    print(f'Received message from {data["sender"]}: {data}')
-    sender = data['sender']
-    receiver = data['receiver']
+    print(f'Received message from {data['senderId']}: {data}')
+    senderId = data['senderId']
+    receiverId = data['receiverId']
     message_text = data['message']
 
     with next(get_db()) as db:
         chat_connection = next((chat for chat in chat_connections_data if 
-                                (chat['user_a_id'] == sender and chat['user_b_id'] == receiver) or
-                                (chat['user_a_id'] == receiver and chat['user_b_id'] == sender)), None)
+                                (chat['user_a_id'] == senderId and chat['user_b_id'] == receiverId) or
+                                (chat['user_a_id'] == receiverId and chat['user_b_id'] == senderId)), None)
 
         if not chat_connection:
-            new_chat_connection = create_chat_connection(sender, receiver, db)
+            new_chat_connection = create_chat_connection(senderId, receiverId, db)
             if new_chat_connection:
                 chat_connection = {
                     'id': str(new_chat_connection.id),
@@ -99,7 +99,7 @@ def chat_message(sid, data):
             print("Failed to create message")
             return
 
-    receiver_sid = connected_clients.get(receiver)
+    receiver_sid = connected_clients.get(receiverId)
     if receiver_sid:
         sio.emit('chat_message', data, room=receiver_sid)
 

@@ -2,14 +2,15 @@
   *ngIf="{
     chatState: chatState$ | async,
     socialState: socialState$ | async,
-    authState: authState$ | async
+    authState: authState$ | async,
+    friendsWithPendingMessages: friendsWithPendingMessages$ | async
   } as viewData"
 >
   <div class="chat-wrapper">
     <div class="friends-list-wrapper">
       <div class="friends-list">
         <ng-container
-          *ngFor="let friend of viewData?.socialState?.data?.friends"
+          *ngFor="let friend of viewData?.friendsWithPendingMessages?.data?.friends"
         >
           <div
             [ngClass]="{
@@ -19,6 +20,15 @@
             (click)="selectFriend(friend.id, friend.name, friend.surname)"
           >
             <label>{{ friend.name }} {{ friend.surname }}</label>
+            <span
+              *ngIf="friend?.hasPendingMessages"
+              style="
+                width: 10px;
+                height: 10px;
+                background-color: red;
+                border-radius: 50%;
+              "
+            ></span>
             <div class="friend-button-wrapper"></div>
           </div>
         </ng-container>
@@ -31,14 +41,23 @@
           <ng-container *ngFor="let message of viewData?.chatState?.messages">
             <div
               [ngClass]="{
-                'message-right': message.sender === viewData.authState.data.id,
-                'message-left': message.sender !== viewData.authState.data.id
+                'message-right':
+                  message.senderId === viewData.authState.data.id,
+                'message-left': message.senderId !== viewData.authState.data.id
               }"
             >
-              <div class="message-sender">
-                {{ message.senderName + " " + message.senderSurname }}
-              </div>
-              <div>{{ message.message }}</div>
+              <ng-container
+                *ngIf="
+                  message.senderId === viewData.authState.data.id ||
+                  (message.receiverId === viewData.authState.data.id &&
+                    message.senderId === selectedFriend.id)
+                "
+              >
+                <div class="message-sender">
+                  {{ message.senderName + " " + message.senderSurname }}
+                </div>
+                <div>{{ message.message }}</div>
+              </ng-container>
             </div>
           </ng-container>
         </div>
@@ -50,7 +69,9 @@
           (keyup.enter)="send()"
           placeholder="Type a message"
         />
-        <dd-button [ddClass]="'primary mg-right'" (click)="send()">Send</dd-button>
+        <dd-button [ddClass]="'primary mg-right'" (click)="send()"
+          >Send</dd-button
+        >
       </div>
     </div>
   </div>

@@ -8,18 +8,12 @@ export const chatReducer = createReducer(
   initialState,
   //---------------SEND MESSAGE---------------------
   on(actions.sendMessage, (state) => ({ ...state })),
-  on(
-    actions.sendMessageSuccess,
-    (state, { sender, receiver, message, senderName, senderSurname }) => {
-      return {
-        ...state,
-        messages: [
-          ...state.messages,
-          { sender, receiver, message, senderName, senderSurname },
-        ],
-      };
-    }
-  ),
+  on(actions.sendMessageSuccess, (state, { type: _, ...payload }) => {
+    return {
+      ...state,
+      messages: [...state.messages, payload],
+    };
+  }),
   on(actions.sendMessageFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
@@ -29,12 +23,27 @@ export const chatReducer = createReducer(
   on(actions.reciveMessage, (state) => ({ ...state })),
   on(
     actions.reciveMessageSuccess,
-    (state, { sender, receiver, message, senderName, senderSurname }) => {
+    (
+      state,
+      {
+        senderId: sender,
+        receiverId: receiver,
+        message,
+        senderName,
+        senderSurname,
+      }
+    ) => {
       return {
         ...state,
         messages: [
           ...state.messages,
-          { sender, receiver, message, senderName, senderSurname },
+          {
+            senderId: sender,
+            receiverId: receiver,
+            message,
+            senderName,
+            senderSurname,
+          },
         ],
       };
     }

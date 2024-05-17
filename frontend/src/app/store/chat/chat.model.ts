@@ -3,9 +3,8 @@ export interface ChatData {
 }
 
 export interface ChatMessage {
-  [x: string]: any;
-  sender: string;
-  receiver: string;
+  senderId: string;
+  receiverId: string;
   senderName: string;
   senderSurname: string;
   message: string;
