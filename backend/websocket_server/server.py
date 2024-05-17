@@ -106,7 +106,7 @@ def chat_message(sid, data):
                     'user_b_id': str(new_chat_connection.user_b_id)
                 }
                 chat_connections_data.append(chat_connection)
-                print(f"Chat connection created: {new_chat_connection.id}")
+                # print(f"Chat connection created: {new_chat_connection.id}")
             else:
                 print("Failed to create chat connection")
                 return

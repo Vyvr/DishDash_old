@@ -115,7 +115,8 @@ def get_messages(user_a_id: str, user_b_id: str, db: Session):
             return []
 
         messages = db.query(MessagesEntity).filter(
-            MessagesEntity.chat_id == chat_connection.id
+            MessagesEntity.chat_id_part_1 == chat_connection.user_a_id,
+            MessagesEntity.chat_id_part_2 == chat_connection.user_b_id,
         ).all()
 
         return messages
