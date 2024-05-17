@@ -88,7 +88,8 @@ def create_message(chat_id: str, message_text: str, db: Session):
     try:
         new_message = MessagesEntity(
             id=uuid.uuid4(),
-            chat_id=chat_id,
+            chat_id_part_1=chat_id,
+            chat_id_part_2=chat_id,
             message=message_text,
             timestamp=datetime.now(timezone.utc)
         )

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, PrimaryKeyConstraint
+from sqlalchemy import Column, ForeignKeyConstraint, String, ForeignKey, DateTime, PrimaryKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -39,25 +39,27 @@ class FriendsEntity(Base):
 class ChatConnectionsEntity(Base):
     __tablename__ = 'chat_connections_entities'
 
-    user_a_id = Column(UUID(as_uuid=True), ForeignKey(
-        'user_entities.id'), nullable=False, primary_key=True)
-    user_b_id = Column(UUID(as_uuid=True), ForeignKey(
-        'user_entities.id'), nullable=False, primary_key=True)
+    user_a_id = Column(UUID(as_uuid=True), ForeignKey('user_entities.id'), nullable=False, primary_key=True)
+    user_b_id = Column(UUID(as_uuid=True), ForeignKey('user_entities.id'), nullable=False, primary_key=True)
 
-    user_a = relationship('UserEntity', foreign_keys=[
-                          user_a_id], primaryjoin="ChatConnectionsEntity.user_a_id == UserEntity.id")
-    user_b = relationship('UserEntity', foreign_keys=[
-                          user_b_id], primaryjoin="ChatConnectionsEntity.user_b_id == UserEntity.id")
+    user_a = relationship('UserEntity', foreign_keys=[user_a_id], primaryjoin="ChatConnectionsEntity.user_a_id == UserEntity.id")
+    user_b = relationship('UserEntity', foreign_keys=[user_b_id], primaryjoin="ChatConnectionsEntity.user_b_id == UserEntity.id")
 
+    messages = relationship('MessagesEntity', back_populates='chat_connection')
 
 class MessagesEntity(Base):
     __tablename__ = 'messages_entities'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    chat_id = Column(UUID(as_uuid=True), ForeignKey(
-        'chat_connections_entities.id'), nullable=False)
+    chat_id_part_1 = Column(UUID(as_uuid=True), nullable=False)
+    chat_id_part_2 = Column(UUID(as_uuid=True), nullable=False)
     message = Column(String, nullable=False)
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-    chat_connection = relationship(
-        'ChatConnectionsEntity', foreign_keys=[chat_id])
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['chat_id_part_1', 'chat_id_part_2'],
+            ['chat_connections_entities.user_a_id', 'chat_connections_entities.user_b_id']
+        ),
+    )
+
