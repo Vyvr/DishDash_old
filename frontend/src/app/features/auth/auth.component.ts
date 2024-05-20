@@ -154,10 +154,10 @@ export class AuthComponent extends OnDestroyMixin {
         confirmPasswordControl.setErrors({ mustMatch: true });
         return { mustMatch: true }; // return an error object here
       } else {
-        confirmPasswordControl.setErrors(null);
+        confirmPasswordControl.setErrors({ mustMatch: false });
       }
 
-      return null; // explicitly return null here
+      return null;
     };
   }
 }

@@ -28,11 +28,18 @@
   <div class="post-footer">
     <button
       class="icon-like-button"
-      [style.fill]="post?.liked ? 'blue' : 'black'"
+      [style.fill]="post?.liked ? 'green' : 'black'"
       (click)="onToggleLike(post?.id)"
     >
       {{ post?.likesCount }}
-      <svg-icon src="assets/thumb-up-icon.svg" alt="Like"></svg-icon>
+      <svg-icon
+        src="{{
+          post?.liked
+            ? 'assets/thumb-up-icon-fill.svg'
+            : 'assets/thumb-up-icon.svg'
+        }}"
+        alt="Like"
+      ></svg-icon>
     </button>
     <button class="icon-comment-button" (click)="onOpenCommentsModal()">
       {{ post?.commentsCount }}
@@ -40,11 +47,18 @@
     </button>
     <button
       class="icon-add-button"
-      [style.fill]="post?.isInMenuBook ? 'blue' : 'black'"
+      [style.fill]="post?.isInMenuBook ? 'green' : 'black'"
       [style.visibility]="isProfilePost ? 'hidden' : 'visible'"
       (click)="onAddToMenuBook()"
     >
-      <svg-icon src="assets/add-to-menu-icon.svg" alt="Add"></svg-icon>
+      <svg-icon
+        src="{{
+          post?.isInMenuBook
+            ? 'assets/add-to-menu-book-icon-fill.svg'
+            : 'assets/add-to-menu-book-icon.svg'
+        }}"
+        alt="Add"
+      ></svg-icon>
     </button>
   </div>
 </div>
