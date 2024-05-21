@@ -1,0 +1,78 @@
+<ng-container
+  *ngIf="{
+    chatState: chatState$ | async,
+    socialState: socialState$ | async,
+    authState: authState$ | async,
+    friendsWithPendingMessages: friendsWithPendingMessages$ | async
+  } as viewData"
+>
+  <div class="chat-wrapper">
+    <div class="friends-list-wrapper">
+      <div class="friends-list">
+        <ng-container
+          *ngFor="let friend of viewData?.friendsWithPendingMessages"
+        >
+          <div
+            [ngClass]="{
+              'selected-friend-contatiner': selectedFriend.id === friend.id,
+              'friend-contatiner': selectedFriend.id !== friend.id
+            }"
+            (click)="selectFriend(friend)"
+          >
+            <label>{{ friend.name }} {{ friend.surname }}</label>
+            <span
+              *ngIf="friend?.hasPendingMessages"
+              style="
+                width: 10px;
+                height: 10px;
+                background-color: red;
+                border-radius: 50%;
+              "
+            ></span>
+            <div class="friend-button-wrapper"></div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="chat-component">
+      <div class="chat-container">
+        <div class="messages">
+          <ng-container *ngFor="let message of viewData?.chatState?.messages">
+            <div
+              [ngClass]="{
+                'message-right':
+                  message.senderId === viewData.authState.data.id,
+                'message-left': message.senderId !== viewData.authState.data.id
+              }"
+            >
+              <ng-container
+                *ngIf="
+                  message.senderId === viewData.authState.data.id ||
+                  (message.receiverId === viewData.authState.data.id &&
+                    message.senderId === selectedFriend.id)
+                "
+              >
+                <div class="message-sender">
+                  {{ message.senderName + " " + message.senderSurname }}
+                </div>
+                <div>{{ message.message }}</div>
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="input-component">
+        <input
+          class="chat-input"
+          [(ngModel)]="message"
+          (keyup.enter)="send()"
+          placeholder="Type a message"
+        />
+        <dd-button [ddClass]="'primary mg-right'" (click)="send()"
+          >Send</dd-button
+        >
+      </div>
+    </div>
+  </div>
+</ng-container>

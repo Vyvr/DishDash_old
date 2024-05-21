@@ -1,47 +1,95 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import {  Socket, io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
+import { Observable, Subject } from 'rxjs';
+import { ChatMessage } from 'src/app/store/chat';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SocketApiService {
-  private serverUrl = 'http://localhost:8083'; // Update with your server URL
-  socket: Socket;
+export class WebSocketService {
+  private socket: Socket | undefined;
+  private messagesSubject: Subject<ChatMessage> = new Subject<ChatMessage>();
 
   constructor() {
-    this.socket = io(this.serverUrl, {
-      withCredentials: false, // Try adjusting this
-      reconnectionAttempts: 5,
-      timeout: 20000, // 20 seconds
+    console.log('WebSocketService initialized.');
+  }
+
+  public connect(userId: string): void {
+    if (this.socket) {
+      console.warn('WebSocket connection already exists.');
+      return;
+    }
+
+    console.log('Initializing WebSocket connection...');
+    this.socket = io('http://localhost:3000', {
+      query: { user_id: userId },
     });
 
-    this.setupListeners();
-  }
-
-  sendFriendRequest(data: any): void {
-    this.socket.emit('friend-request', data);
-  }
-
-  getMessages(): Observable<void> {
-    return new Observable(observer => {
-      this.socket.on('message', (message) => {
-        observer.next(message);
-      });
-    });
-  }
-
-  private setupListeners(): void {
     this.socket.on('connect', () => {
-      console.log('Connected to the socket.io server');
+      console.log('Connected to WebSocket server');
     });
 
-    this.socket.on('disconnect', (reason) => {
-      console.log(`Disconnected: ${reason}`);
+    this.socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server');
     });
 
-    this.socket.on('reply', (data: any) => {
-      console.log('Event received:', data);
+    this.socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
     });
+
+    this.socket.on('connect_timeout', (timeout) => {
+      console.error('Connection timeout:', timeout);
+    });
+
+    this.socket.on('chat_message', (msg: ChatMessage) => {
+      console.log('Message from server:', msg);
+      this.messagesSubject.next(msg);
+    });
+
+    this.socket.on('users_list', (users) => {
+      console.log('Received users list:', users);
+      // Handle the received users list (e.g., store it in a service or state)
+    });
+
+    this.socket.on('friend_selected', (data) => {
+      console.log('Friend selected info from backend:', data);
+      // Handle friend selected notification
+    });
+  }
+
+  public disconnect(): void {
+    if (!this.socket) {
+      console.warn('No WebSocket connection to disconnect.');
+      return;
+    }
+
+    this.socket.disconnect();
+    this.socket = undefined;
+    console.log('WebSocket connection disconnected.');
+  }
+
+  public sendMessage(message: ChatMessage): ChatMessage {
+    if (!this.socket) {
+      console.error('Cannot send message. No WebSocket connection.');
+      return message;
+    }
+
+    // console.log('Sending message:', message);
+    this.socket.emit('chat_message', message);
+    return message;
+  }
+
+  public getMessages(): Observable<ChatMessage> {
+    return this.messagesSubject.asObservable();
+  }
+
+  public selectFriend(senderId: string, receiverId: string): void {
+    if (!this.socket) {
+      console.error('Cannot select friend. No WebSocket connection.');
+      return;
+    }
+
+    // console.log('Selecting friend:', { sender, receiver });
+    this.socket.emit('select_friend', { senderId, receiverId });
   }
 }

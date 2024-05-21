@@ -29,7 +29,7 @@ import { DdPicturesInputComponent } from './shared/components/dd-pictures-input/
 import { SearchApiService } from './core/api/search-api.service';
 import { PostApiService } from './core/api/post-api.service';
 import { SocialApiService } from './core/api/social-api.service';
-import { SocketApiService } from './core/api/socket-api.service';
+import { WebSocketService } from './core/api/socket-api.service';
 import { PostComponent } from './features/dashboard/posts/components/post/post.component';
 import { DdPicturesGridComponent } from './shared/components/dd-pictures-grid/dd-pictures-grid.component';
 import { DdModalComponent } from './shared/components/dd-modal/dd-modal.component';
@@ -43,6 +43,7 @@ import { DdRequestingSpinnerComponent } from './shared/components/dd-requesting-
 import { RoutePipe } from './features/dashboard/header/route.pipe';
 import { DdButtonComponent } from './shared/components/dd-button/dd-button.component';
 import { DdModalFooterComponent } from './shared/components/dd-modal-footer/dd-modal-footer.component';
+import { ChatComponent } from './features/dashboard/chat/chat.component';
 
 const devImports = [
   StoreDevtoolsModule.instrument({
@@ -77,6 +78,7 @@ const devImports = [
     RoutePipe,
     DdButtonComponent,
     DdModalFooterComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,7 +104,7 @@ const devImports = [
     SearchApiService,
     PostApiService,
     SocialApiService,
-    SocketApiService,
+    WebSocketService,
     ...facades,
   ],
   bootstrap: [AppComponent],

@@ -5,4 +5,5 @@ export enum Plugins {
   SETTINGS = 'dashboard/settings',
   MARKET = 'dashboard/market',
   FARMERS = 'dashboard/farmers',
+  CHAT = 'dashboard/chat',
 }

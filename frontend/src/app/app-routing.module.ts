@@ -13,6 +13,7 @@ import { canActivatePosts } from './core/guards/can-activate-posts.guard';
 import { canActivateMenuBook } from './core/guards/can-activate-menu-book.guard';
 import { UserProfileComponent } from './features/dashboard/user-profile/user-profile.component';
 import { canActivateUserProfile } from './core/guards/can-activate-user-profile.guard';
+import { ChatComponent } from './features/dashboard/chat/chat.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -44,6 +45,7 @@ const routes: Routes = [
           { path: 'market', component: MarketComponent },
           { path: 'farmers', component: FarmersComponent },
           { path: 'settings', component: SettingsComponent },
+          { path: 'chat', component: ChatComponent },
         ],
       },
     ],

@@ -12,6 +12,11 @@ export const IconButtons = [
     alt: 'Posts',
   },
   {
+    svg: 'assets/chat-bubble-icon.svg',
+    plugin: Plugins.CHAT,
+    alt: 'Chat',
+  },
+  {
     svg: 'assets/menu-book-icon.svg',
     plugin: Plugins.MENU_BOOK,
     alt: 'Menu book',
