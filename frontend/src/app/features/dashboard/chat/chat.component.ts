@@ -142,7 +142,7 @@ export class ChatComponent extends OnDestroyMixin implements OnInit {
         if (isNil(payload.sender) || isNil(payload.receiver)) {
           return;
         }
-
+        this.chatFacade.clearMessages();
         this.webSocketService.selectFriend(payload.sender, payload.receiver);
       });
   }

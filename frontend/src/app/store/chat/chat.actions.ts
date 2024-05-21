@@ -37,3 +37,7 @@ export const reciveMessageFailure = createAction(
   `[${moduleName}] Receive Message failure`,
   props<{ message: string }>()
 );
+
+//---------------CLEAR MESSAGES---------------------
+
+export const clearMessages = createAction(`[${moduleName}] Clear messages`);

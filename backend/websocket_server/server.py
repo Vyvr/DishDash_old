@@ -27,7 +27,6 @@ def connect(sid, environ):
         print('User ID not found in query parameters')
         return
 
-    # Store the connected client with their user_id
     connected_clients[user_id] = sid
 
     print(f'Connected user SID: {sid}')
@@ -74,12 +73,13 @@ def select_friend(sid, data):
             for message in messages:
                 try:
                     user = get_user(senderId, db)
-                    data = {'senderId': senderId,
-                            'receiverId': receiverId,
-                            'senderName': user.name,
-                            'senderSurname': user.surname,
-                            'message': message.message}
-                    sio.emit('chat_message', data, room=receiver_sid)
+
+                    data = {'senderId': message['sender_id'],
+                            'receiverId': message['receiver_id'],
+                            'senderName': message['sender_name'],
+                            'senderSurname': message['sender_surname'],
+                            'message': message['message']}
+                    sio.emit('chat_message', data, room=sid)
                 except Exception as e:
                     print(f'Error while sending chat history: {e}')
 
@@ -110,7 +110,7 @@ def chat_message(sid, data):
                 print("Failed to create chat connection")
                 return
 
-        new_message = create_message(chat_connection['user_a_id'], chat_connection['user_b_id'], message_text, db)
+        new_message = create_message(chat_connection['user_a_id'], chat_connection['user_b_id'], senderId, receiverId, message_text, db)
         if new_message:
             print(f"Message created with ID: {new_message.id}")
         else:

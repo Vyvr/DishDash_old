@@ -15,7 +15,12 @@ export class ChatFacade {
   sendMessage(payload: ChatMessage): void {
     this.store.dispatch(actions.sendMessage(payload));
   }
+
   reciveMessage(payload: ChatMessage): void {
     this.store.dispatch(actions.reciveMessage(payload));
+  }
+
+  clearMessages(): void {
+    this.store.dispatch(actions.clearMessages());
   }
 }

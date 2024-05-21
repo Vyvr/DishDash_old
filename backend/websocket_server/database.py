@@ -4,6 +4,7 @@ import uuid
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 from models import ChatConnectionsEntity, MessagesEntity, UserEntity, FriendsEntity
 from models import Base
 
@@ -84,12 +85,14 @@ def create_chat_connection(user_a_id: str, user_b_id: str, db: Session):
         return None
 
 
-def create_message(chat_id_part_1: str, chat_id_part_2: str, message_text: str, db: Session):
+def create_message(chat_id_part_1: str, chat_id_part_2: str, sender: str, receiver: str, message_text: str, db: Session):
     try:
         new_message = MessagesEntity(
             id=uuid.uuid4(),
             chat_id_part_1=chat_id_part_1,
             chat_id_part_2=chat_id_part_2,
+            sender_id=sender,
+            receiver_id=receiver,
             message=message_text,
             timestamp=datetime.now(timezone.utc)
         )
@@ -117,9 +120,22 @@ def get_messages(user_a_id: str, user_b_id: str, db: Session):
         messages = db.query(MessagesEntity).filter(
             MessagesEntity.chat_id_part_1 == chat_connection.user_a_id,
             MessagesEntity.chat_id_part_2 == chat_connection.user_b_id,
-        ).all()
+        ).options(joinedload(MessagesEntity.sender)).order_by(MessagesEntity.timestamp).all()
 
-        return messages
+        result = []
+        for message in messages:
+            sender_name = message.sender.name
+            sender_surname = message.sender.surname
+            result.append({
+                'message': message.message,
+                'sender_id': str(message.sender_id),
+                'receiver_id': str(message.receiver_id),
+                'sender_name': sender_name,
+                'sender_surname': sender_surname
+            })
+
+        return result
+
     except Exception as e:
         print(f"Error fetching messages: {e}")
         return None

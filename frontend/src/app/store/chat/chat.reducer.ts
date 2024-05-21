@@ -51,5 +51,13 @@ export const chatReducer = createReducer(
   on(actions.reciveMessageFailure, (state, { message }) => ({
     ...state,
     ...errorState(message),
-  }))
+  })),
+
+  //---------------CLEAR MESSAGES---------------------
+  on(actions.clearMessages, (state) => {
+    return {
+      ...state,
+      messages: [],
+    };
+  })
 );

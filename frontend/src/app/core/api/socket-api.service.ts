@@ -22,7 +22,7 @@ export class WebSocketService {
 
     console.log('Initializing WebSocket connection...');
     this.socket = io('http://localhost:3000', {
-      query: { user_id: userId }
+      query: { user_id: userId },
     });
 
     this.socket.on('connect', () => {
@@ -52,7 +52,7 @@ export class WebSocketService {
     });
 
     this.socket.on('friend_selected', (data) => {
-      console.log('Friend selected:', data);
+      console.log('Friend selected info from backend:', data);
       // Handle friend selected notification
     });
   }
@@ -74,7 +74,7 @@ export class WebSocketService {
       return message;
     }
 
-    console.log('Sending message:', message);
+    // console.log('Sending message:', message);
     this.socket.emit('chat_message', message);
     return message;
   }
@@ -83,13 +83,13 @@ export class WebSocketService {
     return this.messagesSubject.asObservable();
   }
 
-  public selectFriend(sender: string, receiver: string): void {
+  public selectFriend(senderId: string, receiverId: string): void {
     if (!this.socket) {
       console.error('Cannot select friend. No WebSocket connection.');
       return;
     }
 
-    console.log('Selecting friend:', { sender, receiver });
-    this.socket.emit('select_friend', { sender, receiver });
+    // console.log('Selecting friend:', { sender, receiver });
+    this.socket.emit('select_friend', { senderId, receiverId });
   }
 }

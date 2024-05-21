@@ -53,6 +53,8 @@ class MessagesEntity(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     chat_id_part_1 = Column(UUID(as_uuid=True), nullable=False)
     chat_id_part_2 = Column(UUID(as_uuid=True), nullable=False)
+    sender_id = Column(UUID(as_uuid=True), nullable=False)
+    receiver_id = Column(UUID(as_uuid=True), nullable=False)
     message = Column(String, nullable=False)
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
@@ -61,8 +63,11 @@ class MessagesEntity(Base):
             ['chat_id_part_1', 'chat_id_part_2'],
             ['chat_connections_entities.user_a_id', 'chat_connections_entities.user_b_id']
         ),
+        ForeignKeyConstraint(['sender_id'], ['user_entities.id']),
+        ForeignKeyConstraint(['receiver_id'], ['user_entities.id']),
     )
     chat_connection = relationship('ChatConnectionsEntity', 
                                 primaryjoin="and_(MessagesEntity.chat_id_part_1 == ChatConnectionsEntity.user_a_id, MessagesEntity.chat_id_part_2 == ChatConnectionsEntity.user_b_id)",
                                 back_populates='messages')
-
+    sender = relationship('UserEntity', foreign_keys=[sender_id])
+    receiver = relationship('UserEntity', foreign_keys=[receiver_id])
