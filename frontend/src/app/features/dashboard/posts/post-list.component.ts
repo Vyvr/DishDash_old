@@ -234,7 +234,6 @@ export class PostListComponent extends OnDestroyMixin {
 
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
-    // const stopLoading$ = this.postFacade.stopLoading$;
     this.postState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((postState) => {

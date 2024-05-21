@@ -2,14 +2,14 @@
   <label>{{ title }}</label>
   <input
     *ngIf="type === 'input'"
-    class="dd-custom-input"
+    class="dd-custom-input {{ddClass}}"
     [(ngModel)]="valueFromInput"
     (ngModelChange)="onInputChange()"
     placeholder="{{ title }}"
   />
   <input
   *ngIf="type === 'number'"
-  class="dd-custom-number-input"
+  class="dd-custom-number-input {{ddClass}}"
   type="number"
   [(ngModel)]="valueFromInput"
   (ngModelChange)="onInputChange()"
@@ -17,7 +17,7 @@
 />
   <textarea
     *ngIf="type === 'textarea' && resizable === false"
-    class="dd-custom-textarea"
+    class="dd-custom-textarea {{ddClass}}"
     [(ngModel)]="valueFromInput"
     (ngModelChange)="onInputChange()"
     placeholder="{{ title }}"
@@ -25,7 +25,7 @@
   <textarea
     #resizableTextarea
     *ngIf="type === 'textarea' && resizable === true"
-    class="dd-custom-resizable-textarea"
+    class="dd-custom-resizable-textarea {{ddClass}}"
     [(ngModel)]="valueFromInput"
     (ngModelChange)="onInputChange()"
     (ngModelChange)="resizeTextarea()"

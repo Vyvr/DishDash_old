@@ -31,3 +31,29 @@
   overflow: hidden;
   height: auto;
 }
+
+.default {
+}
+
+.bold {
+  color: black;
+  font-weight: bold;
+}
+
+.big-green-radius-border {
+  font-size: 18px;
+  border: 2px solid green;
+  border-radius: 5px;
+  height: 40px;
+}
+
+.big-green-radius-border-textarea {
+  border: 2px solid green;
+  border-radius: 5px;
+  height: 150px;
+}
+
+.green-border-numeric {
+  border: 2px solid green;
+  border-radius: 5px;
+}

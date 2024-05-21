@@ -79,7 +79,6 @@ export const postReducer = createReducer(
   //---------------GET FRIENDS POSTS---------------------
   on(actions.getFriendsPosts, (state) => ({ ...state, ...loadingState })),
   on(actions.getFriendsPostsSuccess, (state, { postsList }) => {
-    console.log(postsList);
     if (postsList.length === 1 && postsList[0].id === '') {
       return {
         ...state,
@@ -92,7 +91,6 @@ export const postReducer = createReducer(
       state.data?.map((post) => [post.id, post]) ?? []
     );
 
-    // Filter new posts to include only those not already present
     const newUniquePosts = postsList.filter(
       (post) => !existingPostsMap.has(post.id)
     );
@@ -109,7 +107,6 @@ export const postReducer = createReducer(
       return updatedPost;
     });
 
-    // Combine the existing posts with the new, unique, transformed posts
     const combinedPosts = [...(state.data ?? []), ...updatedPathsPosts];
 
     return {

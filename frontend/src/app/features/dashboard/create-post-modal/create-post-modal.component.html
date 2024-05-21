@@ -6,11 +6,16 @@
     </div>
     <div class="modal-body">
       <div class="input-wrapper">
-        <dd-input [title]="'Title'" [(inputValue)]="postTitle" />
+        <dd-input
+          [title]="'Title'"
+          [ddClass]="'bold big-green-radius-border'"
+          [(inputValue)]="postTitle"
+        />
       </div>
       <div class="input-wrapper">
         <dd-input
           [title]="'Ingredients'"
+          [ddClass]="'bold big-green-radius-border-textarea'"
           [type]="'textarea'"
           [(inputValue)]="postIngredients"
         />
@@ -29,6 +34,7 @@
       <div class="input-wrapper">
         <dd-input
           [title]="'Preparation'"
+          [ddClass]="'bold big-green-radius-border-textarea'"
           [type]="'textarea'"
           [(inputValue)]="postPreparation"
         />

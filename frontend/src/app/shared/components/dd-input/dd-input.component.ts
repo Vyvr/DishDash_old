@@ -21,6 +21,7 @@ export class DdInputComponent implements OnInit, AfterViewInit {
 
   @Input() title: string = '';
   @Input() type: 'input' | 'textarea' | 'number' = 'input';
+  @Input() ddClass: string = 'default';
   @Input() resizable: boolean = false;
   @Input()
   get inputValue(): string {

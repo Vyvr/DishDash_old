@@ -221,14 +221,7 @@ func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookReques
 		CreationDate:    postEntity.CreationDate,
 	}
 
-	/*@TODO do something with this fucking logger
-	* without this switches it's logging "not found"
-	* for every not liked post. It's annoying
-	 */
-	// Backup the original logger
 	originalLogger := db.Logger
-
-	// Set a temporary logger that ignores "record not found" errors
 	db.Logger = db.Logger.LogMode(logger.Silent)
 
 	if err := db.Where("original_post_id = ? AND holder_id = ?", postEntity.Id, userEntity.Id).Find(&entities.PostInMenuBookEntity{}).Error; err != nil {
@@ -237,7 +230,6 @@ func (s *server) AddToMenuBook(ctx context.Context, in *post.AddToMenuBookReques
 		}
 	}
 
-	// Restore the original logger
 	db.Logger = originalLogger
 
 	result := db.Create(postInMenuBook)
@@ -383,18 +375,9 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 
 	for _, postEntity := range postEntities {
 		var picturesEntities []entities.PostPicturesEntity
-		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
 		db.Where("post_id = ?", postEntity.Id).Find(&picturesEntities)
 
-		// check if post is liked
-		/*@TODO do something with this fucking logger
-		* without this switches it's logging "not found"
-		* for every not liked post. It's annoying
-		 */
-		// Backup the original logger
 		originalLogger := db.Logger
-
-		// Set a temporary logger that ignores "record not found" errors
 		db.Logger = db.Logger.LogMode(logger.Silent)
 
 		var liked = false
@@ -407,7 +390,6 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 			liked = true
 		}
 
-		//check if post is in menu book
 		var isInMenuBook = false
 		err = db.Where("holder_id = ? AND original_post_id = ?", userEntity.Id.String(), postEntity.Id).First(&entities.PostInMenuBookEntity{}).Error
 		if err != nil {
@@ -417,7 +399,7 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 		} else {
 			isInMenuBook = true
 		}
-		// Restore the original logger
+
 		db.Logger = originalLogger
 
 		picturePaths := make([]string, 0, len(picturesEntities))
@@ -439,7 +421,7 @@ func (s *server) GetPosts(ctx context.Context, in *post.GetPostsRequest) (*post.
 			CommentsCount:   postEntity.CommentsCount,
 			Liked:           liked,
 			IsInMenuBook:    isInMenuBook,
-			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
+			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()},
 		}
 		grpcPosts = append(grpcPosts, grpcPost)
 	}
@@ -483,18 +465,9 @@ func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*p
 
 	for _, postEntity := range postEntities {
 		var picturesEntities []entities.PostPicturesEntity
-		//@TODO moze warunek na to jak by post nie zostal znaleziony? To samo z lajkiem
 		db.Where("post_id = ?", postEntity.Id).Find(&picturesEntities)
-
-		// check if post is liked
-		/*@TODO do something with this fucking logger
-		* without this switches it's logging "not found"
-		* for every not liked post. It's annoying
-		 */
-		// Backup the original logger
+		
 		originalLogger := db.Logger
-
-		// Set a temporary logger that ignores "record not found" errors
 		db.Logger = db.Logger.LogMode(logger.Silent)
 
 		var liked = false
@@ -507,7 +480,6 @@ func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*p
 			liked = true
 		}
 
-		//check if post is in menu book
 		var isInMenuBook = false
 		err = db.Where("holder_id = ? AND original_post_id = ?", userEntity.Id.String(), postEntity.Id).First(&entities.PostInMenuBookEntity{}).Error
 		if err != nil {
@@ -517,7 +489,6 @@ func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*p
 		} else {
 			isInMenuBook = true
 		}
-		// Restore the original logger
 		db.Logger = originalLogger
 
 		picturePaths := make([]string, 0, len(picturesEntities))
@@ -539,7 +510,7 @@ func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*p
 			CommentsCount:   postEntity.CommentsCount,
 			Liked:           liked,
 			IsInMenuBook:    isInMenuBook,
-			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()}, // Convert time.Time to *timestamppb.Timestamp
+			CreationDate:    &timestamp.Timestamp{Seconds: postEntity.CreationDate.Unix()},
 		}
 		grpcPosts = append(grpcPosts, grpcPost)
 	}
