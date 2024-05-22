@@ -12,7 +12,7 @@ export class AnalyticsFacade {
 
   constructor(private store: Store<AppState>) {}
 
-  GetAllPostLikesAnaliticsLikesData(payload: GetAllPostLikesAnaliticsDataRequest.AsObject): void {
-    this.store.dispatch(actions.GetAllPostLikesAnaliticsLikesData(payload));
+  GetAllPostLikesAnaliticsData(payload: GetAllPostLikesAnaliticsDataRequest.AsObject): void {
+    this.store.dispatch(actions.GetAllPostLikesAnaliticsData(payload));
   }
 }

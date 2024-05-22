@@ -559,7 +559,7 @@ func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.Pos
 	return nil
 }
 
-func (s *server) GetAllPostLikesAnaliticsLikesData(ctx context.Context, in *post.GetAllPostLikesAnaliticsDataRequest) (*post.GetAllPostLikesAnaliticsDataResponse, error) {
+func (s *server) GetAllPostLikesAnaliticsData(ctx context.Context, in *post.GetAllPostLikesAnaliticsDataRequest) (*post.GetAllPostLikesAnaliticsDataResponse, error) {
 	db := database_service.GetDBInstance()
 
 	userEntity, err := auth_service.ValidateToken(in.Token)

@@ -8,17 +8,17 @@ const moduleName = 'Analytics';
 
 //---------------GET ALL POSTS LIKES ANALYTICS DATA---------------------
 
-export const GetAllPostLikesAnaliticsLikesData = createAction(
+export const GetAllPostLikesAnaliticsData = createAction(
   `[${moduleName}] Get likes analytics data`,
   props<GetAllPostLikesAnaliticsDataRequest.AsObject>()
 );
 
-export const GetAllPostLikesAnaliticsLikesDataSuccess = createAction(
+export const GetAllPostLikesAnaliticsDataSuccess = createAction(
   `[${moduleName}] Get likes analytics data success`,
   props<GetAllPostLikesAnaliticsDataResponse.AsObject>()
 );
 
-export const GetAllPostLikesAnaliticsLikesDataFailure = createAction(
+export const GetAllPostLikesAnaliticsDataFailure = createAction(
   `[${moduleName}] Get likes analytics data failure`,
   props<{ message: string }>()
 );

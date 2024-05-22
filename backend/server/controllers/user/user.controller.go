@@ -74,6 +74,24 @@ func (s *server) UpdateUserData(ctx context.Context, in *user.UpdateRequest) (*u
 		userEntity.Password = string(hashedPassword)
 	}
 
+	if in.GetName() != "" || in.GetSurname() != "" {
+		if updateErr := db.Model(&entities.PostEntity{}).Where("owner_id = ?", userEntity.Id).
+			Updates(map[string]interface{}{
+				"owner_name":    userEntity.Name,
+				"owner_surname": userEntity.Surname,
+			}).Error; updateErr != nil {
+			return nil, status.Errorf(codes.Internal, "failed to update posts: %v", updateErr)
+		}
+
+		if updateErr := db.Model(&entities.PostInMenuBookEntity{}).Where("owner_id = ?", userEntity.Id).
+			Updates(map[string]interface{}{
+				"owner_name":    userEntity.Name,
+				"owner_surname": userEntity.Surname,
+			}).Error; updateErr != nil {
+			return nil, status.Errorf(codes.Internal, "failed to update posts in menu book: %v", updateErr)
+		}
+	}
+
 	// Save the updated entity back to the database
 	if updateErr := db.Save(&userEntity).Error; updateErr != nil {
 		return nil, status.Errorf(codes.Internal, "failed to update user: %v", updateErr)

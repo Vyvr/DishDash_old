@@ -11,6 +11,9 @@
   height: 300px;
   width: 100%;
   border-bottom: 1px solid #ccc;
+  background-image: url("../../../../assets/profile-background.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .user-profile-picture-container {
@@ -59,13 +62,16 @@
   background-color: rgba(191, 191, 191, 0);
   border-right: solid 1px #ccc;
   border-left: solid 1px #ccc;
-  fill: #ccc;
+  fill: black;
   height: 100%;
 
   transition: 0.3s ease-in-out;
-
   &:hover {
     background-color: #d0d0d0a7;
+    color: green;
+    svg-icon {
+      fill: green;
+    }
   }
 }
 

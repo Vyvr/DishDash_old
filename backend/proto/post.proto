@@ -17,7 +17,7 @@ service PostService {
     rpc AddImages(AddPostImagesRequest) returns (AddPostImagesResponse);
     rpc GetImageStream(GetImageStreamRequest) returns (stream GetImageStreamResponse);
 
-    rpc GetAllPostLikesAnaliticsLikesData(GetAllPostLikesAnaliticsDataRequest) returns (GetAllPostLikesAnaliticsDataResponse);
+    rpc GetAllPostLikesAnaliticsData(GetAllPostLikesAnaliticsDataRequest) returns (GetAllPostLikesAnaliticsDataResponse);
     rpc GetAllPostCommentsAnaliticsLikesData(GetAllPostCommentsAnaliticsDataRequest) returns (GetAllPostCommentsAnaliticsDataResponse);
 
     rpc LikePost(ToggleLikeRequest) returns (ToggleLikeResponse);

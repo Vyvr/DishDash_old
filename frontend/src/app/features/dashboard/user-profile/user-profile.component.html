@@ -28,12 +28,12 @@
 
     <div class="user-profile-actions-wrapper">
       <button class="actions-icon-button" (click)="toggleAnalyticsModal()">
-        <img src="assets/analytics-icon.svg" />
+        <svg-icon [src]="'assets/analytics-icon.svg'" [attr.alt]="'analytics'" />
         Analytics
       </button>
-      <button class="actions-icon-button" (click)="toggleSettingsModal()">
-        <img src="assets/user-settings-icon.svg" />
-        Settings
+      <button class="actions-icon-button" (click)="toggleProfilePictureModal()">
+        <svg-icon [src]="'assets/change-avatar-icon.svg'" [attr.alt]="'avatar'" />
+        Avatar
       </button>
     </div>
 
@@ -69,8 +69,8 @@
   <dd-modal
     [isVisible]="isSettingsModalVisible"
     [withHeader]="true"
-    [headerText]="'Settings'"
-    (toggleModal)="toggleSettingsModal()"
+    [headerText]="'Change your profile picture'"
+    (toggleModal)="toggleProfilePictureModal()"
   >
     <input type="file" (change)="onFileSelected($event)" accept="image/*" />
     <div class="new-profile-picture-wrapper" *ngIf="profilePicture">

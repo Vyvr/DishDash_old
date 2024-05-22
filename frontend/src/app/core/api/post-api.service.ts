@@ -182,7 +182,7 @@ export class PostApiService {
     );
   }
 
-  GetAllPostLikesAnaliticsLikesData(
+  GetAllPostLikesAnaliticsData(
     payload: GetAllPostLikesAnaliticsDataRequest.AsObject
   ): Observable<GetAllPostLikesAnaliticsDataResponse.AsObject> {
     const request = new GetAllPostLikesAnaliticsDataRequest();
@@ -193,7 +193,7 @@ export class PostApiService {
       GetAllPostLikesAnaliticsDataRequest,
       GetAllPostLikesAnaliticsDataResponse,
       GetAllPostLikesAnaliticsDataResponse.AsObject
-    >(request, this.postServiceClient.getAllPostLikesAnaliticsLikesData.bind(this.postServiceClient));
+    >(request, this.postServiceClient.getAllPostLikesAnaliticsData.bind(this.postServiceClient));
   }
 
   likePost(

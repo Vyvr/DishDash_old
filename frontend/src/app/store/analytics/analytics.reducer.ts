@@ -8,28 +8,22 @@ export const analyticsReducer = createReducer(
   initialState,
 
   //---------------GET POSTS FROM MENU BOOK---------------------
-  on(actions.GetAllPostLikesAnaliticsLikesData, (state) => ({
+  on(actions.GetAllPostLikesAnaliticsData, (state) => ({
     ...state,
     ...loadingState,
   })),
-  on(
-    actions.GetAllPostLikesAnaliticsLikesDataSuccess,
-    (state, { dataList }) => {
-      return {
-        ...state,
-        ...loadedState,
-        data: {
-          likesList: dataList,
-          commentsList: [],
-        },
-      };
-    }
-  ),
-  on(
-    actions.GetAllPostLikesAnaliticsLikesDataFailure,
-    (state, { message }) => ({
+  on(actions.GetAllPostLikesAnaliticsDataSuccess, (state, { dataList }) => {
+    return {
       ...state,
-      ...errorState(message),
-    })
-  )
+      ...loadedState,
+      data: {
+        likesList: dataList,
+        commentsList: [],
+      },
+    };
+  }),
+  on(actions.GetAllPostLikesAnaliticsDataFailure, (state, { message }) => ({
+    ...state,
+    ...errorState(message),
+  }))
 );

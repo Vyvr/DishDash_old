@@ -219,7 +219,7 @@ export class UserProfileComponent extends OnDestroyMixin {
       });
   }
 
-  toggleSettingsModal(): void {
+  toggleProfilePictureModal(): void {
     this.isSettingsModalVisible = !this.isSettingsModalVisible;
   }
   toggleAnalyticsModal(): void {
@@ -230,7 +230,7 @@ export class UserProfileComponent extends OnDestroyMixin {
           token: authState.data.token,
         };
 
-        this.analyticsFacade.GetAllPostLikesAnaliticsLikesData(payload);
+        this.analyticsFacade.GetAllPostLikesAnaliticsData(payload);
       });
 
     this.isAnalyticsModalVisible = !this.isAnalyticsModalVisible;
