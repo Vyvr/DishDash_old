@@ -17,8 +17,8 @@ import {
   EditCommentRequest,
   EditPostRequest,
   EditPostResponse,
-  GetAllPostLikesAnaliticsDataRequest,
-  GetAllPostLikesAnaliticsDataResponse,
+  GetAllPostAnaliticsDataRequest,
+  GetAllPostAnaliticsDataResponse,
   GetCommentsRequest,
   GetCommentsResponse,
   GetImageStreamRequest,
@@ -182,18 +182,23 @@ export class PostApiService {
     );
   }
 
-  GetAllPostLikesAnaliticsData(
-    payload: GetAllPostLikesAnaliticsDataRequest.AsObject
-  ): Observable<GetAllPostLikesAnaliticsDataResponse.AsObject> {
-    const request = new GetAllPostLikesAnaliticsDataRequest();
+  GetAllPostAnaliticsData(
+    payload: GetAllPostAnaliticsDataRequest.AsObject
+  ): Observable<GetAllPostAnaliticsDataResponse.AsObject> {
+    const request = new GetAllPostAnaliticsDataRequest();
 
     bindPayloadToRequest(request, payload);
 
     return handleRequest<
-      GetAllPostLikesAnaliticsDataRequest,
-      GetAllPostLikesAnaliticsDataResponse,
-      GetAllPostLikesAnaliticsDataResponse.AsObject
-    >(request, this.postServiceClient.getAllPostLikesAnaliticsData.bind(this.postServiceClient));
+      GetAllPostAnaliticsDataRequest,
+      GetAllPostAnaliticsDataResponse,
+      GetAllPostAnaliticsDataResponse.AsObject
+    >(
+      request,
+      this.postServiceClient.getAllPostAnaliticsData.bind(
+        this.postServiceClient
+      )
+    );
   }
 
   likePost(

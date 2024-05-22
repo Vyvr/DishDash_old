@@ -27,12 +27,25 @@
     <p>{{ viewData?.authState.data?.description }}</p>
 
     <div class="user-profile-actions-wrapper">
+      <button class="actions-icon-button" (click)="openCreatePostModal()">
+        <svg-icon
+          [src]="'assets/create-post-icon.svg'"
+          [attr.alt]="'create post'"
+        />
+        Create post
+      </button>
       <button class="actions-icon-button" (click)="toggleAnalyticsModal()">
-        <svg-icon [src]="'assets/analytics-icon.svg'" [attr.alt]="'analytics'" />
+        <svg-icon
+          [src]="'assets/analytics-icon.svg'"
+          [attr.alt]="'analytics'"
+        />
         Analytics
       </button>
       <button class="actions-icon-button" (click)="toggleProfilePictureModal()">
-        <svg-icon [src]="'assets/change-avatar-icon.svg'" [attr.alt]="'avatar'" />
+        <svg-icon
+          [src]="'assets/change-avatar-icon.svg'"
+          [attr.alt]="'avatar'"
+        />
         Avatar
       </button>
     </div>
@@ -107,6 +120,10 @@
             {
               name: 'likes',
               data: viewData?.analyticsState?.data?.likesList
+            },
+            {
+              name: 'comments',
+              data: viewData?.analyticsState?.data?.commentsList
             }
           ]"
           [chart]="chartBuilder.chart"
@@ -118,4 +135,5 @@
       </div>
     </ng-template>
   </dd-modal>
+  <create-post-modal></create-post-modal>
 </ng-container>

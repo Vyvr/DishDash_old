@@ -4,7 +4,7 @@ import { AppState } from '..';
 
 import * as actions from './analytics.actions';
 import * as selectors from './analytics.selectors';
-import { GetAllPostLikesAnaliticsDataRequest } from 'src/app/pb/post_pb';
+import { GetAllPostAnaliticsDataRequest } from 'src/app/pb/post_pb';
 
 @Injectable()
 export class AnalyticsFacade {
@@ -12,7 +12,7 @@ export class AnalyticsFacade {
 
   constructor(private store: Store<AppState>) {}
 
-  GetAllPostLikesAnaliticsData(payload: GetAllPostLikesAnaliticsDataRequest.AsObject): void {
-    this.store.dispatch(actions.GetAllPostLikesAnaliticsData(payload));
+  GetAllPostAnaliticsData(payload: GetAllPostAnaliticsDataRequest.AsObject): void {
+    this.store.dispatch(actions.GetAllPostAnaliticsData(payload));
   }
 }

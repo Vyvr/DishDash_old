@@ -17,14 +17,14 @@ export class AnalyticsEffects {
 
   getPostsFromMenuBookEffect$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(actions.GetAllPostLikesAnaliticsData),
+      ofType(actions.GetAllPostAnaliticsData),
       concatMap(({ type: _, ...payload }) =>
-        this.postApiService.GetAllPostLikesAnaliticsData(payload).pipe(
+        this.postApiService.GetAllPostAnaliticsData(payload).pipe(
           map((response) => {
-            return actions.GetAllPostLikesAnaliticsDataSuccess(response);
+            return actions.GetAllPostAnaliticsDataSuccess(response);
           }),
           catchError((error) =>
-            of(actions.GetAllPostLikesAnaliticsDataFailure(error))
+            of(actions.GetAllPostAnaliticsDataFailure(error))
           )
         )
       )

@@ -60,7 +60,6 @@ export const userPostsReducer = createReducer(
       state.data?.map((post) => [post.id, post]) ?? []
     );
 
-    // Filter new posts to include only those not already present
     const newUniquePosts = postsList.filter(
       (post) => !existingPostsMap.has(post.id)
     );
@@ -70,20 +69,6 @@ export const userPostsReducer = createReducer(
         path = environment.picturesServer + path;
         return path;
       });
-    });
-
-    newUniquePosts.sort((a: Post.AsObject, b: Post.AsObject) => {
-      if (isNil(a.creationDate) || isNil(b.creationDate)) {
-        return 0;
-      }
-      const timeA = a.creationDate
-        ? a.creationDate.seconds * 1000 + a.creationDate.nanos / 1000000
-        : Number.MAX_SAFE_INTEGER;
-      const timeB = b.creationDate
-        ? b.creationDate.seconds * 1000 + b.creationDate.nanos / 1000000
-        : Number.MAX_SAFE_INTEGER;
-
-      return timeB - timeA;
     });
 
     const updatedPathsPosts: Post.AsObject[] = newUniquePosts.map((post) => {
@@ -100,6 +85,20 @@ export const userPostsReducer = createReducer(
 
     // Combine the existing posts with the new, unique, transformed posts
     const combinedPosts = [...updatedPathsPosts, ...(state.data ?? [])];
+
+    combinedPosts.sort((a: Post.AsObject, b: Post.AsObject) => {
+      if (isNil(a.creationDate) || isNil(b.creationDate)) {
+        return 0;
+      }
+      const timeA = a.creationDate
+        ? a.creationDate.seconds * 1000 + a.creationDate.nanos / 1000000
+        : Number.MAX_SAFE_INTEGER;
+      const timeB = b.creationDate
+        ? b.creationDate.seconds * 1000 + b.creationDate.nanos / 1000000
+        : Number.MAX_SAFE_INTEGER;
+
+      return timeB - timeA;
+    });
 
     return {
       ...state,

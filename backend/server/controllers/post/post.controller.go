@@ -466,7 +466,7 @@ func (s *server) GetUserPosts(ctx context.Context, in *post.GetPostsRequest) (*p
 	for _, postEntity := range postEntities {
 		var picturesEntities []entities.PostPicturesEntity
 		db.Where("post_id = ?", postEntity.Id).Find(&picturesEntities)
-		
+
 		originalLogger := db.Logger
 		db.Logger = db.Logger.LogMode(logger.Silent)
 
@@ -559,7 +559,7 @@ func (s *server) GetImageStream(req *post.GetImageStreamRequest, stream post.Pos
 	return nil
 }
 
-func (s *server) GetAllPostLikesAnaliticsData(ctx context.Context, in *post.GetAllPostLikesAnaliticsDataRequest) (*post.GetAllPostLikesAnaliticsDataResponse, error) {
+func (s *server) GetAllPostAnaliticsData(ctx context.Context, in *post.GetAllPostAnaliticsDataRequest) (*post.GetAllPostAnaliticsDataResponse, error) {
 	db := database_service.GetDBInstance()
 
 	userEntity, err := auth_service.ValidateToken(in.Token)
@@ -578,26 +578,43 @@ func (s *server) GetAllPostLikesAnaliticsData(ctx context.Context, in *post.GetA
 	err = db.Joins("JOIN post_entities ON post_entities.id = post_likes_entities.post_id").
 		Where("post_entities.owner_id = ? AND post_likes_entities.creation_date BETWEEN ? AND ?", userEntity.Id, startOfYear, endOfYear).
 		Find(&likesEntities).Error
-
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error in getting likes")
+		return nil, status.Errorf(codes.Internal, "Error in getting likes for analytics data")
 	}
 
-	var yearMap = analytics_service.GetYearMap()
+	var commentsEntities []entities.PostCommentsEntity
+	err = db.Joins("JOIN post_entities ON post_entities.id = post_comments_entities.post_id").
+		Where("post_entities.owner_id = ? AND post_comments_entities.creation_date BETWEEN ? AND ?", userEntity.Id, startOfYear, endOfYear).
+		Find(&commentsEntities).Error
+
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error in getting comments for analytics data")
+	}
+
+	var likesYearMap = analytics_service.GetYearMap()
+	var commentsYearMap = analytics_service.GetYearMap()
 
 	for _, like := range likesEntities {
 		month := like.CreationDate.Month()
-		yearMap[int(month)]++
+		likesYearMap[int(month)]++
+	}
+
+	for _, comment := range commentsEntities {
+		month := comment.CreationDate.Month()
+		commentsYearMap[int(month)]++
 	}
 
 	var likesCount []int64
+	var commentsCount []int64
 
 	for month := 1; month <= 12; month++ {
-		likesCount = append(likesCount, int64(yearMap[month]))
+		likesCount = append(likesCount, int64(likesYearMap[month]))
+		commentsCount = append(commentsCount, int64(commentsYearMap[month]))
 	}
 
-	return &post.GetAllPostLikesAnaliticsDataResponse{
-		Data: likesCount,
+	return &post.GetAllPostAnaliticsDataResponse{
+		LikesCount:    likesCount,
+		CommentsCount: commentsCount,
 	}, nil
 }
 

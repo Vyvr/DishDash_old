@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { AuthFacade } from 'src/app/store/auth';
 import { UserPostsFacade } from 'src/app/store/user-posts';
 import {
@@ -20,7 +20,7 @@ import {
   GetCommentsRequest,
   DeletePostRequest,
   EditPostRequest,
-  GetAllPostLikesAnaliticsDataRequest,
+  GetAllPostAnaliticsDataRequest,
   GetPostsRequest,
 } from 'src/app/pb/post_pb';
 import { bindTokenToPayload } from 'src/app/core/api/utils';
@@ -29,6 +29,7 @@ import imageCompression from 'browser-image-compression';
 import { AddUserPictureRequest } from 'src/app/pb/auth_pb';
 import { ChartBuilder } from './analytics/analytics.model';
 import { AnalyticsFacade } from 'src/app/store/analytics';
+import { CreatePostModalComponent } from '../create-post-modal/create-post-modal.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -36,6 +37,9 @@ import { AnalyticsFacade } from 'src/app/store/analytics';
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent extends OnDestroyMixin {
+  @ViewChild(CreatePostModalComponent) modal: CreatePostModalComponent | null =
+    null;
+
   defaultProfilePicturePath: string =
     '../../../../assets/default-user-picture.webp';
 
@@ -226,11 +230,11 @@ export class UserProfileComponent extends OnDestroyMixin {
     this.authState$
       .pipe(untilComponentDestroyed(this), take(1))
       .subscribe((authState) => {
-        const payload: GetAllPostLikesAnaliticsDataRequest.AsObject = {
+        const payload: GetAllPostAnaliticsDataRequest.AsObject = {
           token: authState.data.token,
         };
 
-        this.analyticsFacade.GetAllPostLikesAnaliticsData(payload);
+        this.analyticsFacade.GetAllPostAnaliticsData(payload);
       });
 
     this.isAnalyticsModalVisible = !this.isAnalyticsModalVisible;
@@ -277,6 +281,27 @@ export class UserProfileComponent extends OnDestroyMixin {
           this._loadPosts();
           this._postsPage++;
         }
+      });
+  }
+
+  openCreatePostModal(): void {
+    this.authState$
+      .pipe(untilComponentDestroyed(this), take(1))
+      .subscribe((authState) => {
+        console.log(this.modal);
+        if (isNil(this.modal) || authState.loading || isNil(authState.data)) {
+          return;
+        }
+
+        const {
+          data: { token, id },
+        } = authState;
+
+        this.modal.openModal({
+          title: '',
+          token,
+          ownerId: id,
+        });
       });
   }
 

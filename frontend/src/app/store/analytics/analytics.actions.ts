@@ -1,24 +1,24 @@
 import { createAction, props } from '@ngrx/store';
 import {
-  GetAllPostLikesAnaliticsDataRequest,
-  GetAllPostLikesAnaliticsDataResponse,
+  GetAllPostAnaliticsDataRequest,
+  GetAllPostAnaliticsDataResponse,
 } from 'src/app/pb/post_pb';
 
 const moduleName = 'Analytics';
 
 //---------------GET ALL POSTS LIKES ANALYTICS DATA---------------------
 
-export const GetAllPostLikesAnaliticsData = createAction(
+export const GetAllPostAnaliticsData = createAction(
   `[${moduleName}] Get likes analytics data`,
-  props<GetAllPostLikesAnaliticsDataRequest.AsObject>()
+  props<GetAllPostAnaliticsDataRequest.AsObject>()
 );
 
-export const GetAllPostLikesAnaliticsDataSuccess = createAction(
+export const GetAllPostAnaliticsDataSuccess = createAction(
   `[${moduleName}] Get likes analytics data success`,
-  props<GetAllPostLikesAnaliticsDataResponse.AsObject>()
+  props<GetAllPostAnaliticsDataResponse.AsObject>()
 );
 
-export const GetAllPostLikesAnaliticsDataFailure = createAction(
+export const GetAllPostAnaliticsDataFailure = createAction(
   `[${moduleName}] Get likes analytics data failure`,
   props<{ message: string }>()
 );

@@ -107,7 +107,23 @@ export const postReducer = createReducer(
       return updatedPost;
     });
 
+    console.log('aa')
+
     const combinedPosts = [...(state.data ?? []), ...updatedPathsPosts];
+
+    combinedPosts.sort((a: Post.AsObject, b: Post.AsObject) => {
+      if (isNil(a.creationDate) || isNil(b.creationDate)) {
+        return 0;
+      }
+      const timeA = a.creationDate
+        ? a.creationDate.seconds * 1000 + a.creationDate.nanos / 1000000
+        : Number.MAX_SAFE_INTEGER;
+      const timeB = b.creationDate
+        ? b.creationDate.seconds * 1000 + b.creationDate.nanos / 1000000
+        : Number.MAX_SAFE_INTEGER;
+
+      return timeB - timeA;
+    });
 
     return {
       ...state,
