@@ -29,7 +29,7 @@ import { DdPicturesInputComponent } from './shared/components/dd-pictures-input/
 import { SearchApiService } from './core/api/search-api.service';
 import { PostApiService } from './core/api/post-api.service';
 import { SocialApiService } from './core/api/social-api.service';
-import { WebSocketService } from './core/api/socket-api.service';
+import { WebSocketService } from './core/api/web-socket-api.service';
 import { PostComponent } from './features/dashboard/posts/components/post/post.component';
 import { DdPicturesGridComponent } from './shared/components/dd-pictures-grid/dd-pictures-grid.component';
 import { DdModalComponent } from './shared/components/dd-modal/dd-modal.component';

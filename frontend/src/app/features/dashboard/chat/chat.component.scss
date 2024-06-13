@@ -22,6 +22,7 @@
   .friend-contatiner {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 5px 5px;
     width: 100%;
     height: 40px;
@@ -34,8 +35,7 @@
     }
 
     &:hover .friend-button-wrapper {
-      display: block;
-      opacity: 1; // Show the button with opacity
+      opacity: 1;
     }
 
     &:hover {
@@ -71,8 +71,12 @@
   overflow: hidden;
 }
 .messages {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column-reverse;
   height: 100%;
   overflow-y: scroll;
+  overflow-x: hidden;
   box-sizing: border-box;
   padding: 35px 40px;
 }
@@ -104,10 +108,12 @@ button {
 
 .message-left {
   align-items: flex-start;
+  margin-right: 20px;
 }
 
 .message-right {
   align-items: flex-end;
+  margin-left: 20px;
 }
 
 .input-component {
@@ -118,4 +124,18 @@ button {
   .chat-input {
     margin-left: 2rem;
   }
+}
+
+.message-content-left,
+.message-content-right {
+  box-sizing: border-box;
+  word-wrap: wrap;
+}
+
+.message-content-left {
+  padding-right: 50%;
+}
+
+.message-content-right {
+  padding-left: 50%;
 }

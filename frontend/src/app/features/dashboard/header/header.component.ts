@@ -6,7 +6,6 @@ import {
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
 import { take } from 'rxjs';
-// import { SocketApiService } from 'src/app/core/api/socket-api.service';
 import {
   AddToFriendsRequest,
   DeleteFromFriendsRequest,

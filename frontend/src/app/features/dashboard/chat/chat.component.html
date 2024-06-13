@@ -56,7 +56,16 @@
                 <div class="message-sender">
                   {{ message.senderName + " " + message.senderSurname }}
                 </div>
-                <div>{{ message.message }}</div>
+                <div
+                  [ngClass]="{
+                    'message-content-right':
+                      message.senderId === viewData.authState.data.id,
+                    'message-content-left':
+                      message.senderId !== viewData.authState.data.id
+                  }"
+                >
+                  {{ message.message }}
+                </div>
               </ng-container>
             </div>
           </ng-container>

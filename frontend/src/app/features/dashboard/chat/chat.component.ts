@@ -6,7 +6,7 @@ import {
 } from '@w11k/ngx-componentdestroyed';
 import { isNil } from 'lodash-es';
 import { BehaviorSubject, combineLatest, take } from 'rxjs';
-import { WebSocketService } from 'src/app/core/api/socket-api.service';
+import { WebSocketService } from 'src/app/core/api/web-socket-api.service';
 import { AuthFacade } from 'src/app/store/auth';
 import { ChatFacade, ChatMessage } from 'src/app/store/chat';
 import { FriendData, SocialFacade } from 'src/app/store/social';

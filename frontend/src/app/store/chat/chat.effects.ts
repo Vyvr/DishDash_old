@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as actions from './chat.actions';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { WebSocketService } from 'src/app/core/api/socket-api.service';
+import { WebSocketService } from 'src/app/core/api/web-socket-api.service';
 import { of } from 'rxjs';
 import { ChatMessage } from './chat.model';
 
