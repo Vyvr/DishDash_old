@@ -9,7 +9,7 @@ import { Observable, filter, map } from 'rxjs';
 import { AuthFacade } from '../../store/auth';
 import { inject } from '@angular/core';
 import { isNil } from 'lodash-es';
-import { WebSocketService } from '../api/socket-api.service';
+import { WebSocketService } from '../api/web-socket-api.service';
 
 export const canEnterGuard: CanActivateChildFn = (
   _childRoute: ActivatedRouteSnapshot,
@@ -17,7 +17,7 @@ export const canEnterGuard: CanActivateChildFn = (
 ): Observable<boolean | UrlTree> => {
   const authFacade = inject(AuthFacade);
   const router = inject(Router);
-  const webSocketService = inject(WebSocketService)
+  const webSocketService = inject(WebSocketService);
 
   authFacade.authState$
     .pipe(filter(({ loading }) => !loading))
@@ -34,8 +34,8 @@ export const canEnterGuard: CanActivateChildFn = (
     filter(({ loading }) => !loading),
     map(({ refreshSuccessful, data }) => {
       const result = refreshSuccessful || router.createUrlTree(['/', 'auth']);
-      if(result instanceof UrlTree || !result) {
-        return result
+      if (result instanceof UrlTree || !result) {
+        return result;
       }
 
       webSocketService.connect(data.id);

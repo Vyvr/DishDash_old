@@ -48,12 +48,10 @@ export class WebSocketService {
 
     this.socket.on('users_list', (users) => {
       console.log('Received users list:', users);
-      // Handle the received users list (e.g., store it in a service or state)
     });
 
     this.socket.on('friend_selected', (data) => {
       console.log('Friend selected info from backend:', data);
-      // Handle friend selected notification
     });
   }
 

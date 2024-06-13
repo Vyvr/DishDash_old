@@ -11,7 +11,7 @@ export const chatReducer = createReducer(
   on(actions.sendMessageSuccess, (state, { type: _, ...payload }) => {
     return {
       ...state,
-      messages: [...state.messages, payload],
+      messages: [payload, ...state.messages],
     };
   }),
   on(actions.sendMessageFailure, (state, { message }) => ({
@@ -36,7 +36,6 @@ export const chatReducer = createReducer(
       return {
         ...state,
         messages: [
-          ...state.messages,
           {
             senderId: sender,
             receiverId: receiver,
@@ -44,6 +43,7 @@ export const chatReducer = createReducer(
             senderName,
             senderSurname,
           },
+          ...state.messages,
         ],
       };
     }

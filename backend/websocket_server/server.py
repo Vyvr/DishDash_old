@@ -13,10 +13,8 @@ chat_connections_data = []
 
 
 @sio.event
-def connect(sid, environ):
-    print(f'Client connected: {sid}')
-
-    query_string = environ.get('QUERY_STRING')
+def connect(sid, data):
+    query_string = data.get('QUERY_STRING')
     if query_string:
         params = dict(param.split('=') for param in query_string.split('&'))
         user_id = params.get('user_id')
@@ -29,10 +27,7 @@ def connect(sid, environ):
 
     connected_clients[user_id] = sid
 
-    print(f'Connected user SID: {sid}')
-
     with next(get_db()) as db:
-        friends = get_user_friends(user_id, db)
         chat_connections = get_user_chat_connections(user_id, db)
 
         global chat_connections_data
@@ -44,8 +39,8 @@ def connect(sid, environ):
             }
             chat_connections_data.append(chat_data)
 
-        sio.emit('users_list', friends, room=sid)
-        sio.emit('chat_connections', chat_connections_data, room=sid)
+        # sio.emit('users_list', friends, room=sid)
+        # sio.emit('chat_connections', chat_connections_data, room=sid)
 
 
 @sio.event
@@ -63,17 +58,13 @@ def select_friend(sid, data):
             receiver_to_senders[receiverId] = []
         receiver_to_senders[receiverId].append(senderId)
 
-        print(f'Connecting senderId {senderId} with receiverId {receiverId}')
         sio.emit('friend_selected', {
                  'senderId': senderId, 'receiverId': receiverId}, room=connected_clients[senderId])
 
         with next(get_db()) as db:
             messages = get_messages(senderId, receiverId, db)
-            receiver_sid = connected_clients.get(receiverId)
             for message in messages:
                 try:
-                    user = get_user(senderId, db)
-
                     data = {'senderId': message['sender_id'],
                             'receiverId': message['receiver_id'],
                             'senderName': message['sender_name'],
@@ -86,7 +77,6 @@ def select_friend(sid, data):
 
 @sio.event
 def chat_message(sid, data):
-    print(f'Received message from {data['senderId']}: {data}')
     senderId = data['senderId']
     receiverId = data['receiverId']
     message_text = data['message']
@@ -105,7 +95,6 @@ def chat_message(sid, data):
                     'user_b_id': str(new_chat_connection.user_b_id)
                 }
                 chat_connections_data.append(chat_connection)
-                # print(f"Chat connection created: {new_chat_connection.id}")
             else:
                 print("Failed to create chat connection")
                 return
