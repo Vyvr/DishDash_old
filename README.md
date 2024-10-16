@@ -1,3 +1,5 @@
+# Currently making new, better version of the app. Gonna post there a link soon
+
 # Cheatsheet
 ## proto to frontend:
 protoc --proto_path=proto proto/*.proto --grpc-web_out=import_style=typescript,mode=grpcwebtext:../frontend/src/app/pb
